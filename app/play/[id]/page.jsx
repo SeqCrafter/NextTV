@@ -704,35 +704,25 @@ export default function PlayerPage() {
   if (loading) {
     return <LoadingSpinner />;
   }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
-    <div className="w-full max-w-7xl pt-4 px-4">
-      <nav aria-label="Breadcrumb" className="flex mb-6 text-sm text-gray-500 overflow-x-auto">
-        <ol className="inline-flex items-center space-x-1 md:space-x-3 whitespace-nowrap">
-          <li className="inline-flex items-center">
-            <Link href="/" className="inline-flex items-center hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-lg mr-1">home</span>
-              首页
-            </Link>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <span className="material-symbols-outlined text-gray-400">chevron_right</span>
-              <span className="ml-1 md:ml-2 hover:text-primary transition-colors cursor-pointer">{videoDetail.type === "movie" ? "电影" : "电视剧"}</span>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <span className="material-symbols-outlined text-gray-400">chevron_right</span>
-              <span className="ml-1 md:ml-2 text-gray-900 font-medium truncate max-w-[200px]">{videoDetail.title}</span>
-            </div>
-          </li>
-        </ol>
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
+        <Link href="/" className="hover:text-primary flex items-center gap-1 transition-colors">
+          <span className="material-symbols-outlined text-[18px]">home</span> 首页
+        </Link>
+        <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
+        <span className="hover:text-primary transition-colors cursor-pointer">{videoDetail.type === "movie" ? "电影" : "电视剧"}</span>
+        <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
+        <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[200px]">{videoDetail.title}</span>
       </nav>
 
-      <div className="grid grid-cols-1 gap-8 transition-all duration-300 lg:grid-cols-12">
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
-        <div className="flex flex-col gap-8 transition-all duration-300 lg:col-span-8">
-          <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group ring-1 ring-gray-900/5">
+        <div className="flex flex-col gap-4 transition-all duration-300 lg:col-span-8 xl:col-span-9">
+          <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800/50">
             {videoDetail?.episodes?.[currentEpisodeIndex] ? (
               <div ref={artRef} className="w-full h-full" />
             ) : (
@@ -742,90 +732,122 @@ export default function PlayerPage() {
             )}
           </div>
 
-          <div className="flex flex-col md:flex-row gap-8 bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="hidden md:block w-48 shrink-0">
-              <div className="aspect-2/3 rounded-xl overflow-hidden shadow-lg ring-1 ring-gray-900/5 relative group">
-                <img alt={`${videoDetail.title} Poster`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={videoDetail.poster} />
-              </div>
-            </div>
-            <div className="flex-1 space-y-5 min-w-0">
-              <div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 wrap-break-words">{videoDetail.title}</h1>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="flex items-center text-primary h-10">
-                      <span className="material-symbols-outlined material-symbols-filled text-xl">star</span>
-                      <span className="text-lg font-bold ml-1 leading-none">{videoDetail.rating}</span>
-                      <span className="text-gray-400 text-sm font-normal ml-1 leading-none self-end pb-1">/ 10</span>
-                    </div>
-                    <FavoriteButton source={source} id={id} videoDetail={videoDetail} />
-                    <button className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 text-gray-400 hover:text-blue-500 transition-colors">
+          {/* Mobile Actions Bar (Visible only on mobile/tablet) */}
+          <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
+              <div className="flex gap-4">
+                  <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary" />
+                  <button className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary transition-colors">
                       <span className="material-symbols-outlined">share</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 mb-4">
-                  <span className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold text-gray-700">{videoDetail.year}</span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span className="truncate">{videoDetail.genre}</span>
-                  {videoDetail.class && (
-                    <>
-                      <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                      <span className="truncate">{videoDetail.type_name}</span>
-                    </>
-                  )}
-                  {videoDetail.episodes.length > 1 && (
-                    <>
-                      <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                      <span>全 {videoDetail.episodes.length} 集</span>
-                    </>
-                  )}
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span className="text-primary text-xs bg-primary/10 px-2 py-1 rounded">{videoDetail.source || source}</span>
-                </div>
+                      分享
+                  </button>
+                  {/* Keep only requested items: Favorite, Share, Source Name (shown below) */}
               </div>
-              {videoDetail.desc && (
-                <div className="prose prose-sm max-w-none text-gray-600">
-                  <h3 className="text-gray-900 font-semibold mb-1">剧情简介</h3>
-                  <p className="leading-relaxed wrap-break-words">{videoDetail.desc}</p>
-                </div>
-              )}
-              {(doubanActors.length > 0 || (videoDetail.actors && videoDetail.actors.length > 0)) && (
-                <div>
-                  <h3 className="text-gray-900 font-semibold mb-3">演员表</h3>
-                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
-                    {(doubanActors.length > 0 ? doubanActors : videoDetail.actors).map((actor, idx) => (
-                      <div key={actor.id || idx} className="flex flex-col items-center gap-2 min-w-[70px] shrink-0">
-                        <div className="size-16 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-100 flex items-center justify-center">
-                          {actor.avatar ? (
-                            <img
-                              src={actor.avatar}
-                              alt={actor.name}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = "none";
-                                e.target.nextSibling.style.display = "flex";
-                              }}
-                            />
-                          ) : null}
-                          <span className="material-symbols-outlined text-gray-400 text-2xl" style={{ display: actor.avatar ? "none" : "flex" }}>
-                            person
-                          </span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-900 text-center truncate w-full">{actor.name}</span>
-                        {actor.role && <span className="text-xs text-gray-500 text-center truncate w-full">{actor.role}</span>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+               <div className="flex items-center gap-2">
+                   <div className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-[150px]">{videoDetail.title}</div>
+                   <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded text-xs">{videoDetail.source || source}</span>
+               </div>
           </div>
         </div>
 
         {/* Right Column: Episodes */}
-        <div className="space-y-6 transition-all duration-300 lg:col-span-4">
-          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} />
+        <div className="w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full">
+           <EpisodeList 
+              episodes={videoDetail.episodes} 
+              episodesTitles={videoDetail.episodes_titles} 
+              currentEpisodeIndex={currentEpisodeIndex} 
+              onEpisodeClick={handleEpisodeClick} 
+           />
+        </div>
+      </div>
+      
+      {/* Bottom Section: Full Info Card (Hidden on Mobile as per request "mobile details only ...", keeping desktop rich) */}
+      <div className="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+           <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+             <div className="w-full md:w-56 shrink-0 mx-auto md:mx-0 max-w-[240px]">
+               <div className="relative aspect-2/3 rounded-lg overflow-hidden shadow-lg group">
+                 <img alt={`${videoDetail.title} Poster`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={videoDetail.poster} />
+                 <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
+                    HD
+                 </div>
+               </div>
+             </div>
+             
+             <div className="flex-1 space-y-6">
+               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-gray-100 dark:border-slate-700 pb-4">
+                 <div>
+                   <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{videoDetail.title}</h1>
+                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 dark:text-slate-400">
+                     <span className="bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-medium text-slate-600 dark:text-slate-300">{videoDetail.year}</span>
+                     <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[16px] text-slate-400">movie</span> {videoDetail.genre}
+                     </span>
+                     {videoDetail.class && (
+                        <span className="flex items-center gap-1">
+                             <span className="material-symbols-outlined text-[16px] text-slate-400">public</span> {videoDetail.type_name}
+                        </span>
+                     )}
+                     <span>全 {videoDetail.episodes?.length || 1} 集</span>
+                     <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded text-xs">{videoDetail.source || source}</span>
+                   </div>
+                 </div>
+                 
+                 <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end">
+                        <div className="flex items-center gap-1 text-primary">
+                            <span className="material-symbols-outlined fill-current text-[24px]">star</span>
+                            <span className="text-2xl font-bold">{videoDetail.rating}</span>
+                            <span className="text-xs text-slate-400 mt-2">/ 10</span>
+                        </div>
+                        <span className="text-xs text-slate-400">豆瓣评分</span>
+                    </div>
+                    <div className="hidden sm:flex gap-2">
+                         <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-red-500 transition-colors" />
+                         <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-500 transition-colors">
+                            <span className="material-symbols-outlined">share</span>
+                         </button>
+                    </div>
+                 </div>
+               </div>
+
+               {videoDetail.desc && (
+                 <div className="space-y-2">
+                   <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">剧情简介</h3>
+                   <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed text-justify">{videoDetail.desc}</p>
+                 </div>
+               )}
+
+               {(doubanActors.length > 0 || (videoDetail.actors && videoDetail.actors.length > 0)) && (
+                 <div className="space-y-3 pt-2">
+                   <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">演员表</h3>
+                   <div className="flex flex-wrap gap-6">
+                     {(doubanActors.length > 0 ? doubanActors : videoDetail.actors).map((actor, idx) => (
+                       <div key={actor.id || idx} className="flex flex-col items-center gap-2 group cursor-pointer">
+                         <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                           {actor.avatar ? (
+                             <img
+                               src={actor.avatar}
+                               alt={actor.name}
+                               className="w-full h-full object-cover"
+                               onError={(e) => {
+                                 e.target.style.display = "none";
+                                 e.target.nextSibling.style.display = "flex";
+                               }}
+                             />
+                           ) : null}
+                           <span className="material-symbols-outlined text-gray-400 text-2xl items-center justify-center bg-gray-100" style={{ display: actor.avatar ? "none" : "flex", width: '100%', height: '100%' }}>
+                             person
+                           </span>
+                         </div>
+                         <div className="text-center">
+                            <p className="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary max-w-[60px] truncate">{actor.name}</p>
+                            {actor.role && <p className="text-[10px] text-slate-500 max-w-[60px] truncate">{actor.role}</p>}
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
+             </div>
         </div>
       </div>
     </div>

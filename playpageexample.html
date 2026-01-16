@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>NextTV - 我和僵尸有个约会1国语</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#fbbf24", // Amber-400 for a warm cinematic feel
+                        primary_hover: "#f59e0b",
+                        "background-light": "#f3f4f6", // Gray-100
+                        "background-dark": "#0f172a", // Slate-900
+                        "card-light": "#ffffff",
+                        "card-dark": "#1e293b", // Slate-800
+                    },
+                    fontFamily: {
+                        display: ["'Noto Sans SC'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '0.75rem',
+                        '2xl': '1rem',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display transition-colors duration-300">
+    <header
+        class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer">
+                <div class="w-8 h-8 bg-black dark:bg-white rounded flex items-center justify-center">
+                    <span class="text-primary font-bold text-xl">N</span>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">NextTV</span>
+            </div>
+            <div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+                <button
+                    class="hover:text-primary transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </button>
+                <button
+                    class="hover:text-primary transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 hidden sm:block">
+                    <span class="material-symbols-outlined text-[20px]">history</span>
+                </button>
+                <button
+                    class="hover:text-primary transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 hidden sm:block">
+                    <span class="material-symbols-outlined text-[20px]">favorite</span>
+                </button>
+                <button
+                    class="hover:text-primary transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800">
+                    <span class="material-symbols-outlined text-[20px]">settings</span>
+                </button>
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-orange-600 overflow-hidden cursor-pointer ml-2">
+                    <img alt="User Avatar" class="w-full h-full object-cover opacity-90"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEu6vD-o_xOvYlyJOO5MNSaUQK4FkWmilqmCYfucoQfJALLpwMMP_ixGZDjxtdJcXmpH4NFa5Oq9ThbRZG55Gqhe07dflOnf0w8Ap8MCUSTSV4J-9okWDdrV7YkpVH9mZidBdCkTK4xEoa3-h4OpTJ0efo62n990DeiB20RiLEURK0pxBaxcK59zHd4nQvIa7EwOABX_WPO9FYATxTqbi6HQmRrdy1WaGCuTap4rlNzgfQx6kkZciE7LgYB3cbetZwRNlbn3fBPv0" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <nav class="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
+            <a class="hover:text-primary flex items-center gap-1 transition-colors" href="#">
+                <span class="material-symbols-outlined text-[18px]">home</span> 首页
+            </a>
+            <span class="mx-2 text-slate-300 dark:text-slate-600">/</span>
+            <a class="hover:text-primary transition-colors" href="#">电视剧</a>
+            <span class="mx-2 text-slate-300 dark:text-slate-600">/</span>
+            <span class="text-slate-800 dark:text-slate-200 font-medium">我和僵尸有个约会1国语</span>
+        </nav>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
+                <div
+                    class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800/50">
+                    <img alt="Video Player Content"
+                        class="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6RpERInj_qoVbmci8BcY3b102jdtX2VPOMB0vbw5PoZtRt8Wlstl8dlnIWmF0AqS2ljTmGcDAq0KxfmWvi9BtKZ1yb57pixdjSrlRyT0wMGQSQvD28u61ct8Wj45zFADAm3qh2YqzeYIHVDE1VL3eBuh3a0pr7ZzFZ4abyDneTYDCx_W11j7pYzdQNdgjlqS-TKxqf2A3AX14nZSWyRqhiKZc5nCQ-5U0lxLQ6gbW0e6UlgBfvTl9Uo5XlTqhQRjI6DjjxL6Ym4k" />
+                    <div class="absolute inset-0 flex items-center justify-center z-10">
+                        <button
+                            class="bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-full w-20 h-20 flex items-center justify-center hover:scale-110 hover:bg-primary hover:border-primary transition-all duration-300 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                            <span class="material-symbols-outlined text-[48px] ml-1">play_arrow</span>
+                        </button>
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/90 to-transparent flex items-end px-4 pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="w-full flex justify-between items-center text-white">
+                            <div class="flex gap-4">
+                                <span class="material-symbols-outlined cursor-pointer">play_arrow</span>
+                                <span class="material-symbols-outlined cursor-pointer">volume_up</span>
+                            </div>
+                            <div class="flex-1 mx-4 h-1 bg-gray-600 rounded-full overflow-hidden">
+                                <div class="w-1/3 h-full bg-primary"></div>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="material-symbols-outlined cursor-pointer">settings</span>
+                                <span class="material-symbols-outlined cursor-pointer">fullscreen</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-12 left-0 right-0 text-center px-4">
+                        <span class="text-white text-lg sm:text-2xl font-medium drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+                            style="text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;">
+                            从小路上山吧
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div class="flex gap-4">
+                        <button class="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary">
+                            <span class="material-symbols-outlined">thumb_up</span>
+                            点赞
+                        </button>
+                        <button class="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary">
+                            <span class="material-symbols-outlined">favorite</span>
+                            收藏
+                        </button>
+                        <button class="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary">
+                            <span class="material-symbols-outlined">share</span>
+                            分享
+                        </button>
+                    </div>
+                    <button
+                        class="flex items-center gap-1 text-sm text-slate-500 bg-gray-100 dark:bg-slate-700 px-3 py-1.5 rounded-lg">
+                        <span class="material-symbols-outlined text-[18px]">report</span> 报错
+                    </button>
+                </div>
+            </div>
+            <div class="lg:col-span-4 xl:col-span-3 flex flex-col h-full">
+                <div
+                    class="glass-panel bg-white dark:bg-card-dark rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full max-h-[600px] lg:max-h-[calc(100vh-140px)]">
+                    <div
+                        class="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 dark:text-white">选集</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">更新至 35 集</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="text-slate-400 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">info</span>
+                            </button>
+                            <button
+                                class="text-slate-400 hover:text-primary transition-colors flex items-center gap-1 text-xs bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded">
+                                <span>正序</span>
+                                <span class="material-symbols-outlined text-[14px]">swap_vert</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="px-4 py-2 flex gap-2 overflow-x-auto no-scrollbar border-b border-gray-50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/30">
+                        <button
+                            class="whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full bg-white dark:bg-slate-700 text-primary shadow-sm ring-1 ring-primary/20">
+                            1 - 35
+                        </button>
+                        <button
+                            class="whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full text-slate-500 hover:bg-white hover:shadow-sm dark:text-slate-400 dark:hover:bg-slate-700 transition-all">
+                            36 - 45
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                        <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                            <button
+                                class="relative aspect-square rounded-lg flex items-center justify-center font-bold text-white bg-primary shadow-md shadow-primary/30 transition-transform transform hover:scale-105">
+                                01
+                                <span
+                                    class="absolute top-0 right-0 -mt-1 -mr-1 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-800"></span>
+                            </button>
+                            <script>
+                                for (let i = 2; i <= 35; i++) {
+                                    let num = i < 10 ? '0' + i : i;
+                                    document.write(`<button class="aspect-square rounded-lg flex items-center justify-center font-medium text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary transition-all duration-200 shadow-sm hover:shadow-md text-sm">${num}</button>`);
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+            class="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+            <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                <div class="w-full md:w-56 flex-shrink-0 mx-auto md:mx-0 max-w-[240px]">
+                    <div class="relative aspect-[2/3] rounded-lg overflow-hidden shadow-lg group">
+                        <img alt="Poster"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHZTPSrpV0ND0_sfhQIJSQ1SHnb2VrBtuVgZGCrmJw3fbVShw2X6FEUK3nWLoIpanK5cvQ5QWXHKNKNrxuzbt1pCA0788xSNVR006eBCbwuWuUCwxFLRNsHHzWP5ykLAGqa3XV3fMphTB3b2UaQrqHSyrZkyGORqqVtnFWyw7P6JD_FQgTjX7pvpkjiWSVwM36OEAFCtjOckRHoI0H30ilyNfDA4CKgU_xblR-ZgrKSblOfRWNDhWk-mz809ITIRn1wnLr8ta-MvY" />
+                        <div
+                            class="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
+                            HD
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-gray-100 dark:border-slate-700 pb-4">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">我和僵尸有个约会1国语
+                            </h1>
+                            <div
+                                class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 dark:text-slate-400">
+                                <span
+                                    class="bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-medium text-slate-600 dark:text-slate-300">1998</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px] text-slate-400">movie</span> 剧情,
+                                    爱情, 悬疑
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px] text-slate-400">public</span> 香港剧
+                                </span>
+                                <span>全 35 集</span>
+                                <span
+                                    class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded text-xs">如意资源</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex flex-col items-end">
+                                <div class="flex items-center gap-1 text-primary">
+                                    <span class="material-symbols-outlined fill-current text-[24px]">star</span>
+                                    <span class="text-2xl font-bold">7.0</span>
+                                    <span class="text-xs text-slate-400 mt-2">/ 10</span>
+                                </div>
+                                <span class="text-xs text-slate-400">豆瓣评分</span>
+                            </div>
+                            <div class="hidden sm:flex gap-2">
+                                <button
+                                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-red-500 transition-colors">
+                                    <span class="material-symbols-outlined">favorite</span>
+                                </button>
+                                <button
+                                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-500 transition-colors">
+                                    <span class="material-symbols-outlined">share</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">剧情简介</h3>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed text-justify">
+                            况天佑（尹天照 饰）带着“儿子”况复生（张国权 饰）和常人一样生活在现代的香港闹市，少有人知他们的真实身份其实是吸血鬼，六十年前同时被僵尸王将臣（任达华
+                            饰）所咬，因此不老不死，以父子相称相依为命，只靠从医院偷血维生。他们与住在同一栋大楼的邻居王珍珍（杨恭如 饰）和马小玲（万绮雯
+                            饰）成为好友，也了解到马小玲其实是驱魔龙族传人，身负家族诅咒，不能为男人落泪，因此无法谈恋爱。相处中，王珍珍逐渐爱上天佑，马小玲也奋力撮合二人，天佑不忍伤害善良的珍珍，但内心知道自己和马小玲彼此吸引。珍珍的一个炽热追求者出现在他们的生活，他叫山本一夫（陈启泰），但真实身份是天佑六十年前同时变成僵尸的宿敌，似乎属于两个年代、两代人的事情发生在同一批人身上，况天佑的身份秘密也被揭开，马小玲需要和他联手御敌。
+                        </p>
+                    </div>
+                    <div class="space-y-3 pt-2">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">演员表</h3>
+                        <div class="flex flex-wrap gap-6">
+                            <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div
+                                    class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                                    <img alt="Eric Wan" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXeUqDvrPldOKpQODaoZfRA-KzH0n4GoRseXF9YS_44V6L77VbAobOb6Fq4TLHl_4qxLjtuJjQUP-jbYbPuGb6IWdmDw-sgI0hzyXn6arRDSWoISXrvWqcpgFELuWfS4Z3NzTZFogJdr1Xov3-Fi8l5kHu7J8EoLF5acMKTuXPkI824LGT_ctySOUX1gBJ5FGMZin4EGRmTYkDVbpBfqHYZjzV5TVlcyoLUnn873ojlQvFRgvwwF9GdKCzKsqugOL1x2hKONwXR18" />
+                                </div>
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary">
+                                        尹天照</p>
+                                    <p class="text-[10px] text-slate-500">演员</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div
+                                    class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                                    <img alt="Kristy Yang" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFGUS5bBsvczeCzCuqliKlCkWOVcvBo6nj3b2Cwe51D8-1Coiv9bCy98imze46hBXmKAkaShhvYuQsX2IX9ogOwm6LYxakiV4QmgEE25TZ6G4hzRd9mxC8RZl5Q4f5lldwaVBxuUIEIotqnd3rEJwwKbsBj9VXW6Cr4Wx0PcUFgVBpunsx7kfKJ5hVjgqokoeAad1HL1qSkfFZ61qZKtRJiL7AF_Yys28hyrKximveSksh-C6R-o7Wq3PeqEE_84kvCX1_yahyCc4" />
+                                </div>
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary">
+                                        杨恭如</p>
+                                    <p class="text-[10px] text-slate-500">饰 王珍珍</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div
+                                    class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                                    <img alt="Joey Meng" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_PwrfAK-TdHltrKhERo_pQULjWFmq1Nrhcttlho8jUyaTkm6gSfreY-7S97TWczUJEkslBy5I7xMOa9VEcFVox_HC6KCDs8BMwLBugnqBuWwenTZtJkZh0DUVHTIm-9YLP-oRenKJa8Xd7XAXabutuNQPBUh7xtnnlG6MS6K5DiR17FQoooGq24b0pFwpfsj4KVumM5UdxXT4SR-ymh8McLO4j1xWdtub4wZ_3rAoLvEOs8VKqiZjAanmTiA5vNa8Rod7Z6vnm1U" />
+                                </div>
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary">
+                                        万绮雯</p>
+                                    <p class="text-[10px] text-slate-500">演员</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div
+                                    class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                                    <img alt="Kenneth Chan" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA06b4epe-lNf3wFCTUzfn02XGF6HlHHuDIrqZP71WPM3CEw7IeI2aqKWrxrWURM5Oz3hituajpwByBonkAkOKghqC_SGFVAv5BUfjFac1Frxz68TnqObWhV02f-K0u8pGplyeColu9w1oR8Z4RDu-b6-YTipOWV99_X_v69h2cylcM8Vl1JtEka0WWR5lntwFHwwfPg_g_EO2pBtOKMC3C092ogB2GgGMdZeZJj8gDUL4I5-604_1VOFrJS-EseI4zbPF59KBuCcY" />
+                                </div>
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary">
+                                        陈启泰</p>
+                                    <p class="text-[10px] text-slate-500">演员</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 group cursor-pointer">
+                                <div
+                                    class="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                                    <img alt="Berg Ng" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr1LOTuyvM9fb-uS5ixXqrLjjZAsRd0EKP3NkPSHa1aXx4GId3UR5Zegidcrqjs8gYNvTnvpfL3PHCZWRU6M5Jf6rWqqruJj7oVggKG0tALlQwhtgNOOuGHr-BCXX7Jes_GgC6eetCgAW6n-Bf60AdKWFJK4SCA8LHW8CHT6xzn9CmjcyCG1lyoVlbMmHioCfcjSta2E_URFg8l02J4yDZ7yK0g8W0oN0fAyRMCPRzJdOxNOxAcZezDERx8vK6L5IAxM3XpQkY_ww" />
+                                </div>
+                                <div class="text-center">
+                                    <p
+                                        class="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary">
+                                        吴廷烨</p>
+                                    <p class="text-[10px] text-slate-500">演员</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="py-8">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6 pl-4 border-l-4 border-primary">猜你喜欢
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800 mb-2 shadow-sm group-hover:shadow-md transition-all">
+                            <img alt="Rec 1"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI3NLOCPFw8PtO8s4imM-vDMIGDLCgIiO6ia5gwttutJPC84FoF7dfMJTtpZH0JVozaE4fT-6DFKegrxIfUYot0D7e7UdzWhGA_GE6XEt-TZTCIIeZ_C-C82rtw6QcG3O22rVP3xBFcbDj2Y4wY1_mRaLpFcLArlDUBrbYy5OI3XtuaKMCUa3aOQOVmqY1AV4D7xXAHG0yODvHVYpF9xGHWBURQyNGOYlZJTw1Vz4AlGa7tAnCq0cJQtuw8mHVZ6WjCtIXDdqBjOk" />
+                            <div
+                                class="absolute top-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                                8.5</div>
+                        </div>
+                        <h3
+                            class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:text-primary transition-colors">
+                            我和僵尸有个约会2</h3>
+                        <p class="text-xs text-slate-500 truncate">万绮雯, 尹天照</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div
+                            class="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800 mb-2 shadow-sm group-hover:shadow-md transition-all">
+                            <img alt="Rec 2"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_j8R-IJXjaVc_fiY8JPqJy_Y3uly7RpV9g_vSA2gUhbDAqhRFlGQC1Gfhq_I4Y0cqatTKMC5TgsLSBD0uip69hUB1mSjV4KNxyA_6rJEzKTxfCItyoFcsV4mZ5s_fCuVqhuU9B-SCF24dL50S6J84S3gwzr2S8kO0xtjd5HdxDpJVx5cQXA2IdZaEqShw8fRBIb4XLaAcc_SUTcsjyJHys-0e9jveyIlM8hD60wrkw1HeKcZuZ-hBQPkCbB9Qm9AeUzkBGqYW-rw" />
+                            <div
+                                class="absolute top-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                                7.8</div>
+                        </div>
+                        <h3
+                            class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:text-primary transition-colors">
+                            我和僵尸有个约会3</h3>
+                        <p class="text-xs text-slate-500 truncate">万绮雯, 陈启泰</p>
+                    </div>
+                    <div class="group cursor-pointer hidden sm:block">
+                        <div
+                            class="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800 mb-2 shadow-sm group-hover:shadow-md transition-all">
+                            <img alt="Rec 3"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 grayscale opacity-50"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLG_EueRKABoUTgj36AlPxS-11Qzmx5VREExKf8OmXj6Vi2cMDo8aN_czMhZ6PYqZ5oI_fGV1cqSnEH-LddqIG00O4d4vbZlSDjLvRudFuRvEi5fxwt99zsjNDIinbu5qlvkM-XIQALg0_Wsdkbrv6NUiyt1SiHZoXIsyND4hCi6TaPdj6gvTTTQ6UhuwVO0waZD68e84qWMSGABczov8qbGVaRvjdPHdiUsyOf-PwDqaL_y97_fE5XNPVXCXs9EL5eStbfuKD3N8" />
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-white font-medium">Coming Soon</span>
+                            </div>
+                        </div>
+                        <h3
+                            class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate group-hover:text-primary transition-colors">
+                            僵尸道长</h3>
+                        <p class="text-xs text-slate-500 truncate">林正英</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-white dark:bg-card-dark border-t border-gray-200 dark:border-slate-800 mt-12 py-8">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-black dark:bg-white rounded flex items-center justify-center">
+                    <span class="text-primary font-bold text-xs">N</span>
+                </div>
+                <span class="text-sm text-slate-500 dark:text-slate-400">© 2026 NextTV. 开源项目。</span>
+            </div>
+            <div class="flex gap-6 text-sm text-slate-500 dark:text-slate-400">
+                <a class="hover:text-primary transition-colors" href="#">隐私政策</a>
+                <a class="hover:text-primary transition-colors" href="#">服务条款</a>
+                <a class="hover:text-primary transition-colors" href="#">Cookie 偏好</a>
+                <a class="hover:text-primary transition-colors" href="#">帮助中心</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
