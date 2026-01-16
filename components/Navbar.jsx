@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
-import { useFavoritesStore } from "@/store/useFavoritesStore";
-import { formatTimeShort } from "@/lib/util";
+import {useState, useEffect, useRef} from "react";
+import {useRouter, usePathname} from "next/navigation";
+import {usePlayHistoryStore} from "@/store/usePlayHistoryStore";
+import {useFavoritesStore} from "@/store/useFavoritesStore";
+import {formatTimeShort} from "@/lib/util";
 import Image from "next/image";
 import Link from "next/link";
 
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [searchTerm, setSearchTerm] = useState("");
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
   const [showFavoritesDropdown, setShowFavoritesDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -20,10 +19,10 @@ export function Navbar() {
   // 获取播放历史
   const playHistory = usePlayHistoryStore((state) => state.playHistory);
   const removePlayRecord = usePlayHistoryStore(
-    (state) => state.removePlayRecord
+    (state) => state.removePlayRecord,
   );
   const clearPlayHistory = usePlayHistoryStore(
-    (state) => state.clearPlayHistory
+    (state) => state.clearPlayHistory,
   );
 
   // 获取收藏列表
@@ -54,12 +53,6 @@ export function Navbar() {
     };
   }, [showHistoryDropdown, showFavoritesDropdown]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
-    }
-  };
 
   const handleHistoryClick = (record) => {
     setShowHistoryDropdown(false);
@@ -98,7 +91,7 @@ export function Navbar() {
   return (
     <div className="sticky top-0 z-50 w-full px-4 md:px-8 py-4">
       <header
-        className="max-w-7xl mx-auto rounded-xl flex items-center justify-between px-6 py-3"
+        className="relative max-w-7xl mx-auto rounded-xl flex items-center justify-between px-6 py-3"
         style={{
           background:
             "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)",
@@ -114,7 +107,12 @@ export function Navbar() {
           onClick={() => router.push("/")}
         >
           <div className="flex items-center">
-            <Image src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png" alt="NextTV" width={24} height={24} />
+            <Image
+              src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
+              alt="NextTV"
+              width={24}
+              height={24}
+            />
           </div>
           <h1 className="text-2xl font-bold tracking-tight leading-none flex items-center">
             <span className="text-gray-900">Next</span>
@@ -149,7 +147,7 @@ export function Navbar() {
           </Link>
 
           {/* History Dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="static md:relative" ref={dropdownRef}>
             <button
               aria-label="History"
               className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${
@@ -162,7 +160,7 @@ export function Navbar() {
 
             {/* Dropdown Menu */}
             {showHistoryDropdown && (
-              <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50 dropdown-enter">
+              <div className="absolute left-0 right-0 md:left-auto md:right-0 top-full mt-2 w-full md:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50 dropdown-enter">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
                   <h3 className="font-bold text-gray-900">观看历史</h3>
                   {playHistory.length > 0 && (
@@ -246,7 +244,7 @@ export function Navbar() {
           </div>
 
           {/* Favorites Dropdown */}
-          <div className="relative" ref={favoritesDropdownRef}>
+          <div className="static md:relative" ref={favoritesDropdownRef}>
             <button
               aria-label="Favorites"
               className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${
@@ -259,7 +257,7 @@ export function Navbar() {
 
             {/* Favorites Dropdown Menu */}
             {showFavoritesDropdown && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50 dropdown-enter">
+              <div className="absolute left-0 right-0 md:left-auto md:right-0 top-full mt-2 w-full md:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50 dropdown-enter">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
                   <h3 className="font-bold text-gray-900">我的收藏</h3>
                   {favorites.length > 0 && (
@@ -341,4 +339,4 @@ export function Navbar() {
       </header>
     </div>
   );
-};
+}
