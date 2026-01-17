@@ -693,9 +693,6 @@ export default function PlayerPage() {
   if (loading) {
     return <LoadingSpinner />;
   }
-  if (loading) {
-    return <LoadingSpinner />;
-  }
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
