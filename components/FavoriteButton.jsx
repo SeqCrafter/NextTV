@@ -41,8 +41,8 @@ export function FavoriteButton({ source, id, videoDetail, className = "" }) {
     <button
       onClick={handleToggleFavorite}
       className={`flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
-        favoriteState ? "text-primary hover:text-primary_hover" : "text-gray-400 dark:text-gray-500 hover:text-primary"
-      } ${className}`}
+        favoriteState ? "" : "text-gray-400 dark:text-gray-500 hover:text-primary"
+      } ${className} ${favoriteState ? "text-red-500! hover:text-red-600!" : ""}`}
       title={favoriteState ? "取消收藏" : "添加收藏"}
     >
       <span className={`material-symbols-outlined ${favoriteState ? "material-symbols-filled" : ""}`}>favorite</span>
