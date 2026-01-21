@@ -8,18 +8,21 @@ import { useSettingsStore } from "@/store/useSettingsStore";
 export function MovieCard({ movie }) {
   const router = useRouter();
   const doubanImageProxy = useSettingsStore((state) => state.doubanImageProxy);
-  
+
   let douban_image_url = movie.poster;
 
-  if (doubanImageProxy === 'server') {
-    // 使用本地 API 代理
-    douban_image_url = `/api/douban/image?url=${encodeURIComponent(movie.poster)}`;
-  } else {
-    // 使用 CDN 替换
-    douban_image_url = movie.poster.replace(
-      /img\d+\.doubanio\.com/g,
-      doubanImageProxy
-    );
+  // 只代理豆瓣的图片
+  if (douban_image_url.includes("doubanio")) {
+    if (doubanImageProxy === 'server') {
+      // 使用本地 API 代理
+      douban_image_url = `/api/douban/image?url=${encodeURIComponent(movie.poster)}`;
+    } else {
+      // 使用 CDN 替换
+      douban_image_url = movie.poster.replace(
+        /img\d+\.doubanio\.com/g,
+        doubanImageProxy
+      );
+    }
   }
 
   const handleClick = () => {
@@ -79,12 +82,12 @@ export function MovieCard({ movie }) {
           </div>
         )}
         {movie.source && movie.source_url && (
-            <SpeedTestBadge 
-                videoId={movie.id} 
-                sourceKey={movie.source}
-                sourceName={movie.source_name}
-                sourceUrl={movie.source_url} 
-            />
+          <SpeedTestBadge
+            videoId={movie.id}
+            sourceKey={movie.source}
+            sourceName={movie.source_name}
+            sourceUrl={movie.source_url}
+          />
         )}
       </div>
       <div>
