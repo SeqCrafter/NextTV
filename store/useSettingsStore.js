@@ -24,6 +24,21 @@ export const useSettingsStore = create(
       // 设置跳过配置
       setSkipConfig: (config) => set({skipConfig: config}),
 
+      // 一键开关所有弹幕源
+      setAllDanmakuSourcesEnabled: (enabled) =>
+        set((state) => ({
+          danmakuSources: state.danmakuSources.map((source) => ({
+            ...source,
+            enabled,
+          })),
+        })),
+
+      // 检查是否有启用的弹幕源
+      hasEnabledDanmakuSources: () => {
+        const state = get();
+        return state.danmakuSources.some((source) => source.enabled);
+      },
+
       // 设置豆瓣代理
       setDoubanProxy: (url) => set({doubanProxy: url}),
       setDoubanImageProxy: (url) => set({doubanImageProxy: url}),
