@@ -17,10 +17,6 @@ export function ContinueWatching({ playHistory }) {
       // 1. 取前6条记录
       const recentHistory = playHistory.slice(0, 6);
 
-      // 记录原始顺序，用于后续可能需要的排序（虽然这里我们只更新 updatedEpisodes map，不重新排序 playHistory）
-      // 如果后续需求改变需要改变 playHistory 顺序，利用这个 originalOrderMap 即可
-      // const originalOrderMap = new Map(recentHistory.map((item, index) => [item.id, index]));
-
       // 2. 按 source 分组
       const groupedBySource = recentHistory.reduce((acc, item) => {
         if (!acc[item.source]) {
@@ -43,7 +39,7 @@ export function ContinueWatching({ playHistory }) {
 
           try {
             const res = await fetch(
-              `/api/detail/upgrade?ids=${ids}&sourceUrl=${sourceConfig.url}`
+              `/api/upgrade?ids=${ids}&sourceUrl=${sourceConfig.url}`
             );
             const data = await res.json();
 
@@ -51,13 +47,15 @@ export function ContinueWatching({ playHistory }) {
             const episodeLengths = data.episodeLength?.episodeLength || data.episodeLength;
 
             if (Array.isArray(episodeLengths)) {
-              items.forEach((item, index) => {
-                const currentTotal = item.totalEpisodes || 0;
-                const newTotal = episodeLengths[index];
+              // 根据 id 匹配，而不是依赖数组索引顺序
+              episodeLengths.forEach(({ id, length }) => {
+                const item = items.find(i => i.id === id);
+                if (!item) return;
 
+                const currentTotal = item.totalEpisodes || 0;
                 // 如果获取到的总集数大于记录的总集数，说明有更新
-                if (newTotal > currentTotal) {
-                  updates[`${item.source}-${item.id}`] = newTotal - currentTotal;
+                if (length > currentTotal) {
+                  updates[`${item.source}-${item.id}`] = length - currentTotal;
                 }
               });
             }

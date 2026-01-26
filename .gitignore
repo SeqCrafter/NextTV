@@ -27,3 +27,6 @@ dist-ssr
 .next/*
 .env.local
 .agent/
+
+CLAUDE.md
+.claude

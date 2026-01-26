@@ -287,6 +287,11 @@ export default function Settings() {
   };
 
   const openDanmakuModal = (source = null) => {
+    // 如果是添加新弹幕源（非编辑模式），检查是否已有弹幕源
+    if (!source && danmakuSources.length >= 1) {
+      alert("目前仅支持添加一个弹幕源，如需更换请先删除现有弹幕源");
+      return;
+    }
     if (source) {
       setEditingSource(source);
       setDanmakuForm({
@@ -500,7 +505,7 @@ export default function Settings() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">弹幕源管理</h2>
-            <p className="text-gray-500 mt-1">配置弹幕接口，丰富观影体验</p>
+            <p className="text-gray-500 mt-1">配置弹幕接口，丰富观影体验（最多支持 1 个弹幕源）</p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button

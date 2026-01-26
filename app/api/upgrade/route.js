@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { unstable_cache } from "next/cache";
+import {NextResponse} from "next/server";
+import {unstable_cache} from "next/cache";
 
 function parseSingleVideo(videoDetail) {
   let episodes = [];
@@ -57,9 +57,10 @@ const checkVideoUpgrade = unstable_cache(
         throw new Error("获取到的详情内容无效");
       }
 
-      const episodeLength = data.list.map((videoDetail) => {
-        return parseSingleVideo(videoDetail);
-      });
+      const episodeLength = data.list.map((videoDetail) => ({
+        id: videoDetail.vod_id.toString(),
+        length: parseSingleVideo(videoDetail),
+      }));
 
       return {
         episodeLength,
@@ -70,8 +71,8 @@ const checkVideoUpgrade = unstable_cache(
       throw error;
     }
   },
-  ["detail-upgrade"],
-  { revalidate: 3600, tags: ["upgrade"] },
+  ["upgrade-api"],
+  {revalidate: 3600, tags: ["upgrade"]},
 );
 
 export async function GET(request) {

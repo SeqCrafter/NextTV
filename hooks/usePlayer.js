@@ -61,6 +61,34 @@ export function usePlayer({
   };
   const savePlayProgressEvent = useEffectEvent(savePlayProgress);
 
+  // 加载当前剧集的弹幕
+  const loadDanmaku = () => {
+    if (!videoDetail || !artPlayerRef.current) return;
+
+    const currentTitle =
+      videoDetail.episodes_titles?.[currentEpisodeIndex] ||
+      `第 ${currentEpisodeIndex + 1} 集`;
+
+    const {danmakuSources} = useSettingsStore.getState();
+    const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
+
+    if (hasEnabledDanmaku) {
+      const isMovie = videoDetail.episodes?.length === 1;
+      artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
+        danmuku: createDanmakuLoader(
+          danmakuSources,
+          videoDetail.douban_id,
+          currentTitle,
+          currentEpisodeIndex,
+          isMovie,
+        ),
+      });
+      artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+      console.log("弹幕加载已触发");
+    }
+  };
+  const loadDanmakuEvent = useEffectEvent(loadDanmaku);
+
   const switchToEpisode = () => {
     if (!videoDetail || !artPlayerRef.current) return;
 
@@ -90,19 +118,26 @@ export function usePlayer({
     });
     artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
     console.log("Cleared danmaku");
-    // 2. 切换弹幕源
+
+    // 2. 加载弹幕（仅当有启用的弹幕源时）
     const {danmakuSources} = useSettingsStore.getState();
-    const isMovie = videoDetail.episodes?.length === 1;
-    artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
-      danmuku: createDanmakuLoader(
-        danmakuSources,
-        videoDetail.douban_id,
-        currentTitle,
-        currentEpisodeIndex,
-        isMovie,
-      ),
-    });
-    artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+    const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
+    if (hasEnabledDanmaku) {
+      const isMovie = videoDetail.episodes?.length === 1;
+      artPlayerRef.current.plugins.artplayerPluginDanmuku.config({
+        danmuku: createDanmakuLoader(
+          danmakuSources,
+          videoDetail.douban_id,
+          currentTitle,
+          currentEpisodeIndex,
+          isMovie,
+        ),
+      });
+      artPlayerRef.current.plugins.artplayerPluginDanmuku.load();
+      console.log("弹幕加载已触发");
+    } else {
+      console.log("没有启用的弹幕源，跳过加载弹幕");
+    }
 
     // 3. 监听新视频开始播放，重置切换标志
     artPlayerRef.current.once("video:canplay", () => {
@@ -128,6 +163,18 @@ export function usePlayer({
         `第${realtimeCurrentEpisodeIndex + 1}集`;
 
       const {danmakuSources} = useSettingsStore.getState();
+      const hasEnabledDanmaku = danmakuSources.some((s) => s.enabled);
+
+      // 根据是否有启用的弹幕源决定是否加载弹幕
+      const danmakuLoader = hasEnabledDanmaku
+        ? createDanmakuLoader(
+            danmakuSources,
+            videoDetail.douban_id,
+            currentTitle,
+            realtimeCurrentEpisodeIndex,
+            videoDetail.episodes?.length === 1,
+          )
+        : () => Promise.resolve([]);
 
       artPlayerRef.current = new Artplayer({
         container: artRef.current,
@@ -167,13 +214,7 @@ export function usePlayer({
 
         plugins: [
           artplayerPluginDanmuku({
-            danmuku: createDanmakuLoader(
-              danmakuSources,
-              videoDetail.douban_id,
-              currentTitle,
-              realtimeCurrentEpisodeIndex,
-              videoDetail.episodes?.length === 1,
-            ),
+            danmuku: danmakuLoader,
             speed: 7.5,
             opacity: 1,
             fontSize: 23,
@@ -250,6 +291,29 @@ export function usePlayer({
           },
         },
         settings: [
+          {
+            html: "弹幕",
+            icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM5 8H11V10H5V8ZM5 12H9V14H5V12ZM19 16H5V14H13V16H19ZM19 12H11V10H19V12ZM19 8H13V10H19V8Z" fill="currentColor"/></svg>',
+            tooltip: hasEnabledDanmaku ? "已开启" : "已关闭",
+            switch: hasEnabledDanmaku,
+            onSwitch: function (item) {
+              const newVal = !item.switch;
+              useSettingsStore.getState().setAllDanmakuSourcesEnabled(newVal);
+              if (artPlayerRef.current) {
+                if (newVal) {
+                  // 开启弹幕：加载弹幕并显示弹幕层
+                  loadDanmakuEvent();
+                  artPlayerRef.current.plugins.artplayerPluginDanmuku.show();
+                  artPlayerRef.current.notice.show = "弹幕已开启";
+                } else {
+                  // 关闭弹幕：隐藏弹幕层
+                  artPlayerRef.current.plugins.artplayerPluginDanmuku.hide();
+                  artPlayerRef.current.notice.show = "弹幕已关闭";
+                }
+              }
+              return newVal;
+            },
+          },
           {
             html: "去广告",
             icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="50%" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="currentColor">AD</text></svg>',
@@ -375,6 +439,11 @@ export function usePlayer({
 
       artPlayerRef.current.on("ready", () => {
         console.log("播放器就绪");
+        // 如果没有启用的弹幕源，初始隐藏弹幕层
+        const {danmakuSources} = useSettingsStore.getState();
+        if (!danmakuSources.some((s) => s.enabled)) {
+          artPlayerRef.current.plugins.artplayerPluginDanmuku.hide();
+        }
       });
 
       artPlayerRef.current.once("video:canplay", () => {

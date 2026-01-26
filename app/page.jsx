@@ -50,7 +50,11 @@ export default function Home() {
 
   const handleMediaTypeChange = (type) => {
     setMediaType(type);
-    setCurrentTag("热门");
+    if (type === "movie") {
+      setCurrentTag("华语");
+    } else {
+      setCurrentTag("国产剧");
+    }
     setPage(0);
   };
 
