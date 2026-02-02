@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useSettingsStore } from "@/store/useSettingsStore";
-import { getVideoDetail } from "@/lib/cmsApi";
-import { scrapeDoubanDetails } from "@/lib/getDouban";
-import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
+import {useState, useEffect} from "react";
+import {useSettingsStore} from "@/store/useSettingsStore";
+import {getVideoDetail} from "@/lib/cmsApi";
+import {scrapeDoubanDetails} from "@/lib/getDouban";
+import {usePlayHistoryStore} from "@/store/usePlayHistoryStore";
 
 export function useVideoData(id, source, setCurrentEpisodeIndex) {
   const [videoDetail, setVideoDetail] = useState(null);
@@ -39,7 +39,7 @@ export function useVideoData(id, source, setCurrentEpisodeIndex) {
           sourceConfig.name,
           sourceConfig.url,
         );
-
+        const doubanImageProxy = useSettingsStore.getState().doubanImageProxy;
         let actorsData = [];
         if (videoDetailData.douban_id) {
           const doubanResult = await scrapeDoubanDetails(
@@ -50,7 +50,7 @@ export function useVideoData(id, source, setCurrentEpisodeIndex) {
               ...actor,
               avatar: actor.avatar.replace(
                 /img\d+\.doubanio\.com/g,
-                "img.doubanio.cmliussss.com",
+                doubanImageProxy,
               ),
             }));
           } else {

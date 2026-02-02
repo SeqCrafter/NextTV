@@ -1,10 +1,10 @@
 "use client";
 
-import {useState, useEffect, useRef} from "react";
-import {useRouter, usePathname} from "next/navigation";
-import {usePlayHistoryStore} from "@/store/usePlayHistoryStore";
-import {useFavoritesStore} from "@/store/useFavoritesStore";
-import {formatTimeShort} from "@/lib/util";
+import { useState, useEffect, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
+import { useFavoritesStore } from "@/store/useFavoritesStore";
+import { formatTimeShort } from "@/lib/util";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -103,21 +103,27 @@ export function Navbar() {
         }}
       >
         <div
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-3 cursor-pointer select-none group"
           onClick={() => router.push("/")}
         >
-          <div className="flex items-center">
+          <div className="relative group-hover:scale-105 transition-transform duration-200">
             <Image
               src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
               alt="NextTV"
-              width={24}
-              height={24}
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain"
             />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight leading-none flex items-center">
-            <span className="text-gray-900">Next</span>
-            <span className="text-primary">TV</span>
-          </h1>
+          <div className="flex flex-col justify-center h-full">
+            <h1 className="text-xl font-extrabold leading-none tracking-tight">
+              <span className="text-gray-900">Next</span>
+              <span className="text-primary">TV</span>
+            </h1>
+            <span className="text-[11px] text-gray-500 font-medium tracking-wide mt-0.5 group-hover:text-primary transition-colors">
+              影视无限畅享
+            </span>
+          </div>
         </div>
 
         <div className="hidden md:flex flex-1 max-w-md mx-6">
@@ -150,9 +156,8 @@ export function Navbar() {
           <div className="static md:relative" ref={dropdownRef}>
             <button
               aria-label="History"
-              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${
-                showHistoryDropdown ? "bg-gray-100 text-gray-900" : ""
-              }`}
+              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${showHistoryDropdown ? "bg-gray-100 text-gray-900" : ""
+                }`}
               onClick={() => setShowHistoryDropdown(!showHistoryDropdown)}
             >
               <span className="material-symbols-outlined">history</span>
@@ -252,9 +257,8 @@ export function Navbar() {
           <div className="static md:relative" ref={favoritesDropdownRef}>
             <button
               aria-label="Favorites"
-              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${
-                showFavoritesDropdown ? "bg-gray-100 text-gray-900" : ""
-              }`}
+              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${showFavoritesDropdown ? "bg-gray-100 text-gray-900" : ""
+                }`}
               onClick={() => setShowFavoritesDropdown(!showFavoritesDropdown)}
             >
               <span className="material-symbols-outlined">favorite</span>
@@ -334,9 +338,8 @@ export function Navbar() {
           <Link
             href="/settings"
             aria-label="Settings"
-            className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${
-              pathname === "/settings" ? "bg-gray-100 text-gray-900" : ""
-            }`}
+            className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/settings" ? "bg-gray-100 text-gray-900" : ""
+              }`}
           >
             <span className="material-symbols-outlined">settings</span>
           </Link>

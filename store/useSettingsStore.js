@@ -129,14 +129,49 @@ export const useSettingsStore = create(
 
       importSettings: (data) =>
         set(() => {
+          let videoSources = DEFAULT_VIDEO_SOURCES;
+          if (Array.isArray(data.videoSources)) {
+            videoSources = data.videoSources
+              .map((source, index) => ({
+                id: Date.now().toString() + index,
+                name: source.name || source.Name || "",
+                key: source.key || source.Key || "",
+                url: source.url || source.URL || "",
+                description: source.description || source.Description || "",
+                enabled: true,
+                type: "video",
+              }))
+              .filter((s) => s.name && s.url);
+          }
+
+          let danmakuSources = [];
+          if (
+            Array.isArray(data.danmakuSources) &&
+            data.danmakuSources.length > 0
+          ) {
+            const source = data.danmakuSources[0]; // Only keep the first one
+            if (source.name || source.url) {
+              danmakuSources = [
+                {
+                  id: Date.now().toString() + "d",
+                  name: source.name || source.Name || "",
+                  url: source.url || source.URL || "",
+                  enabled: true,
+                  type: "danmaku",
+                },
+              ];
+            }
+          }
+
           return {
-            videoSources: data.videoSources || DEFAULT_VIDEO_SOURCES,
-            danmakuSources: data.danmakuSources || DEFAULT_DANMAKU_SOURCES,
+            videoSources:
+              videoSources.length > 0 ? videoSources : DEFAULT_VIDEO_SOURCES,
+            danmakuSources,
           };
         }),
     }),
     {
-      name: "streambox-settings",
+      name: "nexttv-settings",
     },
   ),
 );
