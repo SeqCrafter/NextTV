@@ -34,41 +34,7 @@
   background-color: var(--color-background-light);
 }
 
-.material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-}
 
-.material-symbols-filled {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
-}
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -104,72 +70,6 @@
 .selection\:text-white::selection {
   color: white;
 }
-
-/* ============================================
-   ArtPlayer Liquid Glass Plugin Styles
-   毛玻璃效果控制栏插件样式
-   borrow from https://github.com/SzeMeng76/LunaTV
-   ============================================ */
-
-/* 将 CSS 变量定义在基类上，避免控制栏隐藏时变量回退导致的闪烁 */
-.artplayer-plugin-liquid-glass {
-  --art-control-height: 42px;
-  --art-control-icon-size: 24px;
-  --art-control-icon-scale: 1.1;
-}
-
-.artplayer-plugin-liquid-glass.art-control-show .art-bottom {
-  align-items: center;
-  background-image: none;
-  padding-bottom: var(--art-padding);
-}
-
-.artplayer-plugin-liquid-glass.art-control-show .art-bottom .art-liquid-glass {
-  border-radius: 8px;
-  backdrop-filter: blur(12px);
-  background-color: rgba(0, 0, 0, 0.25);
-  padding: var(--art-padding) calc(var(--art-padding) * 1.5) 5px;
-}
-
-.artplayer-plugin-liquid-glass.art-control-show .art-settings {
-  bottom: calc(
-    var(--art-control-height) + var(--art-bottom-gap) + var(--art-padding)
-  );
-}
-
-.artplayer-plugin-liquid-glass.art-control-show .art-layer-auto-playback {
-  bottom: calc(
-    var(--art-control-height) + var(--art-bottom-gap) + var(--art-padding) * 4 +
-      10px
-  );
-}
-
-/* 让按钮可自动缩小，防止溢出 */
-.artplayer-plugin-liquid-glass .art-control {
-  flex-shrink: 1 !important;
-  min-width: 32px !important;
-  padding: 0 6px !important;
-}
-
-/* 🔑 关键：完全按照官方CSS，不设置width让容器自适应 */
-.artplayer-plugin-liquid-glass .art-bottom {
-  align-items: center; /* 官方唯一的对齐设置 */
-}
-
-/* 移动端优化 */
-@media (max-width: 768px) {
-  .artplayer-plugin-liquid-glass .art-control {
-    padding: 0 4px !important;
-    min-width: 28px !important;
-  }
-}
-
-/* ============================================
-   ArtPlayer Controls Styles
-   控制栏样式 - 模块化重构版
-   ⚠️ 重要：保留所有 !important 确保正确覆盖
-   borrow from https://github.com/SzeMeng76/LunaTV
-   ============================================ */
 
 /* ===== Poster (封面图) ===== */
 .art-poster {

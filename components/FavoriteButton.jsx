@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
+import { MaterialSymbolsFavoriteOutlineRounded } from "@/components/icons";
 
 export function FavoriteButton({ source, id, videoDetail, className = "" }) {
   // 使用精确选择器：只选择当前item的收藏状态，避免不必要的重渲染
@@ -40,12 +41,14 @@ export function FavoriteButton({ source, id, videoDetail, className = "" }) {
   return (
     <button
       onClick={handleToggleFavorite}
-      className={`flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
-        favoriteState ? "" : "text-gray-400 dark:text-gray-500 hover:text-primary"
-      } ${className} ${favoriteState ? "text-red-500! hover:text-red-600!" : ""}`}
+      className={`flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${favoriteState ? "" : "text-gray-400 dark:text-gray-500 hover:text-primary"
+        } ${className} ${favoriteState ? "text-red-500! hover:text-red-600!" : ""}`}
       title={favoriteState ? "取消收藏" : "添加收藏"}
     >
-      <span className={`material-symbols-outlined ${favoriteState ? "material-symbols-filled" : ""}`}>favorite</span>
+      <MaterialSymbolsFavoriteOutlineRounded
+        className={`text-[24px] transition-transform duration-300 ${favoriteState ? "fill-current scale-110" : "scale-100"
+          }`}
+      />
     </button>
   );
 }

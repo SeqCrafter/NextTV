@@ -7,6 +7,14 @@ import { SearchBox } from "@/components/SearchBox";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { fetchRecommendations, loadUserTags, saveUserTags, defaultMovieTags, defaultTvTags, convertDoubanToMovie } from "@/lib/doubanApi";
+import {
+  MaterialSymbolsMovieOutlineRounded,
+  MaterialSymbolsTvOutlineRounded,
+  MaterialSymbolsAdd,
+  MaterialSymbolsChevronLeftRounded,
+  MaterialSymbolsChevronRightRounded,
+  MaterialSymbolsCloseRounded
+} from "@/components/icons";
 
 export default function Home() {
   const [mediaType, setMediaType] = useState("movie");
@@ -144,14 +152,14 @@ export default function Home() {
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="movie" checked={mediaType === "movie"} onChange={() => handleMediaTypeChange("movie")} />
             <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">movie</span>
+              <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
               电影
             </div>
           </label>
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="tv" checked={mediaType === "tv"} onChange={() => handleMediaTypeChange("tv")} />
             <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">tv</span>
+              <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
               电视剧
             </div>
           </label>
@@ -163,20 +171,19 @@ export default function Home() {
         <div className="flex gap-3 overflow-x-auto hide-scrollbar py-2 px-1">
           <button
             onClick={() => setShowTagModal(true)}
-            className="shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer btn-press"
+            className="shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer btn-press flex items-center"
           >
-            <span className="material-symbols-outlined text-[16px] align-middle mr-1">add</span>
+            <MaterialSymbolsAdd className="text-[16px] mr-1" />
             管理标签
           </button>
           {currentTags.map((tag) => (
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className={`shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
-                tag === currentTag
-                  ? "bg-primary/10 border border-primary text-primary font-semibold hover:bg-primary hover:text-white"
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+              className={`shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${tag === currentTag
+                ? "bg-primary/10 border border-primary text-primary font-semibold hover:bg-primary hover:text-white"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
             >
               {tag}
             </button>
@@ -188,7 +195,7 @@ export default function Home() {
       {/* Popular Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <span className="w-1 h-6 bg-primary rounded-full"></span>
             豆瓣热门 - {currentTag}
           </h2>
@@ -198,24 +205,22 @@ export default function Home() {
             <button
               onClick={handlePrevPage}
               disabled={page === 0}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
-                page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-              }`}
+              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
+                }`}
               title="上一页"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+              <MaterialSymbolsChevronLeftRounded className="text-[20px]" />
             </button>
             <button
               onClick={handleNextPage}
               disabled={movies.length < pageSize}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
-                movies.length < pageSize
-                  ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-              }`}
+              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${movies.length < pageSize
+                ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
+                : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
+                }`}
               title="下一页"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              <MaterialSymbolsChevronRightRounded className="text-[20px]" />
             </button>
           </div>
         </div>
@@ -247,7 +252,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">标签管理 ({mediaType === "movie" ? "电影" : "电视剧"})</h3>
               <button onClick={() => setShowTagModal(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors btn-press">
-                <span className="material-symbols-outlined">close</span>
+                <MaterialSymbolsCloseRounded />
               </button>
             </div>
 
@@ -264,7 +269,7 @@ export default function Home() {
                     <span>{tag}</span>
                     {tag !== "热门" && (
                       <button onClick={() => handleDeleteTag(tag)} className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer btn-press">
-                        <span className="material-symbols-outlined text-[16px]">close</span>
+                        <MaterialSymbolsCloseRounded className="text-[16px]" />
                       </button>
                     )}
                   </div>

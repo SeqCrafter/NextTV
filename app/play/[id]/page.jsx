@@ -8,6 +8,15 @@ import { VideoPlayer } from "@/components/VideoPlayer";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { EpisodeList } from "@/components/EpisodeList";
 import { LoadingSpinner } from "@/components/PlayerPageLoading";
+import Image from "next/image";
+import {
+  MaterialSymbolsHomeOutlineRounded,
+  MaterialSymbolsShareOutline,
+  MaterialSymbolsMovieOutlineRounded,
+  MaterialSymbolsPublic,
+  MaterialSymbolsStarOutlineRounded,
+  MaterialSymbolsPerson2OutlineRounded
+} from "@/components/icons";
 
 export default function PlayerPage() {
   const params = useParams();
@@ -45,7 +54,7 @@ export default function PlayerPage() {
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="hover:text-primary flex items-center gap-1 transition-colors">
-          <span className="material-symbols-outlined text-[18px]">home</span> 首页
+          <MaterialSymbolsHomeOutlineRounded className="text-[18px]" /> 首页
         </Link>
         <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
         <span className="hover:text-primary transition-colors cursor-pointer">{videoDetail.type === "movie" ? "电影" : "电视剧"}</span>
@@ -68,7 +77,7 @@ export default function PlayerPage() {
             <div className="flex gap-4">
               <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary" />
               <button className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary transition-colors">
-                <span className="material-symbols-outlined">share</span>
+                <MaterialSymbolsShareOutline className="text-[24px]" />
                 分享
               </button>
               {/* Keep only requested items: Favorite, Share, Source Name (shown below) */}
@@ -96,7 +105,15 @@ export default function PlayerPage() {
         <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-56 shrink-0 mx-auto md:mx-0 max-w-[240px]">
             <div className="relative aspect-2/3 rounded-lg overflow-hidden shadow-lg group">
-              <img alt={`${videoDetail.title} Poster`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={videoDetail.poster} />
+              <Image
+                alt={`${videoDetail.title} Poster`}
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                src={videoDetail.poster}
+                fill
+                sizes="(max-width: 768px) 100vw, 300px"
+                unoptimized
+                priority
+              />
               <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
                 HD
               </div>
@@ -106,15 +123,15 @@ export default function PlayerPage() {
           <div className="flex-1 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-gray-100 dark:border-slate-700 pb-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{videoDetail.title}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">{videoDetail.title}</h1>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 dark:text-slate-400">
                   <span className="bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-medium text-slate-600 dark:text-slate-300">{videoDetail.year}</span>
                   <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-slate-400">movie</span> {videoDetail.genre}
+                    <MaterialSymbolsMovieOutlineRounded className="text-[16px] text-slate-400" /> {videoDetail.genre}
                   </span>
                   {videoDetail.class && (
                     <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px] text-slate-400">public</span> {videoDetail.type_name}
+                      <MaterialSymbolsPublic className="text-[16px] text-slate-400" /> {videoDetail.type_name}
                     </span>
                   )}
                   <span>全 {videoDetail.episodes?.length || 1} 集</span>
@@ -125,7 +142,7 @@ export default function PlayerPage() {
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
                   <div className="flex items-center gap-1 text-primary">
-                    <span className="material-symbols-outlined fill-current text-[24px]">star</span>
+                    <MaterialSymbolsStarOutlineRounded className="text-[24px] fill-current" />
                     <span className="text-2xl font-bold">{videoDetail.rating}</span>
                     <span className="text-xs text-slate-400 mt-2">/ 10</span>
                   </div>
@@ -134,7 +151,7 @@ export default function PlayerPage() {
                 <div className="hidden sm:flex gap-2">
                   <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-red-500 transition-colors" />
                   <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-500 transition-colors">
-                    <span className="material-symbols-outlined">share</span>
+                    <MaterialSymbolsShareOutline className="text-[24px]" />
                   </button>
                 </div>
               </div>
@@ -143,7 +160,7 @@ export default function PlayerPage() {
             {videoDetail.desc && (
               <div className="space-y-2">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">剧情简介</h3>
-                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed text-justify">{videoDetail.desc}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-sm leading-loose tracking-wide text-justify">{videoDetail.desc}</p>
               </div>
             )}
 
@@ -153,21 +170,25 @@ export default function PlayerPage() {
                 <div className="flex flex-wrap gap-6">
                   {(doubanActors.length > 0 ? doubanActors : videoDetail.actors).map((actor, idx) => (
                     <div key={actor.id || idx} className="flex flex-col items-center gap-2 group cursor-pointer">
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
                         {actor.avatar ? (
-                          <img
+                          <Image
                             src={actor.avatar}
                             alt={actor.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                            unoptimized
                             onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
+                              const img = e.target;
+                              img.style.display = "none";
+                              if (img.nextSibling) {
+                                img.nextSibling.style.display = "flex";
+                              }
                             }}
                           />
                         ) : null}
-                        <span className="material-symbols-outlined text-gray-400 text-2xl items-center justify-center bg-gray-100" style={{ display: actor.avatar ? "none" : "flex", width: '100%', height: '100%' }}>
-                          person
-                        </span>
+                        <MaterialSymbolsPerson2OutlineRounded className="text-gray-400 text-2xl items-center justify-center bg-gray-100" style={{ display: actor.avatar ? "none" : "flex", width: '100%', height: '100%' }} />
                       </div>
                       <div className="text-center">
                         <p className="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary max-w-[60px] truncate">{actor.name}</p>

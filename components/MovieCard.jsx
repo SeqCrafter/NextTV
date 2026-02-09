@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { SpeedTestBadge } from "@/components/SpeedTestBadge";
+import { MaterialSymbolsStarRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
 import { useSettingsStore } from "@/store/useSettingsStore";
 
@@ -42,9 +43,7 @@ export function MovieCard({ movie }) {
     >
       <div className="relative w-full aspect-2/3 overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-gray-200 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-primary/50">
         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 z-10">
-          <span className="material-symbols-outlined text-primary text-[14px]">
-            star
-          </span>
+          <MaterialSymbolsStarRounded className="text-primary text-[14px]" />
           {movie.rating}
         </div>
         <div
@@ -54,9 +53,7 @@ export function MovieCard({ movie }) {
         ></div>
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
           <button className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 cursor-pointer">
-            <span className="material-symbols-outlined text-[18px]">
-              play_arrow
-            </span>{" "}
+            <MaterialSymbolsPlayArrowRounded className="text-[18px]" />{" "}
             立即观看
           </button>
         </div>

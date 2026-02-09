@@ -2,7 +2,6 @@ import {useEffect, useRef, useEffectEvent} from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
-import artplayerPluginLiquidGlass from "@/lib/artplayer-plugin-liquid-glass";
 import {useSettingsStore} from "@/store/useSettingsStore";
 import {usePlayHistoryStore} from "@/store/usePlayHistoryStore";
 import {formatTime, CustomHlsJsLoader} from "@/lib/util";
@@ -152,6 +151,13 @@ export function usePlayer({
     if (!videoDetail || !artRef.current || artPlayerRef.current) {
       return;
     }
+
+    const isIOS =
+      typeof navigator !== "undefined" &&
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      typeof window !== "undefined" &&
+      !window.MSStream;
+
     try {
       console.log("重新初始化播放器了！");
       const realtimeCurrentEpisodeIndex = CurrentEpisodeIndexEvent();
@@ -211,7 +217,6 @@ export function usePlayer({
         moreVideoAttr: {
           crossOrigin: "anonymous",
         },
-
         plugins: [
           artplayerPluginDanmuku({
             danmuku: danmakuLoader,
@@ -232,7 +237,6 @@ export function usePlayer({
             maxWidth: 400,
             theme: "dark",
           }),
-          artplayerPluginLiquidGlass(),
         ],
 
         customType: {
@@ -443,6 +447,16 @@ export function usePlayer({
         const {danmakuSources} = useSettingsStore.getState();
         if (!danmakuSources.some((s) => s.enabled)) {
           artPlayerRef.current.plugins.artplayerPluginDanmuku.hide();
+        }
+      });
+      artPlayerRef.current.on("fullscreen", () => {
+        if (isIOS) {
+          artPlayerRef.current.fullscreen = false; // 阻止 ArtPlayer 的 fullscreen
+          const video = artPlayerRef.current.video;
+
+          if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen(); // ✅ iOS 真全屏
+          }
         }
       });
 

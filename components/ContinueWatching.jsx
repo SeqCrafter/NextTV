@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { formatTimeRemaining } from "@/lib/util";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useEffect, useState } from "react";
+import { MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
 export function ContinueWatching({ playHistory }) {
   const router = useRouter();
@@ -133,9 +134,7 @@ export function ContinueWatching({ playHistory }) {
                 {/* 播放图标 */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                   <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
-                    <span className="material-symbols-outlined text-primary text-2xl ml-0.5">
-                      play_arrow
-                    </span>
+                    <MaterialSymbolsPlayArrowRounded className="text-primary text-2xl ml-0.5" />
                   </div>
                 </div>
               </div>

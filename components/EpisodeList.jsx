@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { MaterialSymbolsSwapVertRounded } from "@/components/icons";
 
 export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onEpisodeClick }) {
   const [isReversed, setIsReversed] = useState(false);
@@ -49,7 +50,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
             onClick={() => setIsReversed(!isReversed)}
           >
             <span>{isReversed ? "倒序" : "正序"}</span>
-            <span className={`material-symbols-outlined text-[14px] transition-transform ${isReversed ? "rotate-180" : ""}`}>swap_vert</span>
+            <MaterialSymbolsSwapVertRounded className={`text-[14px] transition-transform ${isReversed ? "rotate-180" : ""}`} />
           </button>
         </div>
       </div>
@@ -66,11 +67,10 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
                   <button
                     key={idx}
                     onClick={() => setPage(idx)}
-                    className={`whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${
-                      isActive
-                        ? "bg-white dark:bg-slate-700 text-primary shadow-sm ring-1 ring-primary/20"
-                        : "text-slate-500 hover:bg-white hover:shadow-sm dark:text-slate-400 dark:hover:bg-slate-700"
-                    }`}
+                    className={`whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${isActive
+                      ? "bg-white dark:bg-slate-700 text-primary shadow-sm ring-1 ring-primary/20"
+                      : "text-slate-500 hover:bg-white hover:shadow-sm dark:text-slate-400 dark:hover:bg-slate-700"
+                      }`}
                   >
                     {start}-{end}
                   </button>
@@ -89,10 +89,9 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
                 <div key={originalIndex} className="relative group/episode">
                   <button
                     className={`w-full aspect-square rounded-lg flex items-center justify-center font-medium transition-all duration-200 shadow-sm hover:shadow-md text-sm cursor-pointer
-                      ${
-                        isCurrent
-                          ? "bg-primary text-white font-bold shadow-md shadow-primary/30 transform scale-105"
-                          : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
+                      ${isCurrent
+                        ? "bg-primary text-white font-bold shadow-md shadow-primary/30 transform scale-105"
+                        : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
                       }
                     `}
                     onClick={() => onEpisodeClick(originalIndex)}

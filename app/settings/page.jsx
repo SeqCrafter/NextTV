@@ -2,6 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import {
+  MaterialSymbolsArrowUpwardRounded,
+  MaterialSymbolsArrowDownwardRounded,
+  MaterialSymbolsEditSquareOutline,
+  MaterialSymbolsDeleteOutlineRounded,
+  MaterialSymbolsAdd,
+  MaterialSymbolsSearchRounded,
+  MaterialSymbolsUploadFileOutlineRounded,
+  MaterialSymbolsDownload2Outline,
+  MaterialSymbolsCloseRounded,
+  MaterialSymbolsCheckRounded,
+  MaterialSymbolsExpandMoreRounded,
+  MaterialSymbolsChevronRightRounded
+} from "@/components/icons";
 
 const SourceItem = ({
   source,
@@ -19,11 +33,10 @@ const SourceItem = ({
 
   return (
     <div
-      className={`group flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 bg-white border rounded-2xl hover:shadow-card transition-all duration-200 gap-3 md:gap-4 ${
-        source.enabled
-          ? "border-blue-100 hover:border-blue-200"
-          : "border-gray-100 hover:border-gray-200"
-      }`}
+      className={`group flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 bg-white border rounded-2xl hover:shadow-card transition-all duration-200 gap-3 md:gap-4 ${source.enabled
+        ? "border-blue-100 hover:border-blue-200"
+        : "border-gray-100 hover:border-gray-200"
+        }`}
     >
       <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0 overflow-hidden">
         <div className="relative inline-block w-12 shrink-0 align-middle select-none transition duration-200 ease-in">
@@ -41,9 +54,8 @@ const SourceItem = ({
           />
           <label
             htmlFor={`toggle-${source.id}`}
-            className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200 ${
-              source.enabled ? "bg-primary" : "bg-gray-300"
-            }`}
+            className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-200 ${source.enabled ? "bg-primary" : "bg-gray-300"
+              }`}
           ></label>
         </div>
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
@@ -59,48 +71,38 @@ const SourceItem = ({
         <button
           onClick={() => onMoveUp(source.id)}
           disabled={!canMoveUp}
-          className={`min-h-[44px] w-10 md:w-auto p-2 rounded-full transition-all duration-300 ${
-            canMoveUp
-              ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
-              : "text-gray-200 cursor-not-allowed"
-          }`}
+          className={`min-h-[44px] w-10 md:w-auto p-2 rounded-full transition-all duration-300 ${canMoveUp
+            ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
+            : "text-gray-200 cursor-not-allowed"
+            }`}
           aria-label="向上移动"
         >
-          <span className="material-symbols-outlined text-[18px] md:text-[20px]">
-            arrow_upward
-          </span>
+          <MaterialSymbolsArrowUpwardRounded className="text-[18px] md:text-[20px]" />
         </button>
         <button
           onClick={() => onMoveDown(source.id)}
           disabled={!canMoveDown}
-          className={`min-h-[44px] w-10 md:w-auto p-2 rounded-full transition-all duration-300 ${
-            canMoveDown
-              ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
-              : "text-gray-200 cursor-not-allowed"
-          }`}
+          className={`min-h-[44px] w-10 md:w-auto p-2 rounded-full transition-all duration-300 ${canMoveDown
+            ? "text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
+            : "text-gray-200 cursor-not-allowed"
+            }`}
           aria-label="向下移动"
         >
-          <span className="material-symbols-outlined text-[18px] md:text-[20px]">
-            arrow_downward
-          </span>
+          <MaterialSymbolsArrowDownwardRounded className="text-[18px] md:text-[20px]" />
         </button>
         <button
           onClick={() => onEdit(source)}
           className="min-h-[44px] w-10 md:w-auto p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 cursor-pointer"
           aria-label="编辑"
         >
-          <span className="material-symbols-outlined text-[18px] md:text-[20px]">
-            edit_square
-          </span>
+          <MaterialSymbolsEditSquareOutline className="text-[18px] md:text-[20px]" />
         </button>
         <button
           onClick={() => onDelete(source.id)}
           className="min-h-[44px] w-10 md:w-auto p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 cursor-pointer"
           aria-label="删除"
         >
-          <span className="material-symbols-outlined text-[18px] md:text-[20px]">
-            delete
-          </span>
+          <MaterialSymbolsDeleteOutlineRounded className="text-[18px] md:text-[20px]" />
         </button>
       </div>
     </div>
@@ -133,16 +135,14 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out ${
-        isAnimating ? "opacity-100" : "opacity-0"
-      }`}
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out ${isAnimating ? "opacity-100" : "opacity-0"
+        }`}
     >
       <div
-        className={`bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out ${
-          isAnimating
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 translate-y-4"
-        }`}
+        className={`bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out ${isAnimating
+          ? "opacity-100 scale-100 translate-y-0"
+          : "opacity-0 scale-95 translate-y-4"
+          }`}
       >
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
           <h3 className="text-xl font-bold text-gray-900">{title}</h3>
@@ -150,7 +150,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
           >
-            <span className="material-symbols-outlined">close</span>
+            <MaterialSymbolsCloseRounded />
           </button>
         </div>
         <div className="p-6">{children}</div>
@@ -182,26 +182,21 @@ const CustomSelect = ({ value, onChange, options, label }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${
-          isOpen ? "ring-2 ring-primary/20 border-primary bg-white" : "hover:bg-gray-100 hover:border-gray-300"
-        }`}
+        className={`w-full flex items-center justify-between bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${isOpen ? "ring-2 ring-primary/20 border-primary bg-white" : "hover:bg-gray-100 hover:border-gray-300"
+          }`}
       >
         <span className="truncate mr-2 font-medium">{selectedOption.label}</span>
-        <span
-          className={`material-symbols-outlined text-gray-500 transition-transform duration-300 ease-in-out ${
-            isOpen ? "rotate-180 text-primary" : ""
-          }`}
-        >
-          expand_more
-        </span>
+        <MaterialSymbolsExpandMoreRounded
+          className={`text-gray-500 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180 text-primary" : ""
+            }`}
+        />
       </button>
 
       <div
-        className={`absolute z-20 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden transform transition-all duration-200 ease-out origin-top ${
-          isOpen
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-        }`}
+        className={`absolute z-20 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden transform transition-all duration-200 ease-out origin-top ${isOpen
+          ? "opacity-100 scale-100 translate-y-0"
+          : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+          }`}
       >
         <div className="max-h-60 overflow-y-auto py-1">
           {options.map((option) => (
@@ -212,15 +207,14 @@ const CustomSelect = ({ value, onChange, options, label }) => {
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-150 flex items-center justify-between ${
-                option.value === value
-                  ? "bg-primary/5 text-primary font-semibold"
-                  : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+              className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-150 flex items-center justify-between ${option.value === value
+                ? "bg-primary/5 text-primary font-semibold"
+                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                }`}
             >
               <span>{option.label}</span>
               {option.value === value && (
-                <span className="material-symbols-outlined text-[18px]">check</span>
+                <MaterialSymbolsCheckRounded className="text-[18px]" />
               )}
             </button>
           ))}
@@ -346,9 +340,8 @@ export default function Settings() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `streambox-settings-${
-      new Date().toISOString().split("T")[0]
-    }.json`;
+    a.download = `streambox-settings-${new Date().toISOString().split("T")[0]
+      }.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -411,7 +404,7 @@ export default function Settings() {
       <section className="bg-white rounded-2xl shadow-soft p-4 md:p-8 mt-6 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">视频源管理</h2>
+            <h2 className="text-xl font-bold text-gray-900">视频源管理</h2>
             <p className="text-gray-500 mt-1">
               管理视频来源，调整优先级和启用状态
             </p>
@@ -427,18 +420,14 @@ export default function Settings() {
               onClick={() => openVideoModal()}
               className="min-h-[44px] px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm font-bold">
-                add
-              </span>
+              <MaterialSymbolsAdd className="text-sm font-bold" />
               添加源
             </button>
           </div>
         </div>
         <div className="relative mt-6 mb-6">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-gray-400">
-              search
-            </span>
+            <MaterialSymbolsSearchRounded className="text-gray-400" />
           </div>
           <input
             className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm shadow-sm transition-shadow"
@@ -470,11 +459,11 @@ export default function Settings() {
       <section className="bg-white rounded-2xl shadow-soft p-4 md:p-8 mt-8 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">豆瓣配置</h2>
+            <h2 className="text-xl font-bold text-gray-900">豆瓣配置</h2>
             <p className="text-gray-500 mt-1">配置豆瓣 API 和图片代理以防止连接问题</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">豆瓣 API 代理</label>
@@ -504,7 +493,7 @@ export default function Settings() {
       <section className="bg-white rounded-2xl shadow-soft p-4 md:p-8 mt-8 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">弹幕源管理</h2>
+            <h2 className="text-xl font-bold text-gray-900">弹幕源管理</h2>
             <p className="text-gray-500 mt-1">配置弹幕接口，丰富观影体验（最多支持 1 个弹幕源）</p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -518,18 +507,14 @@ export default function Settings() {
               onClick={() => openDanmakuModal()}
               className="min-h-[44px] px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span className="material-symbols-outlined text-sm font-bold">
-                add
-              </span>
+              <MaterialSymbolsAdd className="text-sm font-bold" />
               添加源
             </button>
           </div>
         </div>
         <div className="relative mt-6 mb-6">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-gray-400">
-              search
-            </span>
+            <MaterialSymbolsSearchRounded className="text-gray-400" />
           </div>
           <input
             className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm shadow-sm transition-shadow"
@@ -560,7 +545,7 @@ export default function Settings() {
       {/* Data Management */}
       <section className="bg-white rounded-2xl shadow-soft p-4 md:p-8 mt-8 border border-gray-100">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">数据管理</h2>
+          <h2 className="text-xl font-bold text-gray-900">数据管理</h2>
           <p className="text-gray-500 mt-1">
             导入或导出您的所有设置、源和播放历史
           </p>
@@ -572,9 +557,7 @@ export default function Settings() {
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
-                <span className="material-symbols-outlined text-2xl">
-                  upload_file
-                </span>
+                <MaterialSymbolsUploadFileOutlineRounded className="text-2xl" />
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">导入配置</h3>
@@ -583,9 +566,7 @@ export default function Settings() {
                 </p>
               </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-all duration-300">
-              chevron_right
-            </span>
+            <MaterialSymbolsChevronRightRounded className="text-gray-400 group-hover:text-primary transition-all duration-300" />
           </button>
           <button
             onClick={handleExport}
@@ -593,18 +574,14 @@ export default function Settings() {
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                <span className="material-symbols-outlined text-2xl">
-                  download
-                </span>
+                <MaterialSymbolsDownload2Outline className="text-2xl" />
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">导出配置</h3>
                 <p className="text-sm text-gray-500 mt-1">备份当前数据到本地</p>
               </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-all duration-300">
-              chevron_right
-            </span>
+            <MaterialSymbolsChevronRightRounded className="text-gray-400 group-hover:text-primary transition-all duration-300" />
           </button>
         </div>
       </section>

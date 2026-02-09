@@ -3,6 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
+import {
+  MaterialSymbolsSearchRounded,
+  MaterialSymbolsCloseRounded,
+  MaterialSymbolsHistoryRounded
+} from "@/components/icons";
 
 export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索电影、电视剧..." }) {
   const router = useRouter();
@@ -40,7 +45,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
       const trimmedValue = inputValue.trim();
       addToHistory(trimmedValue);
       setShowHistory(false);
-      
+
       if (onSearch) {
         onSearch(trimmedValue);
       } else {
@@ -53,7 +58,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
     setInputValue(item);
     setShowHistory(false);
     addToHistory(item);
-    
+
     if (onSearch) {
       onSearch(item);
     } else {
@@ -72,10 +77,10 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
     <div ref={searchContainerRef} className="w-full relative">
       <form onSubmit={handleSearch} className="w-full relative group">
         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-          <span className="material-symbols-outlined">search</span>
+          <MaterialSymbolsSearchRounded className="text-xl" />
         </div>
         <input
-          className="w-full h-14 bg-white border border-gray-200 rounded-xl pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm text-lg"
+          className="w-full h-14 bg-white border border-gray-200 rounded-xl pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm text-base placeholder:text-sm"
           placeholder={placeholder}
           type="text"
           value={inputValue}
@@ -90,9 +95,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                 onClick={handleClearInput}
                 className="p-1 hover:bg-gray-100 rounded-md text-gray-400 hover:text-gray-600 transition-colors btn-press"
               >
-                <span className="material-symbols-outlined text-xl">
-                  close
-                </span>
+                <MaterialSymbolsCloseRounded className="text-xl" />
               </button>
             )}
             <div className="w-px h-6 bg-gray-200 self-center"></div>
@@ -108,9 +111,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 dropdown-enter">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <span className="material-symbols-outlined text-[18px]">
-                history
-              </span>
+              <MaterialSymbolsHistoryRounded className="text-[18px]" />
               <span className="font-medium">搜索历史</span>
             </div>
             <button
@@ -128,9 +129,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                 onClick={() => handleHistoryItemClick(item)}
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <span className="material-symbols-outlined text-gray-400 text-[20px]">
-                    search
-                  </span>
+                  <MaterialSymbolsSearchRounded className="text-[20px] text-gray-400" />
                   <span className="text-gray-900 truncate">{item}</span>
                 </div>
                 <button
@@ -140,9 +139,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                   }}
                   className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 rounded-md text-gray-400 hover:text-gray-600 transition-all btn-press"
                 >
-                  <span className="material-symbols-outlined text-[18px]">
-                    close
-                  </span>
+                  <MaterialSymbolsCloseRounded className="text-[18px]" />
                 </button>
               </div>
             ))}

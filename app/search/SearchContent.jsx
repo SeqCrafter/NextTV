@@ -7,6 +7,12 @@ import { SkeletonCard } from "@/components/SkeletonCard";
 import { SearchBox } from "@/components/SearchBox";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { searchVideos } from "@/lib/cmsApi";
+import {
+  MaterialSymbolsSearchRounded,
+  MaterialSymbolsGridViewOutlineRounded,
+  MaterialSymbolsMovieOutlineRounded,
+  MaterialSymbolsTvOutlineRounded
+} from "@/components/icons";
 
 export default function SearchContent() {
   const searchParams = useSearchParams();
@@ -82,9 +88,7 @@ export default function SearchContent() {
     if (error) {
       return (
         <div className="flex flex-col items-center justify-center py-20">
-          <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
-            search_off
-          </span>
+          <MaterialSymbolsSearchRounded className="text-6xl text-gray-300 mb-4" />
           <p className="text-gray-500">{error}</p>
         </div>
       );
@@ -135,9 +139,7 @@ export default function SearchContent() {
     // Empty state - no query or no results
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
-          search
-        </span>
+        <MaterialSymbolsSearchRounded className="text-6xl text-gray-300 mb-4" />
         <p className="text-gray-500">请输入关键词开始搜索</p>
       </div>
     );
@@ -159,9 +161,7 @@ export default function SearchContent() {
               onChange={(e) => setMediaType(e.target.value)}
             />
             <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">
-                grid_view
-              </span>
+              <MaterialSymbolsGridViewOutlineRounded className="text-[18px]" />
               全部
             </div>
           </label>
@@ -175,9 +175,7 @@ export default function SearchContent() {
               onChange={(e) => setMediaType(e.target.value)}
             />
             <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">
-                movie
-              </span>
+              <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
               电影
             </div>
           </label>
@@ -191,7 +189,7 @@ export default function SearchContent() {
               onChange={(e) => setMediaType(e.target.value)}
             />
             <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">tv</span>
+              <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
               电视剧
             </div>
           </label>
