@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { SearchBox } from "@/components/SearchBox";
@@ -11,24 +11,44 @@ import {
   MaterialSymbolsSearchRounded,
   MaterialSymbolsGridViewOutlineRounded,
   MaterialSymbolsMovieOutlineRounded,
-  MaterialSymbolsTvOutlineRounded
+  MaterialSymbolsTvOutlineRounded,
+  MaterialSymbolsChevronLeftRounded,
+  MaterialSymbolsChevronRightRounded,
 } from "@/components/icons";
 
 export default function SearchContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const query = searchParams.get("q") || "";
+  const currentPage = Number(searchParams.get("page")) || 1;
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mediaType, setMediaType] = useState("all"); // 'all', 'movie', 'tv'
   const [sourceFilter, setSourceFilter] = useState("all"); // 视频源筛选
+  const [pageCount, setPageCount] = useState(1);
   const videoSources = useSettingsStore((state) => state.videoSources);
+
+  const handlePageChange = useCallback(
+    (page) => {
+      const params = new URLSearchParams(searchParams);
+      if (page <= 1) {
+        params.delete("page");
+      } else {
+        params.set("page", String(page));
+      }
+      router.push(`/search?${params.toString()}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [searchParams, router],
+  );
 
   // 执行搜索
   useEffect(() => {
     async function performSearch() {
       if (!query || !query.trim()) {
         setResults([]);
+        setPageCount(1);
         return;
       }
 
@@ -36,23 +56,25 @@ export default function SearchContent() {
       setError(null);
 
       try {
-        const searchResults = await searchVideos(query, videoSources);
-        setResults(searchResults);
+        const searchData = await searchVideos(query, videoSources, currentPage);
+        setResults(searchData.results);
+        setPageCount(searchData.pageCount);
 
-        if (searchResults.length === 0) {
+        if (searchData.results.length === 0) {
           setError("未找到相关结果，请尝试其他关键词");
         }
       } catch (err) {
         console.error("搜索错误:", err);
         setError("搜索失败，请稍后重试");
         setResults([]);
+        setPageCount(1);
       } finally {
         setLoading(false);
       }
     }
 
     performSearch();
-  }, [query, videoSources]);
+  }, [query, videoSources, currentPage]);
 
   // 根据媒体类型和视频源过滤结果
   const filteredResults = results.filter((result) => {
@@ -132,6 +154,14 @@ export default function SearchContent() {
               </div>
             ))}
           </div>
+
+          {pageCount > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              pageCount={pageCount}
+              onPageChange={handlePageChange}
+            />
+          )}
         </>
       );
     }
@@ -197,6 +227,96 @@ export default function SearchContent() {
       </div>
 
       <div>{renderContent()}</div>
+    </div>
+  );
+}
+
+function Pagination({ currentPage, pageCount, onPageChange }) {
+  // 计算要显示的页码范围，最多显示 5 个页码按钮
+  function getPageNumbers() {
+    const maxVisible = 5;
+    if (pageCount <= maxVisible) {
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    }
+
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = start + maxVisible - 1;
+
+    if (end > pageCount) {
+      end = pageCount;
+      start = end - maxVisible + 1;
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+
+  const pages = getPageNumbers();
+
+  return (
+    <div className="flex items-center justify-center gap-1.5 mt-8 mb-4">
+      <button
+        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+        aria-label="上一页"
+      >
+        <MaterialSymbolsChevronLeftRounded className="text-xl" />
+      </button>
+
+      {pages[0] > 1 && (
+        <>
+          <button
+            className="min-w-[36px] h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            onClick={() => onPageChange(1)}
+          >
+            1
+          </button>
+          {pages[0] > 2 && (
+            <span className="min-w-[36px] h-9 flex items-center justify-center text-sm text-gray-400">
+              ...
+            </span>
+          )}
+        </>
+      )}
+
+      {pages.map((page) => (
+        <button
+          key={page}
+          className={`min-w-[36px] h-9 rounded-lg text-sm font-medium transition-colors ${
+            page === currentPage
+              ? "bg-primary text-white shadow-sm"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
+          onClick={() => onPageChange(page)}
+        >
+          {page}
+        </button>
+      ))}
+
+      {pages[pages.length - 1] < pageCount && (
+        <>
+          {pages[pages.length - 1] < pageCount - 1 && (
+            <span className="min-w-[36px] h-9 flex items-center justify-center text-sm text-gray-400">
+              ...
+            </span>
+          )}
+          <button
+            className="min-w-[36px] h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            onClick={() => onPageChange(pageCount)}
+          >
+            {pageCount}
+          </button>
+        </>
+      )}
+
+      <button
+        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        disabled={currentPage === pageCount}
+        onClick={() => onPageChange(currentPage + 1)}
+        aria-label="下一页"
+      >
+        <MaterialSymbolsChevronRightRounded className="text-xl" />
+      </button>
     </div>
   );
 }

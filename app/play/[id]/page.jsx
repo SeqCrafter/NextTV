@@ -16,6 +16,7 @@ import {
   MaterialSymbolsPublic,
   MaterialSymbolsStarOutlineRounded,
   MaterialSymbolsPerson2OutlineRounded,
+  MaterialSymbolsChevronLeftRounded,
 } from "@/components/icons";
 
 export default function PlayerPage() {
@@ -24,6 +25,7 @@ export default function PlayerPage() {
   const id = params.id;
   const source = searchParams.get("source");
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+  const [episodesCollapsed, setEpisodesCollapsed] = useState(false);
   const { videoDetail, doubanActors, loading, error } = useVideoData(id, source, setCurrentEpisodeIndex);
 
   const handleEpisodeClick = (index) => {
@@ -59,8 +61,20 @@ export default function PlayerPage() {
 
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
-        <div className="flex flex-col gap-4 transition-all duration-300 lg:col-span-8 xl:col-span-9">
-          <VideoPlayer key={id} videoDetail={videoDetail} currentEpisodeIndex={currentEpisodeIndex} setCurrentEpisodeIndex={setCurrentEpisodeIndex} />
+        <div className={`flex flex-col gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
+          <div className="relative">
+            <VideoPlayer key={id} videoDetail={videoDetail} currentEpisodeIndex={currentEpisodeIndex} setCurrentEpisodeIndex={setCurrentEpisodeIndex} />
+            {episodesCollapsed && (
+              <button
+                className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white/80 hover:text-white text-xs font-medium backdrop-blur-sm transition-all cursor-pointer"
+                onClick={() => setEpisodesCollapsed(false)}
+                title="显示选集"
+              >
+                <MaterialSymbolsChevronLeftRounded className="text-[16px]" />
+                选集
+              </button>
+            )}
+          </div>
 
           {/* Mobile Actions Bar (Visible only on mobile/tablet) */}
           <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
@@ -76,8 +90,8 @@ export default function PlayerPage() {
         </div>
 
         {/* Right Column: Episodes */}
-        <div className="w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full">
-          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} />
+        <div className={`w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full transition-all duration-300 ${episodesCollapsed ? "hidden" : ""}`}>
+          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} onCollapse={() => setEpisodesCollapsed(true)} />
         </div>
       </div>
 

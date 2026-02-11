@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { MaterialSymbolsSwapVertRounded } from "@/components/icons";
+import { MaterialSymbolsSwapVertRounded, MaterialSymbolsChevronRightRounded } from "@/components/icons";
 
-export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onEpisodeClick }) {
+export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onEpisodeClick, onCollapse }) {
   const [isReversed, setIsReversed] = useState(false);
   const [page, setPage] = useState(0);
   const [prevEpisodeIndex, setPrevEpisodeIndex] = useState(currentEpisodeIndex);
@@ -44,7 +44,17 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{episodes.length > 1 ? `更新至 ${episodes.length} 集` : "电影"}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-end gap-1.5">
+          {onCollapse && (
+            <button
+              className="text-white hover:bg-primary/80 transition-colors flex items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
+              onClick={onCollapse}
+              title="隐藏选集"
+            >
+              <span>折叠</span>
+              <MaterialSymbolsChevronRightRounded className="text-[14px]" />
+            </button>
+          )}
           <button
             className="text-slate-400 hover:text-primary transition-colors flex items-center gap-1 text-xs bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded cursor-pointer"
             onClick={() => setIsReversed(!isReversed)}
