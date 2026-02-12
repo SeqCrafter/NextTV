@@ -12,7 +12,7 @@ export function VideoPlayer({
   });
 
   return (
-    <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-gray-800/50">
+    <div className="relative w-full h-full bg-black rounded-xl overflow-hidden group border border-gray-800/50">
       {videoDetail?.episodes?.[currentEpisodeIndex] ? (
         <div ref={artRef} className="w-full h-full" />
       ) : (

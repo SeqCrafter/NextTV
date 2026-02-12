@@ -34,8 +34,6 @@
   background-color: var(--color-background-light);
 }
 
-
-
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -121,12 +119,16 @@
     opacity: 1 !important;
     transform: translateY(0) !important;
     pointer-events: auto !important;
-    transition: opacity 0.15s ease 0.1s, transform 0.15s ease 0.1s !important;
+    transition:
+      opacity 0.15s ease 0.1s,
+      transform 0.15s ease 0.1s !important;
   }
 
   /* 音量面板默认隐藏状态 */
   .art-volume-panel {
-    transition: opacity 0.15s ease 0.3s, transform 0.15s ease 0.3s !important;
+    transition:
+      opacity 0.15s ease 0.3s,
+      transform 0.15s ease 0.3s !important;
   }
 }
 
@@ -380,7 +382,9 @@
 
 /* ===== Button Micro-interactions ===== */
 .btn-press {
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 .btn-press:active {
@@ -433,7 +437,9 @@ input:checked + .media-toggle-btn .material-symbols-outlined {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .btn-ripple:active::after {
@@ -470,8 +476,8 @@ html {
 
 /* ===== Focus Visible Enhancement ===== */
 *:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 1px solid var(--color-primary);
+  outline-offset: -1px;
   border-radius: 4px;
 }
 

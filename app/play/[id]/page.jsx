@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useVideoData } from "@/hooks/useVideoData";
 import { VideoPlayer } from "@/components/VideoPlayer";
@@ -26,7 +26,21 @@ export default function PlayerPage() {
   const source = searchParams.get("source");
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
   const [episodesCollapsed, setEpisodesCollapsed] = useState(false);
+  const [fixedPlayerHeight, setFixedPlayerHeight] = useState(null);
+  const playerWrapperRef = useRef(null);
   const { videoDetail, doubanActors, loading, error } = useVideoData(id, source, setCurrentEpisodeIndex);
+
+  const handleCollapse = useCallback(() => {
+    if (playerWrapperRef.current) {
+      setFixedPlayerHeight(playerWrapperRef.current.offsetHeight);
+    }
+    setEpisodesCollapsed(true);
+  }, []);
+
+  const handleExpand = useCallback(() => {
+    setEpisodesCollapsed(false);
+    setFixedPlayerHeight(null);
+  }, []);
 
   const handleEpisodeClick = (index) => {
     setCurrentEpisodeIndex(index);
@@ -62,12 +76,16 @@ export default function PlayerPage() {
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
         <div className={`flex flex-col gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
-          <div className="relative">
+          <div
+            ref={playerWrapperRef}
+            className={`relative ${episodesCollapsed ? "" : "aspect-video"}`}
+            style={episodesCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}
+          >
             <VideoPlayer key={id} videoDetail={videoDetail} currentEpisodeIndex={currentEpisodeIndex} setCurrentEpisodeIndex={setCurrentEpisodeIndex} />
             {episodesCollapsed && (
               <button
                 className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white/80 hover:text-white text-xs font-medium backdrop-blur-sm transition-all cursor-pointer"
-                onClick={() => setEpisodesCollapsed(false)}
+                onClick={handleExpand}
                 title="显示选集"
               >
                 <MaterialSymbolsChevronLeftRounded className="text-[16px]" />
@@ -77,7 +95,7 @@ export default function PlayerPage() {
           </div>
 
           {/* Mobile Actions Bar (Visible only on mobile/tablet) */}
-          <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
+          <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-800">
             <div className="flex gap-4">
               <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary" />
               {/* Keep only requested items: Favorite, Share, Source Name (shown below) */}
@@ -91,15 +109,15 @@ export default function PlayerPage() {
 
         {/* Right Column: Episodes */}
         <div className={`w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full transition-all duration-300 ${episodesCollapsed ? "hidden" : ""}`}>
-          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} onCollapse={() => setEpisodesCollapsed(true)} />
+          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} onCollapse={handleCollapse} />
         </div>
       </div>
 
       {/* Bottom Section: Full Info Card (Hidden on Mobile as per request "mobile details only ...", keeping desktop rich) */}
-      <div className="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+      <div className="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden">
         <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-56 shrink-0 mx-auto md:mx-0 max-w-[240px]">
-            <div className="relative aspect-2/3 rounded-lg overflow-hidden shadow-lg group">
+            <div className="relative aspect-2/3 rounded-lg overflow-hidden group">
               <Image
                 alt={`${videoDetail.title} Poster`}
                 className="object-cover transition-transform duration-700 group-hover:scale-110"

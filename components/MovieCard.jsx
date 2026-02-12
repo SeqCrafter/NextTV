@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { SpeedTestBadge } from "@/components/SpeedTestBadge";
-import { MaterialSymbolsStarRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
+import { MaterialSymbolsStarRounded } from "@/components/icons";
 
 import { useSettingsStore } from "@/store/useSettingsStore";
 
@@ -51,12 +51,6 @@ export function MovieCard({ movie }) {
           style={{ backgroundImage: `url('${douban_image_url}')` }}
           aria-label={`Poster for ${movie.title}`}
         ></div>
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-          <button className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 cursor-pointer">
-            <MaterialSymbolsPlayArrowRounded className="text-[18px]" />{" "}
-            立即观看
-          </button>
-        </div>
         {movie.source_name && (
           <div className="absolute bottom-2 left-2 z-10">
             <span className="bg-primary/90 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">

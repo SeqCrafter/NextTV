@@ -102,7 +102,7 @@ export function ContinueWatching({ playHistory }) {
         {playHistory.slice(0, 6).map((record) => (
           <div
             key={`${record.source}-${record.id}`}
-            className="group relative shrink-0 w-[280px] bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
+            className="group relative shrink-0 w-[280px] bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-primary transition-colors duration-300 cursor-pointer"
             onClick={() => handlePlayClick(record)}
           >
             {updatedEpisodes[`${record.source}-${record.id}`] > 0 && (

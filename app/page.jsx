@@ -13,12 +13,12 @@ import {
   MaterialSymbolsAdd,
   MaterialSymbolsChevronLeftRounded,
   MaterialSymbolsChevronRightRounded,
-  MaterialSymbolsCloseRounded
+  MaterialSymbolsCloseRounded,
 } from "@/components/icons";
 
 export default function Home() {
   const [mediaType, setMediaType] = useState("movie");
-  const [currentTag, setCurrentTag] = useState("热门");
+  const [currentTag, setCurrentTag] = useState("华语");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -83,7 +83,9 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const currentTags = mediaType === "movie" ? movieTags : tvTags;
+  const defaultTag = mediaType === "movie" ? "华语" : "国产剧";
+  const rawTags = mediaType === "movie" ? movieTags : tvTags;
+  const currentTags = rawTags.includes(defaultTag) ? [defaultTag, ...rawTags.filter((t) => t !== defaultTag)] : rawTags;
 
   const handleAddTag = (tagName) => {
     const trimmedTag = tagName.trim();
@@ -148,17 +150,17 @@ export default function Home() {
       <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
         <SearchBox />
 
-        <div className="bg-white p-1.5 rounded-xl inline-flex shadow-sm border border-gray-200">
+        <div className="bg-gray-100 p-1 rounded-lg inline-flex">
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="movie" checked={mediaType === "movie"} onChange={() => handleMediaTypeChange("movie")} />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
               <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
               电影
             </div>
           </label>
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="tv" checked={mediaType === "tv"} onChange={() => handleMediaTypeChange("tv")} />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md flex items-center gap-2">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
               <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
               电视剧
             </div>
@@ -180,10 +182,11 @@ export default function Home() {
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className={`shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${tag === currentTag
-                ? "bg-primary/10 border border-primary text-primary font-semibold hover:bg-primary hover:text-white"
-                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+              className={`shrink-0 px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
+                tag === currentTag
+                  ? "bg-primary/10 border border-primary text-primary font-semibold hover:bg-primary hover:text-white"
+                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
             >
               {tag}
             </button>
@@ -205,8 +208,9 @@ export default function Home() {
             <button
               onClick={handlePrevPage}
               disabled={page === 0}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-                }`}
+              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
+                page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
+              }`}
               title="上一页"
             >
               <MaterialSymbolsChevronLeftRounded className="text-[20px]" />
@@ -214,10 +218,11 @@ export default function Home() {
             <button
               onClick={handleNextPage}
               disabled={movies.length < pageSize}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${movies.length < pageSize
-                ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
-                : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-                }`}
+              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
+                movies.length < pageSize
+                  ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
+              }`}
               title="下一页"
             >
               <MaterialSymbolsChevronRightRounded className="text-[20px]" />
