@@ -37,7 +37,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
   const showTabs = episodes.length > 0;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
       <div className="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
         <div>
           <h3 className="text-lg font-bold text-slate-800 dark:text-white">选集</h3>
@@ -78,8 +78,8 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
                     key={idx}
                     onClick={() => setPage(idx)}
                     className={`whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${isActive
-                      ? "bg-white dark:bg-slate-700 text-primary shadow-sm ring-1 ring-primary/20"
-                      : "text-slate-500 hover:bg-white hover:shadow-sm dark:text-slate-400 dark:hover:bg-slate-700"
+                      ? "bg-white dark:bg-slate-700 text-primary ring-1 ring-primary/20"
+                      : "text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-700"
                       }`}
                   >
                     {start}-{end}
@@ -98,9 +98,9 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
               return (
                 <div key={originalIndex} className="relative group/episode">
                   <button
-                    className={`w-full aspect-square rounded-lg flex items-center justify-center font-medium transition-all duration-200 shadow-sm hover:shadow-md text-sm cursor-pointer
+                    className={`w-full aspect-square rounded-lg flex items-center justify-center font-medium transition-all duration-200 text-sm cursor-pointer
                       ${isCurrent
-                        ? "bg-primary text-white font-bold shadow-md shadow-primary/30 transform scale-105"
+                        ? "bg-primary text-white font-bold transform scale-105"
                         : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
                       }
                     `}
