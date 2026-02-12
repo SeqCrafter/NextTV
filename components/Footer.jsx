@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -13,28 +14,24 @@ export function Footer() {
         <div className="flex gap-6">
           <a
             className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="#"
+            href="mailto:sdupan2015@gmail.com"
           >
-            隐私政策
+            联系作者
           </a>
           <a
             className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="#"
+            href="https://github.com/SeqCrafter/NextTV/issues"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            服务条款
+            提交问题
           </a>
-          <a
+          <Link
             className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="#"
-          >
-            Cookie 偏好
-          </a>
-          <a
-            className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="#"
+            href="/help"
           >
             帮助中心
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

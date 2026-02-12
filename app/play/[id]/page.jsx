@@ -15,7 +15,8 @@ import {
   MaterialSymbolsMovieOutlineRounded,
   MaterialSymbolsPublic,
   MaterialSymbolsStarOutlineRounded,
-  MaterialSymbolsPerson2OutlineRounded
+  MaterialSymbolsPerson2OutlineRounded,
+  MaterialSymbolsChevronLeftRounded,
 } from "@/components/icons";
 
 export default function PlayerPage() {
@@ -24,12 +25,8 @@ export default function PlayerPage() {
   const id = params.id;
   const source = searchParams.get("source");
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
-  const {
-    videoDetail,
-    doubanActors,
-    loading,
-    error
-  } = useVideoData(id, source, setCurrentEpisodeIndex);
+  const [episodesCollapsed, setEpisodesCollapsed] = useState(false);
+  const { videoDetail, doubanActors, loading, error } = useVideoData(id, source, setCurrentEpisodeIndex);
 
   const handleEpisodeClick = (index) => {
     setCurrentEpisodeIndex(index);
@@ -44,11 +41,11 @@ export default function PlayerPage() {
         </div>
       </div>
     );
-  };
+  }
 
   if (loading || !videoDetail) {
     return <LoadingSpinner />;
-  };
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
@@ -64,22 +61,25 @@ export default function PlayerPage() {
 
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
-        <div className="flex flex-col gap-4 transition-all duration-300 lg:col-span-8 xl:col-span-9">
-          <VideoPlayer
-            key={id}
-            videoDetail={videoDetail}
-            currentEpisodeIndex={currentEpisodeIndex}
-            setCurrentEpisodeIndex={setCurrentEpisodeIndex}
-          />
+        <div className={`flex flex-col gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
+          <div className="relative">
+            <VideoPlayer key={id} videoDetail={videoDetail} currentEpisodeIndex={currentEpisodeIndex} setCurrentEpisodeIndex={setCurrentEpisodeIndex} />
+            {episodesCollapsed && (
+              <button
+                className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white/80 hover:text-white text-xs font-medium backdrop-blur-sm transition-all cursor-pointer"
+                onClick={() => setEpisodesCollapsed(false)}
+                title="显示选集"
+              >
+                <MaterialSymbolsChevronLeftRounded className="text-[16px]" />
+                选集
+              </button>
+            )}
+          </div>
 
           {/* Mobile Actions Bar (Visible only on mobile/tablet) */}
           <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
             <div className="flex gap-4">
               <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary" />
-              <button className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary transition-colors">
-                <MaterialSymbolsShareOutline className="text-[24px]" />
-                分享
-              </button>
               {/* Keep only requested items: Favorite, Share, Source Name (shown below) */}
             </div>
             <div className="flex items-center gap-2">
@@ -90,13 +90,8 @@ export default function PlayerPage() {
         </div>
 
         {/* Right Column: Episodes */}
-        <div className="w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full">
-          <EpisodeList
-            episodes={videoDetail.episodes}
-            episodesTitles={videoDetail.episodes_titles}
-            currentEpisodeIndex={currentEpisodeIndex}
-            onEpisodeClick={handleEpisodeClick}
-          />
+        <div className={`w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full transition-all duration-300 ${episodesCollapsed ? "hidden" : ""}`}>
+          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} onCollapse={() => setEpisodesCollapsed(true)} />
         </div>
       </div>
 
@@ -114,9 +109,7 @@ export default function PlayerPage() {
                 unoptimized
                 priority
               />
-              <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
-                HD
-              </div>
+              <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">HD</div>
             </div>
           </div>
 
@@ -134,7 +127,7 @@ export default function PlayerPage() {
                       <MaterialSymbolsPublic className="text-[16px] text-slate-400" /> {videoDetail.type_name}
                     </span>
                   )}
-                  <span>全 {videoDetail.episodes?.length || 1} 集</span>
+                  <span>更新至 {videoDetail.episodes?.length || 1} 集</span>
                   <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded text-xs">{videoDetail.source_name || source}</span>
                 </div>
               </div>
@@ -149,10 +142,12 @@ export default function PlayerPage() {
                   <span className="text-xs text-slate-400">豆瓣评分</span>
                 </div>
                 <div className="hidden sm:flex gap-2">
-                  <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-red-500 transition-colors" />
-                  <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-500 transition-colors">
-                    <MaterialSymbolsShareOutline className="text-[24px]" />
-                  </button>
+                  <FavoriteButton
+                    source={source}
+                    id={id}
+                    videoDetail={videoDetail}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-400 hover:text-red-500 transition-colors"
+                  />
                 </div>
               </div>
             </div>
@@ -188,7 +183,10 @@ export default function PlayerPage() {
                             }}
                           />
                         ) : null}
-                        <MaterialSymbolsPerson2OutlineRounded className="text-gray-400 text-2xl items-center justify-center bg-gray-100" style={{ display: actor.avatar ? "none" : "flex", width: '100%', height: '100%' }} />
+                        <MaterialSymbolsPerson2OutlineRounded
+                          className="text-gray-400 text-2xl items-center justify-center bg-gray-100"
+                          style={{ display: actor.avatar ? "none" : "flex", width: "100%", height: "100%" }}
+                        />
                       </div>
                       <div className="text-center">
                         <p className="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary max-w-[60px] truncate">{actor.name}</p>
