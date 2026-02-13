@@ -61,8 +61,8 @@ export default function HelpPage() {
                 desc: "集成logvar弹幕功能，支持自定义弹幕源，让你在观影时也能感受社区互动的乐趣。",
               },
               {
-                title: "豆瓣推荐集成",
-                desc: "首页展示豆瓣热门推荐，帮助你发现热门好片，不再为找片发愁。",
+                title: "豆瓣红果推荐集成",
+                desc: "首页展示豆瓣热门推荐，红果短剧热门推荐，帮助你发现热门好片，不再为找片发愁。",
               },
               {
                 title: "豆瓣演员表集成",
@@ -245,7 +245,7 @@ export default function HelpPage() {
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
               <p className="text-sm text-amber-800">
                 <strong>提示：</strong>
-                导入时支持批量添加视频源。你可以手动编辑 JSON 文件来批量配置多个视频源，然后一次性导入。导入操作会合并现有配置而非覆盖。
+                导入时支持批量添加视频源。你可以手动编辑 JSON 文件来批量配置多个视频源，然后一次性导入。导入操作会合并现有配置而非覆盖。导入格式请前往github仓库查看。
               </p>
             </div>
           </div>

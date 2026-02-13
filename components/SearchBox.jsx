@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
 import { MaterialSymbolsSearchRounded, MaterialSymbolsCloseRounded, MaterialSymbolsHistoryRounded } from "@/components/icons";
 
-export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索电影、电视剧..." }) {
+export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索电影、电视剧、短剧..." }) {
   const router = useRouter();
   const [inputValue, setInputValue] = useState(initialValue);
   const [showHistory, setShowHistory] = useState(false);

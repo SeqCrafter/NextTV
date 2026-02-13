@@ -68,7 +68,9 @@ export default function PlayerPage() {
           <MaterialSymbolsHomeOutlineRounded className="text-[18px]" /> 首页
         </Link>
         <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
-        <span className="hover:text-primary transition-colors cursor-pointer">{videoDetail.type === "movie" ? "电影" : "电视剧"}</span>
+        <span className="hover:text-primary transition-colors cursor-pointer">
+          {videoDetail.type === "movie" ? "电影" : videoDetail.type === "tv" ? "电视剧" : videoDetail.type === "short" ? "短剧" : "其它"}
+        </span>
         <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
         <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[200px]">{videoDetail.title}</span>
       </nav>
@@ -76,11 +78,7 @@ export default function PlayerPage() {
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
         <div className={`flex flex-col gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
-          <div
-            ref={playerWrapperRef}
-            className={`relative ${episodesCollapsed ? "" : "aspect-video"}`}
-            style={episodesCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}
-          >
+          <div ref={playerWrapperRef} className={`relative ${episodesCollapsed ? "" : "aspect-video"}`} style={episodesCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}>
             <VideoPlayer key={id} videoDetail={videoDetail} currentEpisodeIndex={currentEpisodeIndex} setCurrentEpisodeIndex={setCurrentEpisodeIndex} />
             {episodesCollapsed && (
               <button
@@ -109,7 +107,13 @@ export default function PlayerPage() {
 
         {/* Right Column: Episodes */}
         <div className={`w-full lg:col-span-4 xl:col-span-3 flex flex-col h-full transition-all duration-300 ${episodesCollapsed ? "hidden" : ""}`}>
-          <EpisodeList episodes={videoDetail.episodes} episodesTitles={videoDetail.episodes_titles} currentEpisodeIndex={currentEpisodeIndex} onEpisodeClick={handleEpisodeClick} onCollapse={handleCollapse} />
+          <EpisodeList
+            episodes={videoDetail.episodes}
+            episodesTitles={videoDetail.episodes_titles}
+            currentEpisodeIndex={currentEpisodeIndex}
+            onEpisodeClick={handleEpisodeClick}
+            onCollapse={handleCollapse}
+          />
         </div>
       </div>
 
@@ -201,10 +205,9 @@ export default function PlayerPage() {
                             }}
                           />
                         ) : null}
-                        <MaterialSymbolsPerson2OutlineRounded
-                          className="text-gray-400 text-2xl items-center justify-center bg-gray-100"
-                          style={{ display: actor.avatar ? "none" : "flex", width: "100%", height: "100%" }}
-                        />
+                        <div className="absolute inset-0 text-gray-400 items-center justify-center bg-gray-100 rounded-full" style={{ display: actor.avatar ? "none" : "flex" }}>
+                          <MaterialSymbolsPerson2OutlineRounded className="text-2xl" />
+                        </div>
                       </div>
                       <div className="text-center">
                         <p className="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-primary max-w-[60px] truncate">{actor.name}</p>

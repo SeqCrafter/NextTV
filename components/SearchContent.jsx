@@ -12,6 +12,7 @@ import {
   MaterialSymbolsGridViewOutlineRounded,
   MaterialSymbolsMovieOutlineRounded,
   MaterialSymbolsTvOutlineRounded,
+  MaterialSymbolsSmartphoneOutline,
   MaterialSymbolsChevronLeftRounded,
   MaterialSymbolsChevronRightRounded,
 } from "@/components/icons";
@@ -84,6 +85,8 @@ export default function SearchContent() {
       matchMediaType = result.type === "movie";
     } else if (mediaType === "tv") {
       matchMediaType = result.type === "tv";
+    } else if (mediaType === "short") {
+      matchMediaType = result.type === "short";
     }
 
     // 视频源筛选
@@ -180,7 +183,7 @@ export default function SearchContent() {
       <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
         <SearchBox initialValue={query} />
 
-        <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+        <div className="bg-gray-100 p-1 rounded-lg inline-flex items-center gap-0.5">
           <label className="cursor-pointer relative">
             <input
               className="peer sr-only"
@@ -190,11 +193,12 @@ export default function SearchContent() {
               checked={mediaType === "all"}
               onChange={(e) => setMediaType(e.target.value)}
             />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
               <MaterialSymbolsGridViewOutlineRounded className="text-[18px]" />
               全部
             </div>
           </label>
+          <div className={`w-px h-4 bg-gray-300 ${mediaType === "all" || mediaType === "movie" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
           <label className="cursor-pointer relative">
             <input
               className="peer sr-only"
@@ -204,11 +208,12 @@ export default function SearchContent() {
               checked={mediaType === "movie"}
               onChange={(e) => setMediaType(e.target.value)}
             />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
               <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
               电影
             </div>
           </label>
+          <div className={`w-px h-4 bg-gray-300 ${mediaType === "movie" || mediaType === "tv" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
           <label className="cursor-pointer relative">
             <input
               className="peer sr-only"
@@ -218,9 +223,24 @@ export default function SearchContent() {
               checked={mediaType === "tv"}
               onChange={(e) => setMediaType(e.target.value)}
             />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
               <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
               电视剧
+            </div>
+          </label>
+          <div className={`w-px h-4 bg-gray-300 ${mediaType === "tv" || mediaType === "short" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
+          <label className="cursor-pointer relative">
+            <input
+              className="peer sr-only"
+              name="media-type"
+              type="radio"
+              value="short"
+              checked={mediaType === "short"}
+              onChange={(e) => setMediaType(e.target.value)}
+            />
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
+              <MaterialSymbolsSmartphoneOutline className="text-[18px]" />
+              短剧
             </div>
           </label>
         </div>

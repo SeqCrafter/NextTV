@@ -10,6 +10,7 @@ import { fetchRecommendations, loadUserTags, saveUserTags, defaultMovieTags, def
 import {
   MaterialSymbolsMovieOutlineRounded,
   MaterialSymbolsTvOutlineRounded,
+  MaterialSymbolsSmartphoneOutline,
   MaterialSymbolsAdd,
   MaterialSymbolsChevronLeftRounded,
   MaterialSymbolsChevronRightRounded,
@@ -41,9 +42,22 @@ export default function Home() {
   const loadMovies = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchRecommendations(mediaType, currentTag, pageSize, page * pageSize, doubanProxy);
-      const converted = data.subjects.map(convertDoubanToMovie);
-      setMovies(converted);
+      if (mediaType === "short") {
+        const res = await fetch(`/api/hongguo?page_limit=${pageSize}&page_start=${page * pageSize}`);
+        const data = await res.json();
+        const converted = (data.list || []).map((item) => ({
+          id: item.title,
+          title: item.title,
+          poster: item.poster,
+          rating: "暂无",
+          hongguoUrl: item.hongguoUrl,
+        }));
+        setMovies(converted);
+      } else {
+        const data = await fetchRecommendations(mediaType, currentTag, pageSize, page * pageSize, doubanProxy);
+        const converted = data.subjects.map(convertDoubanToMovie);
+        setMovies(converted);
+      }
     } catch (error) {
       console.error("加载失败:", error);
       setMovies([]);
@@ -60,7 +74,7 @@ export default function Home() {
     setMediaType(type);
     if (type === "movie") {
       setCurrentTag("华语");
-    } else {
+    } else if (type === "tv") {
       setCurrentTag("国产剧");
     }
     setPage(0);
@@ -84,7 +98,7 @@ export default function Home() {
   };
 
   const defaultTag = mediaType === "movie" ? "华语" : "国产剧";
-  const rawTags = mediaType === "movie" ? movieTags : tvTags;
+  const rawTags = mediaType === "movie" ? movieTags : mediaType === "tv" ? tvTags : [];
   const currentTags = rawTags.includes(defaultTag) ? [defaultTag, ...rawTags.filter((t) => t !== defaultTag)] : rawTags;
 
   const handleAddTag = (tagName) => {
@@ -150,25 +164,35 @@ export default function Home() {
       <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
         <SearchBox />
 
-        <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+        <div className="bg-gray-100 p-1 rounded-lg inline-flex items-center gap-0.5">
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="movie" checked={mediaType === "movie"} onChange={() => handleMediaTypeChange("movie")} />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
               <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
               电影
             </div>
           </label>
+          <div className={`w-px h-4 bg-gray-300 ${mediaType === "movie" || mediaType === "tv" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="tv" checked={mediaType === "tv"} onChange={() => handleMediaTypeChange("tv")} />
-            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white flex items-center gap-2 transition-all">
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
               <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
               电视剧
+            </div>
+          </label>
+          <div className={`w-px h-4 bg-gray-300 ${mediaType === "tv" || mediaType === "short" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
+          <label className="cursor-pointer relative">
+            <input className="peer sr-only" name="media-type" type="radio" value="short" checked={mediaType === "short"} onChange={() => handleMediaTypeChange("short")} />
+            <div className="media-toggle-btn px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-2 transition-all">
+              <MaterialSymbolsSmartphoneOutline className="text-[18px]" />
+              短剧
             </div>
           </label>
         </div>
       </div>
 
-      {/* Categories */}
+      {/* Categories - 短剧模式不显示标签 */}
+      {mediaType !== "short" && (
       <div className="w-full overflow-hidden relative group/scroll">
         <div className="flex gap-3 overflow-x-auto hide-scrollbar py-2 px-1">
           <button
@@ -194,13 +218,14 @@ export default function Home() {
         </div>
         <div className="absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-background-light to-transparent pointer-events-none"></div>
       </div>
+      )}
 
       {/* Popular Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <span className="w-1 h-6 bg-primary rounded-full"></span>
-            豆瓣热门 - {currentTag}
+            {mediaType === "short" ? "红果短剧 - 热门推荐" : `豆瓣热门 - ${currentTag}`}
           </h2>
 
           {/* Pagination Controls */}

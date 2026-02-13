@@ -31,7 +31,7 @@ export function MovieCard({ movie }) {
     if (movie.source) {
       router.push(`/play/${movie.id}?source=${movie.source}`);
     } else {
-      // 如果没有 source（豆瓣卡片），跳转到搜索页面，使用 title 搜索
+      // 豆瓣卡片或红果卡片，跳转到搜索页面，使用 title 搜索
       router.push(`/search?q=${encodeURIComponent(movie.title)}`);
     }
   };
@@ -69,6 +69,20 @@ export function MovieCard({ movie }) {
               title="在豆瓣查看"
             >
               🔗 豆瓣
+            </a>
+          </div>
+        )}
+        {movie.hongguoUrl && (
+          <div className="absolute bottom-2 right-2 z-10">
+            <a
+              href={movie.hongguoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="bg-black/70 hover:bg-black/90 text-white text-xs px-2 py-1 rounded-md transition-colors"
+              title="在红果查看"
+            >
+              🔗 红果
             </a>
           </div>
         )}
