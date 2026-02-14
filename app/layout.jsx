@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "TV - 无限",
-  description: "TV平台",
+  title: "TV - 平台",
+  description: "TV-平台",
 };
 
 export default function RootLayout({ children }) {
