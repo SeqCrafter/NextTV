@@ -121,7 +121,7 @@ export function Navbar() {
               <span className="text-gray-900">灬灬</span>
               <span className="text-primary">TV</span>
             </h1>
-            <span className="text-[3px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
+            <span className="text-[1px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
               ▂▃▄▅▆▇█ 
             </span>
           </div>
