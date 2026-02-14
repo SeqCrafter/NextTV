@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "帮助中心 - NextTV",
-  description: "NextTV 帮助中心，了解如何使用 NextTV 的各项功能",
+  title: "帮助中心",
+  description: "帮助中心",
 };
 
 function Section({ id, number, title, children }) {
@@ -30,7 +30,7 @@ export default function HelpPage() {
       {/* Header */}
       <div className="text-center mt-8 mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">帮助中心</h1>
-        <p className="text-gray-500 text-lg max-w-2xl mx-auto">了解 NextTV 的核心功能与使用方法</p>
+        <p className="text-gray-500 text-lg max-w-2xl mx-auto">了解核心功能与使用方法</p>
       </div>
 
       {/* Navigation */}
@@ -88,7 +88,7 @@ export default function HelpPage() {
         {/* Section 2: Add Video Source */}
         <Section id="video-source" number="2" title="如何添加视频源">
           <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 space-y-6">
-            <p className="text-gray-600 leading-relaxed">视频源是 NextTV 搜索和播放视频的数据来源。你可以添加兼容 CMS 接口的资源站来扩展可搜索的内容范围。</p>
+            <p className="text-gray-600 leading-relaxed">视频源是搜索和播放视频的数据来源。你可以添加兼容 CMS 接口的资源站来扩展可搜索的内容范围。</p>
             <div className="space-y-4">
               <h3 className="font-bold text-gray-900">操作步骤</h3>
               <ol className="list-decimal list-inside space-y-3 text-gray-600">
@@ -141,7 +141,7 @@ export default function HelpPage() {
         {/* Section 3: Add Danmaku Source */}
         <Section id="danmaku-source" number="3" title="如何添加弹幕源">
           <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 space-y-6">
-            <p className="text-gray-600 leading-relaxed">弹幕源提供视频播放时的实时弹幕数据。目前 NextTV 支持配置一个弹幕源。本项目调取弹幕采用客户端直接流式获取，未经过服务器代理。</p>
+            <p className="text-gray-600 leading-relaxed">弹幕源提供视频播放时的实时弹幕数据。目前支持配置一个弹幕源。本项目调取弹幕采用客户端直接流式获取，未经过服务器代理。</p>
             <div className="space-y-4">
               <h3 className="font-bold text-gray-900">操作步骤</h3>
               <ol className="list-decimal list-inside space-y-3 text-gray-600">
@@ -256,11 +256,11 @@ export default function HelpPage() {
       <div className="text-center mt-14 mb-8 p-8 bg-white border border-gray-100 rounded-2xl">
         <p className="text-gray-600 mb-4">还有其他问题？欢迎联系我们或提交 Issue。</p>
         <div className="flex justify-center gap-4 flex-wrap">
-          <a href="mailto:sdupan2015@gmail.com" className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <a href="####" className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             联系作者
           </a>
           <a
-            href="https://github.com/SeqCrafter/NextTV/issues"
+            href="####"
             target="_blank"
             rel="noopener noreferrer"
             className="px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
