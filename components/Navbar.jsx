@@ -115,20 +115,13 @@ export function Navbar() {
           onClick={() => router.push("/")}
         >
           <div className="relative group-hover:scale-105 transition-transform duration-200">
-            <Image
-              src="#"
-              alt="#"
-              width={20}
-              height={20}
-              className="w-5 h-5 object-contain"
-            />
           </div>
           <div className="flex flex-col justify-center h-full">
             <h1 className="text-xl font-extrabold leading-none tracking-tight">
               <span className="text-gray-900">灬灬</span>
               <span className="text-primary">TV</span>
             </h1>
-            <span className="text-[5px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
+            <span className="text-[3px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
               ▂▃▄▅▆▇█ 
             </span>
           </div>
