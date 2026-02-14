@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "NextTV - 影视无限",
-  description: "NextTV 影视播放平台",
+  title: "TV - 无限",
+  description: "TV平台",
 };
 
 export default function RootLayout({ children }) {
