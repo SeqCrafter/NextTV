@@ -125,11 +125,11 @@ export function Navbar() {
           </div>
           <div className="flex flex-col justify-center h-full">
             <h1 className="text-xl font-extrabold leading-none tracking-tight">
-              <span className="text-gray-900">Next</span>
+              <span className="text-gray-900">灬灬</span>
               <span className="text-primary">TV</span>
             </h1>
-            <span className="text-[18px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
-              灬灬
+            <span className="text-[5px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
+              ▂▃▄▅▆▇█ 
             </span>
           </div>
         </div>
