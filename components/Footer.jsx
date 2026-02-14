@@ -8,19 +8,19 @@ export function Footer() {
         <div className="flex items-center gap-2">
           <Image src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png" alt="NextTV" width={24} height={24} />
           <p className="text-gray-500 text-sm font-medium">
-            © 2026 NextTV. 开源项目。
+            © ShineJ。
           </p>
         </div>
         <div className="flex gap-6">
           <a
             className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="mailto:sdupan2015@gmail.com"
+            href="####"
           >
             联系作者
           </a>
           <a
             className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
-            href="https://github.com/SeqCrafter/NextTV/issues"
+            href="####"
             target="_blank"
             rel="noopener noreferrer"
           >
