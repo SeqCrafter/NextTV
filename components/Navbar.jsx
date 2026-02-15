@@ -115,21 +115,14 @@ export function Navbar() {
           onClick={() => router.push("/")}
         >
           <div className="relative group-hover:scale-105 transition-transform duration-200">
-            <Image
-              src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
-              alt="NextTV"
-              width={20}
-              height={20}
-              className="w-5 h-5 object-contain"
-            />
           </div>
           <div className="flex flex-col justify-center h-full">
             <h1 className="text-xl font-extrabold leading-none tracking-tight">
-              <span className="text-gray-900">Next</span>
+              <span className="text-gray-900">灬灬</span>
               <span className="text-primary">TV</span>
             </h1>
-            <span className="text-[10px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
-              影视无限畅享
+            <span className="text-[1px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
+              ▂▃▄▅▆▇█ 
             </span>
           </div>
         </div>
@@ -139,20 +132,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="https://github.com/SeqCrafter/NextTV"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors btn-press"
-          >
-            <SimpleIconsGithub
-              aria-hidden="true"
-              className="size-5"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            />
-          </Link>
 
           {/* History Dropdown */}
           <div className="static md:relative" ref={dropdownRef}>
