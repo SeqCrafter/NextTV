@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { VideoPlayerDirect } from "@/components/VideoPlayerDirect";
 import { DanmakuSearch } from "@/components/DanmakuSearch";
@@ -11,6 +11,14 @@ import {
 } from "@/components/icons";
 
 export default function DirectPlayerPage() {
+  return (
+    <Suspense>
+      <DirectPlayerContent />
+    </Suspense>
+  );
+}
+
+function DirectPlayerContent() {
   const searchParams = useSearchParams();
   const playerurl = searchParams.get("playerurl");
   const title = searchParams.get("title") || "";
