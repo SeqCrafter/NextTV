@@ -186,7 +186,7 @@ export default function HelpPage() {
                 <li>
                   部署完成后，你需要填入的API地址的样子大概为
                   <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">
-                    https://{"{"}your project name{"}"}.netlify.app/{"{"}token{"}"}/api/v2/douban
+                    https://{"{"}your project name{"}"}.netlify.app/{"{"}token{"}"}
                   </code>
                   ，其中your project name为你部署的项目的名字，token为你设置的环境变量中的LOGVAR_TOKEN。
                 </li>

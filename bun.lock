@@ -8,20 +8,20 @@
         "artplayer": "^5.3.0",
         "artplayer-plugin-danmuku": "^5.2.0",
         "hls.js": "^1.6.15",
-        "next": "16.1.1",
-        "react": "19.2.3",
-        "react-dom": "19.2.3",
-        "zustand": "^5.0.10",
+        "next": "16.1.6",
+        "react": "19.2.4",
+        "react-dom": "19.2.4",
+        "zustand": "^5.0.11",
       },
       "devDependencies": {
-        "@tailwindcss/postcss": "^4",
-        "autoprefixer": "^10.4.20",
+        "@tailwindcss/postcss": "^4.1.18",
+        "autoprefixer": "^10.4.24",
         "babel-plugin-react-compiler": "1.0.0",
-        "eslint": "^9",
+        "eslint": "^9.39.2",
         "eslint-config-next": "16.1.1",
         "eslint-plugin-react-hooks": "^7.0.1",
-        "postcss": "^8.4.47",
-        "tailwindcss": "^4",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.18",
       },
     },
   },
@@ -158,25 +158,25 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.12", "https://registry.npmmirror.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz", { "dependencies": { "@emnapi/core": "^1.4.3", "@emnapi/runtime": "^1.4.3", "@tybys/wasm-util": "^0.10.0" } }, "sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ=="],
 
-    "@next/env": ["@next/env@16.1.1", "https://registry.npmmirror.com/@next/env/-/env-16.1.1.tgz", {}, "sha512-3oxyM97Sr2PqiVyMyrZUtrtM3jqqFxOQJVuKclDsgj/L728iZt/GyslkN4NwarledZATCenbk4Offjk1hQmaAA=="],
+    "@next/env": ["@next/env@16.1.6", "https://registry.npmmirror.com/@next/env/-/env-16.1.6.tgz", {}, "sha512-N1ySLuZjnAtN3kFnwhAwPvZah8RJxKasD7x1f8shFqhncnWZn4JMfg37diLNuoHsLAlrDfM3g4mawVdtAG8XLQ=="],
 
     "@next/eslint-plugin-next": ["@next/eslint-plugin-next@16.1.1", "https://registry.npmmirror.com/@next/eslint-plugin-next/-/eslint-plugin-next-16.1.1.tgz", { "dependencies": { "fast-glob": "3.3.1" } }, "sha512-Ovb/6TuLKbE1UiPcg0p39Ke3puyTCIKN9hGbNItmpQsp+WX3qrjO3WaMVSi6JHr9X1NrmthqIguVHodMJbh/dw=="],
 
-    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.1.1", "https://registry.npmmirror.com/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.1.1.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-JS3m42ifsVSJjSTzh27nW+Igfha3NdBOFScr9C80hHGrWx55pTrVL23RJbqir7k7/15SKlrLHhh/MQzqBBYrQA=="],
+    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.1.6", "https://registry.npmmirror.com/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.1.6.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-wTzYulosJr/6nFnqGW7FrG3jfUUlEf8UjGA0/pyypJl42ExdVgC6xJgcXQ+V8QFn6niSG2Pb8+MIG1mZr2vczw=="],
 
-    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.1.1", "https://registry.npmmirror.com/@next/swc-darwin-x64/-/swc-darwin-x64-16.1.1.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-hbyKtrDGUkgkyQi1m1IyD3q4I/3m9ngr+V93z4oKHrPcmxwNL5iMWORvLSGAf2YujL+6HxgVvZuCYZfLfb4bGw=="],
+    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.1.6", "https://registry.npmmirror.com/@next/swc-darwin-x64/-/swc-darwin-x64-16.1.6.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-BLFPYPDO+MNJsiDWbeVzqvYd4NyuRrEYVB5k2N3JfWncuHAy2IVwMAOlVQDFjj+krkWzhY2apvmekMkfQR0CUQ=="],
 
-    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.1.1", "https://registry.npmmirror.com/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.1.1.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-/fvHet+EYckFvRLQ0jPHJCUI5/B56+2DpI1xDSvi80r/3Ez+Eaa2Yq4tJcRTaB1kqj/HrYKn8Yplm9bNoMJpwQ=="],
+    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.1.6", "https://registry.npmmirror.com/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.1.6.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-OJYkCd5pj/QloBvoEcJ2XiMnlJkRv9idWA/j0ugSuA34gMT6f5b7vOiCQHVRpvStoZUknhl6/UxOXL4OwtdaBw=="],
 
-    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.1.1", "https://registry.npmmirror.com/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.1.1.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-MFHrgL4TXNQbBPzkKKur4Fb5ICEJa87HM7fczFs2+HWblM7mMLdco3dvyTI+QmLBU9xgns/EeeINSZD6Ar+oLg=="],
+    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.1.6", "https://registry.npmmirror.com/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.1.6.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-S4J2v+8tT3NIO9u2q+S0G5KdvNDjXfAv06OhfOzNDaBn5rw84DGXWndOEB7d5/x852A20sW1M56vhC/tRVbccQ=="],
 
-    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.1.1", "https://registry.npmmirror.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.1.1.tgz", { "os": "linux", "cpu": "x64" }, "sha512-20bYDfgOQAPUkkKBnyP9PTuHiJGM7HzNBbuqmD0jiFVZ0aOldz+VnJhbxzjcSabYsnNjMPsE0cyzEudpYxsrUQ=="],
+    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.1.6", "https://registry.npmmirror.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.1.6.tgz", { "os": "linux", "cpu": "x64" }, "sha512-2eEBDkFlMMNQnkTyPBhQOAyn2qMxyG2eE7GPH2WIDGEpEILcBPI/jdSv4t6xupSP+ot/jkfrCShLAa7+ZUPcJQ=="],
 
-    "@next/swc-linux-x64-musl": ["@next/swc-linux-x64-musl@16.1.1", "https://registry.npmmirror.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.1.1.tgz", { "os": "linux", "cpu": "x64" }, "sha512-9pRbK3M4asAHQRkwaXwu601oPZHghuSC8IXNENgbBSyImHv/zY4K5udBusgdHkvJ/Tcr96jJwQYOll0qU8+fPA=="],
+    "@next/swc-linux-x64-musl": ["@next/swc-linux-x64-musl@16.1.6", "https://registry.npmmirror.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.1.6.tgz", { "os": "linux", "cpu": "x64" }, "sha512-oicJwRlyOoZXVlxmIMaTq7f8pN9QNbdes0q2FXfRsPhfCi8n8JmOZJm5oo1pwDaFbnnD421rVU409M3evFbIqg=="],
 
-    "@next/swc-win32-arm64-msvc": ["@next/swc-win32-arm64-msvc@16.1.1", "https://registry.npmmirror.com/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.1.1.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-bdfQkggaLgnmYrFkSQfsHfOhk/mCYmjnrbRCGgkMcoOBZ4n+TRRSLmT/CU5SATzlBJ9TpioUyBW/vWFXTqQRiA=="],
+    "@next/swc-win32-arm64-msvc": ["@next/swc-win32-arm64-msvc@16.1.6", "https://registry.npmmirror.com/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.1.6.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-gQmm8izDTPgs+DCWH22kcDmuUp7NyiJgEl18bcr8irXA5N2m2O+JQIr6f3ct42GOs9c0h8QF3L5SzIxcYAAXXw=="],
 
-    "@next/swc-win32-x64-msvc": ["@next/swc-win32-x64-msvc@16.1.1", "https://registry.npmmirror.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.1.1.tgz", { "os": "win32", "cpu": "x64" }, "sha512-Ncwbw2WJ57Al5OX0k4chM68DKhEPlrXBaSXDCi2kPi5f4d8b3ejr3RRJGfKBLrn2YJL5ezNS7w2TZLHSti8CMw=="],
+    "@next/swc-win32-x64-msvc": ["@next/swc-win32-x64-msvc@16.1.6", "https://registry.npmmirror.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.1.6.tgz", { "os": "win32", "cpu": "x64" }, "sha512-NRfO39AIrzBnixKbjuo2YiYhB6o9d8v/ymU9m/Xk8cyVk+k7XylniXkHwjs4s70wedVffc6bQNbufk5v0xEm0A=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "https://registry.npmmirror.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
@@ -666,7 +666,7 @@
 
     "natural-compare": ["natural-compare@1.4.0", "https://registry.npmmirror.com/natural-compare/-/natural-compare-1.4.0.tgz", {}, "sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw=="],
 
-    "next": ["next@16.1.1", "https://registry.npmmirror.com/next/-/next-16.1.1.tgz", { "dependencies": { "@next/env": "16.1.1", "@swc/helpers": "0.5.15", "baseline-browser-mapping": "^2.8.3", "caniuse-lite": "^1.0.30001579", "postcss": "8.4.31", "styled-jsx": "5.1.6" }, "optionalDependencies": { "@next/swc-darwin-arm64": "16.1.1", "@next/swc-darwin-x64": "16.1.1", "@next/swc-linux-arm64-gnu": "16.1.1", "@next/swc-linux-arm64-musl": "16.1.1", "@next/swc-linux-x64-gnu": "16.1.1", "@next/swc-linux-x64-musl": "16.1.1", "@next/swc-win32-arm64-msvc": "16.1.1", "@next/swc-win32-x64-msvc": "16.1.1", "sharp": "^0.34.4" }, "peerDependencies": { "@opentelemetry/api": "^1.1.0", "@playwright/test": "^1.51.1", "babel-plugin-react-compiler": "*", "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", "sass": "^1.3.0" }, "optionalPeers": ["@opentelemetry/api", "@playwright/test", "babel-plugin-react-compiler", "sass"], "bin": { "next": "dist/bin/next" } }, "sha512-QI+T7xrxt1pF6SQ/JYFz95ro/mg/1Znk5vBebsWwbpejj1T0A23hO7GYEaVac9QUOT2BIMiuzm0L99ooq7k0/w=="],
+    "next": ["next@16.1.6", "https://registry.npmmirror.com/next/-/next-16.1.6.tgz", { "dependencies": { "@next/env": "16.1.6", "@swc/helpers": "0.5.15", "baseline-browser-mapping": "^2.8.3", "caniuse-lite": "^1.0.30001579", "postcss": "8.4.31", "styled-jsx": "5.1.6" }, "optionalDependencies": { "@next/swc-darwin-arm64": "16.1.6", "@next/swc-darwin-x64": "16.1.6", "@next/swc-linux-arm64-gnu": "16.1.6", "@next/swc-linux-arm64-musl": "16.1.6", "@next/swc-linux-x64-gnu": "16.1.6", "@next/swc-linux-x64-musl": "16.1.6", "@next/swc-win32-arm64-msvc": "16.1.6", "@next/swc-win32-x64-msvc": "16.1.6", "sharp": "^0.34.4" }, "peerDependencies": { "@opentelemetry/api": "^1.1.0", "@playwright/test": "^1.51.1", "babel-plugin-react-compiler": "*", "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", "sass": "^1.3.0" }, "optionalPeers": ["@opentelemetry/api", "@playwright/test", "babel-plugin-react-compiler", "sass"], "bin": { "next": "dist/bin/next" } }, "sha512-hkyRkcu5x/41KoqnROkfTm2pZVbKxvbZRuNvKXLRXxs3VfyO0WhY50TQS40EuKO9SW3rBj/sF3WbVwDACeMZyw=="],
 
     "node-exports-info": ["node-exports-info@1.6.0", "https://registry.npmmirror.com/node-exports-info/-/node-exports-info-1.6.0.tgz", { "dependencies": { "array.prototype.flatmap": "^1.3.3", "es-errors": "^1.3.0", "object.entries": "^1.1.9", "semver": "^6.3.1" } }, "sha512-pyFS63ptit/P5WqUkt+UUfe+4oevH+bFeIiPPdfb0pFeYEu/1ELnJu5l+5EcTKYL5M7zaAa7S8ddywgXypqKCw=="],
 
@@ -724,9 +724,9 @@
 
     "queue-microtask": ["queue-microtask@1.2.3", "https://registry.npmmirror.com/queue-microtask/-/queue-microtask-1.2.3.tgz", {}, "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="],
 
-    "react": ["react@19.2.3", "https://registry.npmmirror.com/react/-/react-19.2.3.tgz", {}, "sha512-Ku/hhYbVjOQnXDZFv2+RibmLFGwFdeeKHFcOTlrt7xplBnya5OGn/hIRDsqDiSUcfORsDC7MPxwork8jBwsIWA=="],
+    "react": ["react@19.2.4", "https://registry.npmmirror.com/react/-/react-19.2.4.tgz", {}, "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ=="],
 
-    "react-dom": ["react-dom@19.2.3", "https://registry.npmmirror.com/react-dom/-/react-dom-19.2.3.tgz", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.3" } }, "sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg=="],
+    "react-dom": ["react-dom@19.2.4", "https://registry.npmmirror.com/react-dom/-/react-dom-19.2.4.tgz", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.4" } }, "sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ=="],
 
     "react-is": ["react-is@16.13.1", "https://registry.npmmirror.com/react-is/-/react-is-16.13.1.tgz", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
