@@ -51,6 +51,9 @@ export default function Home() {
         if (mediaType === "short") {
           const res = await fetch(`/api/hongguo?page_limit=${pageSize}&page_start=${page * pageSize}`);
           const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.error || "获取红果短剧推荐失败");
+          }
           const converted = (data.list || []).map((item) => ({
             id: item.title,
             title: item.title,

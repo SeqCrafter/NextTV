@@ -1,10 +1,56 @@
 import {NextResponse} from "next/server";
 import {unstable_cache} from "next/cache";
 
+const HONGGUO_BASE_URL = "https://hongguoduanju.com";
+
+function extractRouterData(html) {
+  const assignmentMatch = html.match(/(?:window\.)?_ROUTER_DATA\s*=\s*/);
+  if (!assignmentMatch || assignmentMatch.index === undefined) {
+    throw new Error("无法从页面中找到 _ROUTER_DATA");
+  }
+
+  const jsonStart = assignmentMatch.index + assignmentMatch[0].length;
+  if (html[jsonStart] !== "{") {
+    throw new Error("_ROUTER_DATA 格式异常");
+  }
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = jsonStart; index < html.length; index += 1) {
+    const character = html[index];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (character === "\\") {
+        escaped = true;
+      } else if (character === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (character === '"') {
+      inString = true;
+    } else if (character === "{") {
+      depth += 1;
+    } else if (character === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        return JSON.parse(html.slice(jsonStart, index + 1));
+      }
+    }
+  }
+
+  throw new Error("无法从页面中完整提取 _ROUTER_DATA");
+}
+
 const getHongguoRecommend = unstable_cache(
   async () => {
     const response = await fetch(
-      "https://novelquickapp.com/category?sort_type=1",
+      `${HONGGUO_BASE_URL}/category?sort_type=1`,
       {
         headers: {
           "User-Agent":
@@ -19,22 +65,7 @@ const getHongguoRecommend = unstable_cache(
     }
 
     const html = await response.text();
-
-    // 从 <script> 标签中提取 window._ROUTER_DATA
-    const startMarker = "window._ROUTER_DATA = ";
-    const startIdx = html.indexOf(startMarker);
-    if (startIdx === -1) {
-      throw new Error("无法从页面中找到 _ROUTER_DATA");
-    }
-    const jsonStart = startIdx + startMarker.length;
-    const jsonEnd = html.indexOf("</script>", jsonStart);
-    if (jsonEnd === -1) {
-      throw new Error("无法从页面中提取数据");
-    }
-    const rawJson = html.substring(jsonStart, jsonEnd).trim().replace(/;$/, "");
-
-    // 解析 JSON（内容中包含 \u002F 等 Unicode 转义，JSON.parse 会自动处理）
-    const routerData = JSON.parse(rawJson);
+    const routerData = extractRouterData(html);
 
     // 路径: loaderData.category_page.recommendList
     const recommendList =
@@ -48,7 +79,7 @@ const getHongguoRecommend = unstable_cache(
     return recommendList.map((item) => ({
       title: item.series_name,
       poster: item.series_cover,
-      hongguoUrl: `https://novelquickapp.com/detail?series_id=${item.series_id}`,
+      hongguoUrl: `${HONGGUO_BASE_URL}/detail?series_id=${item.series_id}`,
     }));
   },
   ["hongguo-api"],
