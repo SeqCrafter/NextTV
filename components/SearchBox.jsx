@@ -18,11 +18,6 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
   const clearHistory = useSearchHistoryStore((state) => state.clearHistory);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
-  // Update input value when initialValue changes
-  useEffect(() => {
-    setInputValue(initialValue);
-  }, [initialValue]);
-
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {

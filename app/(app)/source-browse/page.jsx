@@ -14,7 +14,7 @@ export default function SourceBrowsePage() {
   const videoSources = useSettingsStore((state) => state.videoSources);
   const activeSources = useMemo(() => videoSources.filter(s => s.enabled), [videoSources]);
 
-  const [activeSourceId, setActiveSourceId] = useState(null);
+  const [selectedSourceId, setSelectedSourceId] = useState(null);
   const [categories, setCategories] = useState([]);
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   
@@ -25,14 +25,20 @@ export default function SourceBrowsePage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalVideos, setTotalVideos] = useState(0);
 
+  const activeSourceId = activeSources.some((source) => source.id === selectedSourceId)
+    ? selectedSourceId
+    : activeSources[0]?.id ?? null;
   const activeSource = useMemo(() => activeSources.find(s => s.id === activeSourceId), [activeSources, activeSourceId]);
 
-  // Initialize active source
   useEffect(() => {
-    if (activeSources.length > 0 && !activeSourceId) {
-      setActiveSourceId(activeSources[0].id);
+    async function resetSourceView() {
+      await Promise.resolve();
+      setActiveCategoryId("all");
+      setPage(1);
     }
-  }, [activeSources, activeSourceId]);
+
+    resetSourceView();
+  }, [activeSourceId]);
 
   // Fetch categories and total info when source changes
   useEffect(() => {
@@ -61,10 +67,6 @@ export default function SourceBrowsePage() {
 
     fetchSourceInfo();
     
-    // Default to 'all' category and page 1 when source changes
-    setActiveCategoryId("all");
-    setPage(1);
-
     return () => controller.abort();
   }, [activeSource?.url]);
 
@@ -123,7 +125,7 @@ export default function SourceBrowsePage() {
             {activeSources.map(source => (
               <button
                 key={source.id}
-                onClick={() => setActiveSourceId(source.id)}
+                onClick={() => setSelectedSourceId(source.id)}
                 className={`shrink-0 flex items-center justify-between gap-4 px-6 py-4 rounded-xl border transition-all min-w-[240px] cursor-pointer ${
                   activeSourceId === source.id
                     ? 'border-primary ring-1 ring-primary bg-white shadow-sm'

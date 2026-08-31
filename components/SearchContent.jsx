@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useEffectEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
@@ -32,16 +32,13 @@ export default function SearchContent() {
   const restoreScrollPosition = useSearchScrollStore((state) => state.restoreScrollPosition);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
-  // 使用 ref 保存 restoreScrollPosition，避免作为 useEffect 依赖
-  const restoreScrollPositionRef = useRef(restoreScrollPosition);
-  restoreScrollPositionRef.current = restoreScrollPosition;
+  const getCurrentVideoSources = useEffectEvent(() => videoSources);
+  const restoreSavedScrollPosition = useEffectEvent(() => restoreScrollPosition());
 
   // 只显示已激活的源
   const enabledSources = videoSources.filter((s) => s.enabled);
   // 稳定的依赖值，避免 Zustand hydration 引用变化触发重复请求
   const enabledSourceKeys = enabledSources.map((s) => s.key).join(",");
-  const videoSourcesRef = useRef(videoSources);
-  videoSourcesRef.current = videoSources;
   // 从 URL 参数读取源过滤，默认为第一个激活源
   const sourceParam = searchParams.get("source");
   const sourceFilter = sourceParam && enabledSources.some((s) => s.key === sourceParam)
@@ -107,7 +104,7 @@ export default function SearchContent() {
       try {
         const searchData = await searchVideos(
           query,
-          videoSourcesRef.current,
+          getCurrentVideoSources(),
           currentPage,
           sourceFilter || undefined,
         );
@@ -120,7 +117,7 @@ export default function SearchContent() {
 
         // 数据加载完成后恢复滚动位置
         requestAnimationFrame(() => {
-          const savedY = restoreScrollPositionRef.current();
+          const savedY = restoreSavedScrollPosition();
           if (savedY > 0) {
             window.scrollTo(0, savedY);
           }
@@ -224,7 +221,7 @@ export default function SearchContent() {
   return (
     <div className="w-full max-w-7xl flex flex-col gap-8 pt-6 page-enter">
       <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
-        <SearchBox initialValue={query} />
+        <SearchBox key={query} initialValue={query} />
 
         <div className="bg-gray-100 p-1 rounded-lg inline-flex items-center gap-0.5">
           <label className="cursor-pointer relative">
@@ -315,4 +312,3 @@ export default function SearchContent() {
     </div>
   );
 }
-

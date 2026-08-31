@@ -30,17 +30,17 @@ export function SpeedTestBadge({ videoId, sourceKey, sourceName, sourceUrl }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check cache again in effect in case it was populated by another component instance
-    const cached = getCachedResult();
-    if (cached) {
-      setResult(cached);
-      setLoading(false);
-      return;
-    }
-
     let mounted = true;
 
     async function runTest() {
+      // Check cache again in case another component populated it after render.
+      const cached = getCachedResult();
+      if (cached) {
+        setResult(cached);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         // 1. Get video details

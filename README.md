@@ -12,11 +12,11 @@
 
 <div align="center">
 
-![Next.js](https://img.shields.io/badge/Next.js-16.2.1-000?logo=nextdotjs)
-![React](https://img.shields.io/badge/React-19.2.4-61dafb?logo=react)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.2.2-38bdf8?logo=tailwindcss)
+![Next.js](https://img.shields.io/badge/Next.js-16.3.3-000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19.2.8-61dafb?logo=react)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.3.3-38bdf8?logo=tailwindcss)
 ![ArtPlayer](https://img.shields.io/badge/ArtPlayer-5.4.0-ff6b6b)
-![HLS.js](https://img.shields.io/badge/HLS.js-1.6.15-ec407a)
+![HLS.js](https://img.shields.io/badge/HLS.js-1.7.1-ec407a)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Docker Ready](https://img.shields.io/badge/Docker-ready-blue?logo=docker)
 
@@ -70,19 +70,19 @@
 
 ### 核心框架
 
-- **Next.js** 16.2.1 - React 服务端渲染框架
-- **React** 19.2.4 - 用户界面构建库
-- **Tailwind CSS** 4.1.18 - 现代化 CSS 框架
+- **Next.js** 16.3.3 - React 服务端渲染框架
+- **React** 19.2.8 - 用户界面构建库
+- **Tailwind CSS** 4.3.3 - 现代化 CSS 框架
 
 ### 播放器相关
 
 - **Artplayer** 5.4.0 - 功能丰富的 HTML5 视频播放器
-- **HLS.js** 1.6.15 - HTTP Live Streaming 支持
+- **HLS.js** 1.7.1 - HTTP Live Streaming 支持
 - **artplayer-plugin-danmuku** 5.3.0 - 弹幕插件
 
 ### 状态管理
 
-- **Zustand** 5.0.10 - 轻量级状态管理库
+- **Zustand** 5.0.15 - 轻量级状态管理库
 
 ---
 
@@ -112,6 +112,10 @@ bun dev
 ```
 
 访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+
+也可以通过局域网 HTTP 地址（例如 `http://192.168.0.5:3000`）访问。登录会话的
+Cookie 会根据当前请求协议自动设置：HTTPS 使用 `Secure`，HTTP 不使用
+`Secure`。通过反向代理部署时，请确保代理正确传递 `X-Forwarded-Proto`。
 
 ### 构建生产版本
 

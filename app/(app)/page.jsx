@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { ContinueWatching } from "@/components/ContinueWatching";
@@ -34,41 +34,46 @@ export default function Home() {
   const doubanProxy = useSettingsStore((state) => state.doubanProxy);
 
   useEffect(() => {
-    const { movieTags: loadedMovieTags, tvTags: loadedTvTags } = loadUserTags();
-    setMovieTags(loadedMovieTags);
-    setTvTags(loadedTvTags);
+    async function hydrateUserTags() {
+      await Promise.resolve();
+      const { movieTags: loadedMovieTags, tvTags: loadedTvTags } = loadUserTags();
+      setMovieTags(loadedMovieTags);
+      setTvTags(loadedTvTags);
+    }
+
+    hydrateUserTags();
   }, []);
 
-  const loadMovies = useCallback(async () => {
-    setLoading(true);
-    try {
-      if (mediaType === "short") {
-        const res = await fetch(`/api/hongguo?page_limit=${pageSize}&page_start=${page * pageSize}`);
-        const data = await res.json();
-        const converted = (data.list || []).map((item) => ({
-          id: item.title,
-          title: item.title,
-          poster: item.poster,
-          rating: "暂无",
-          hongguoUrl: item.hongguoUrl,
-        }));
-        setMovies(converted);
-      } else {
-        const data = await fetchRecommendations(mediaType, currentTag, pageSize, page * pageSize, doubanProxy);
-        const converted = data.subjects.map(convertDoubanToMovie);
-        setMovies(converted);
-      }
-    } catch (error) {
-      console.error("加载失败:", error);
-      setMovies([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [mediaType, currentTag, page, doubanProxy]);
-
   useEffect(() => {
+    async function loadMovies() {
+      setLoading(true);
+      try {
+        if (mediaType === "short") {
+          const res = await fetch(`/api/hongguo?page_limit=${pageSize}&page_start=${page * pageSize}`);
+          const data = await res.json();
+          const converted = (data.list || []).map((item) => ({
+            id: item.title,
+            title: item.title,
+            poster: item.poster,
+            rating: "暂无",
+            hongguoUrl: item.hongguoUrl,
+          }));
+          setMovies(converted);
+        } else {
+          const data = await fetchRecommendations(mediaType, currentTag, pageSize, page * pageSize, doubanProxy);
+          const converted = data.subjects.map(convertDoubanToMovie);
+          setMovies(converted);
+        }
+      } catch (error) {
+        console.error("加载失败:", error);
+        setMovies([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     loadMovies();
-  }, [loadMovies]);
+  }, [mediaType, currentTag, page, doubanProxy]);
 
   const handleMediaTypeChange = (type) => {
     setMediaType(type);
