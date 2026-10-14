@@ -32,15 +32,10 @@ const checkVideoUpgrade = unstable_cache(
   async (ids, sourceUrl) => {
     const detailUrl = `${sourceUrl}?ac=detail&ids=${ids}`;
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
     try {
       const response = await fetch(detailUrl, {
-        signal: controller.signal,
+        signal: AbortSignal.timeout(10000),
       });
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`详情请求失败: ${response.status}`);
@@ -66,8 +61,12 @@ const checkVideoUpgrade = unstable_cache(
         episodeLength,
       };
     } catch (error) {
-      clearTimeout(timeoutId);
-      console.error("获取详情错误:", error.message);
+      // 底层网络错误（如 fetch failed）的真实原因在 error.cause 中
+      console.error(
+        "获取详情错误:",
+        error.message,
+        error.cause?.code || error.cause?.message || "",
+      );
       throw error;
     }
   },
@@ -80,20 +79,23 @@ export async function GET(request) {
   const ids = searchParams.get("ids");
   const sourceUrl = searchParams.get("sourceUrl");
 
+  if (!ids || !sourceUrl) {
+    return NextResponse.json(
+      {error: "缺少 ids 或 sourceUrl 参数", episodeLength: []},
+      {status: 400},
+    );
+  }
+
   try {
     const episodeLength = await checkVideoUpgrade(ids, sourceUrl);
     return NextResponse.json({
       episodeLength,
     });
   } catch (error) {
-    console.error("获取详情错误:", error.message);
+    // 更新检查只是辅助信息，视频源不可达时降级为空结果，不影响页面
     return NextResponse.json(
-      {
-        error: error.message,
-      },
-      {
-        status: 500,
-      },
+      {error: error.message, episodeLength: []},
+      {status: 200, headers: {"Cache-Control": "no-store"}},
     );
   }
 }
