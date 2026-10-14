@@ -4,7 +4,8 @@ import Hls from "hls.js";
 import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
-import { formatTime, CustomHlsJsLoader } from "@/lib/util";
+import { formatTime } from "@/lib/util";
+import { CustomHlsJsLoader } from "@/lib/hlsLoader";
 import { replaceDanmakuLoader } from "@/lib/artplayerDanmaku";
 import { createDanmakuLoader } from "@/lib/danmakuApi";
 export function usePlayer({
