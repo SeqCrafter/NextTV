@@ -169,7 +169,7 @@ export function LibraryPanel({
                     <li key={`${record.source}-${record.id}`} className="group relative">
                       <button
                         onClick={() => onHistoryClick(record)}
-                        className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-white/80 cursor-pointer"
+                        className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
                       >
                         <Poster src={record.poster}>
                           <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
@@ -218,7 +218,7 @@ export function LibraryPanel({
                   <li key={`${favorite.source}-${favorite.id}`} className="group relative">
                     <button
                       onClick={() => onFavoriteClick(favorite)}
-                      className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-white/80 cursor-pointer"
+                      className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
                     >
                       <Poster src={favorite.poster}>
                         <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">

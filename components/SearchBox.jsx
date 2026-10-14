@@ -75,7 +75,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
           <MaterialSymbolsSearchRounded className="text-xl" />
         </div>
         <input
-          className="w-full h-12 sm:h-14 bg-white border border-gray-200 rounded-xl pl-12 pr-24 text-gray-900 placeholder-gray-400 shadow-sm transition-all text-base placeholder:text-sm hover:border-gray-300 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+          className="w-full h-12 sm:h-14 bg-white border border-gray-900/[0.06] rounded-xl pl-12 pr-24 text-gray-900 placeholder-gray-400 shadow-[0_1px_2px_rgba(17,24,39,0.03)] transition-all text-base placeholder:text-sm hover:border-gray-900/10 focus:outline-none focus:border-primary/60 focus:ring-[3px] focus:ring-primary/10"
           placeholder={placeholder}
           type="search"
           enterKeyHint="search"
@@ -92,8 +92,8 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                 <MaterialSymbolsCloseRounded className="text-xl" />
               </button>
             )}
-            <div className="hidden sm:block w-px h-6 bg-gray-200 self-center"></div>
-            <kbd aria-hidden="true" className="hidden sm:inline-flex min-w-8 items-center justify-center rounded-md border border-gray-200 bg-linear-to-b from-white to-gray-50 px-2 py-[5px] text-[10px] font-medium leading-none text-gray-400 shadow-[0_1px_0_rgba(255,255,255,0.95)_inset,0_1px_1px_rgba(15,23,42,0.04)] self-center">
+            <div className="hidden sm:block w-px h-5 bg-gray-900/[0.06] self-center"></div>
+            <kbd aria-hidden="true" className="hidden sm:inline-flex min-w-8 items-center justify-center rounded-md bg-gray-900/[0.04] px-2 py-[5px] text-[10px] font-medium leading-none text-gray-400 self-center">
               ⏎
             </kbd>
           </div>
@@ -114,7 +114,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
           </div>
           <div className="max-h-80 overflow-y-auto overscroll-contain p-1.5 custom-scrollbar">
             {searchHistory.map((item, index) => (
-              <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/80 transition-colors group cursor-pointer" onClick={() => handleHistoryItemClick(item)}>
+              <div key={index} className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-gray-900/[0.04] transition-colors group cursor-pointer" onClick={() => handleHistoryItemClick(item)}>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <MaterialSymbolsSearchRounded className="text-[20px] text-gray-400" />
                   <span className="text-gray-900 truncate">{item}</span>
