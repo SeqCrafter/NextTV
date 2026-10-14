@@ -680,3 +680,115 @@ input[type="search"]::-webkit-search-decoration {
 .animate-shake {
   animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
+
+/* ============================================
+   Mobile Adaptation
+   手机端适配：安全区、底部导航、底部抽屉、输入防缩放
+   ============================================ */
+
+/* 底部导航栏高度（不含安全区） */
+:root {
+  --mobile-nav-height: 4rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* 横屏时避开刘海 */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 消除移动端点击延迟 */
+a,
+button,
+label,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"] {
+  touch-action: manipulation;
+}
+
+/* 手机端为底部导航预留空间，桌面端不受影响 */
+@media (max-width: 767px) {
+  .pb-mobile-nav {
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+  }
+
+  /* iOS 输入框字号小于 16px 时聚焦会自动放大页面 */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+.mobile-nav {
+  height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-top: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== Bottom Sheet ===== */
+/* 手机端弹窗统一改为从底部滑出的抽屉 */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-enter {
+  animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 小屏用抽屉动画，sm 及以上沿用原来的缩放弹出 */
+@media (max-width: 639px) {
+  .modal-content-enter,
+  .danmaku-modal-content {
+    animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .danmaku-modal-overlay {
+    align-items: flex-end;
+  }
+
+  .danmaku-modal-content {
+    width: 100%;
+    max-width: none;
+    max-height: 85dvh;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .danmaku-modal-close {
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 8px;
+  }
+}
+
+/* 抽屉顶部的拖拽把手（装饰） */
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(17, 24, 39, 0.15);
+  margin: 8px auto 0;
+}

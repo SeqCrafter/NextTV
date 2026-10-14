@@ -184,7 +184,7 @@ export default function Home() {
         <div role="radiogroup" aria-label="内容类型" className="bg-gray-100 p-1 rounded-xl inline-flex items-center gap-0.5 max-w-full">
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="movie" checked={mediaType === "movie"} onChange={() => handleMediaTypeChange("movie")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
+            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
               <MaterialSymbolsMovieOutlineRounded className="text-[18px]" aria-hidden="true" />
               电影
             </div>
@@ -192,7 +192,7 @@ export default function Home() {
           <div className={`w-px h-4 bg-gray-300 ${mediaType === "movie" || mediaType === "tv" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="tv" checked={mediaType === "tv"} onChange={() => handleMediaTypeChange("tv")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
+            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
               <MaterialSymbolsTvOutlineRounded className="text-[18px]" aria-hidden="true" />
               电视剧
             </div>
@@ -200,7 +200,7 @@ export default function Home() {
           <div className={`w-px h-4 bg-gray-300 ${mediaType === "tv" || mediaType === "short" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
           <label className="cursor-pointer relative">
             <input className="peer sr-only" name="media-type" type="radio" value="short" checked={mediaType === "short"} onChange={() => handleMediaTypeChange("short")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
+            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
               <MaterialSymbolsSmartphoneOutline className="text-[18px]" aria-hidden="true" />
               短剧
             </div>
@@ -214,7 +214,7 @@ export default function Home() {
         <div className="flex gap-2 sm:gap-3 overflow-x-auto hide-scrollbar py-2 px-1 pr-16 snap-x" role="toolbar" aria-label="分类标签">
           <button
             onClick={() => setShowTagModal(true)}
-            className="shrink-0 px-4 sm:px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-white border border-dashed border-gray-300 text-gray-600 hover:border-primary hover:text-gray-900 cursor-pointer btn-press flex items-center"
+            className="shrink-0 px-4 sm:px-5 py-2.5 sm:py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-white border border-dashed border-gray-300 text-gray-600 hover:border-primary hover:text-gray-900 cursor-pointer btn-press flex items-center"
           >
             <MaterialSymbolsAdd className="text-[16px] mr-1" />
             管理标签
@@ -224,7 +224,7 @@ export default function Home() {
               key={tag}
               onClick={() => handleTagClick(tag)}
               aria-pressed={tag === currentTag}
-              className={`shrink-0 snap-start px-4 sm:px-5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
+              className={`shrink-0 snap-start px-4 sm:px-5 py-2.5 sm:py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
                 tag === currentTag
                   ? "bg-primary border border-primary text-white font-semibold shadow-sm"
                   : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -253,7 +253,7 @@ export default function Home() {
             <button
               onClick={handlePrevPage}
               disabled={page === 0}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
+              className={`flex items-center justify-center size-11 sm:size-9 rounded-lg border transition-all btn-press ${
                 page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
               }`}
               title="上一页"
@@ -264,7 +264,7 @@ export default function Home() {
             <button
               onClick={handleNextPage}
               disabled={loading || movies.length < pageSize}
-              className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all btn-press ${
+              className={`flex items-center justify-center size-11 sm:size-9 rounded-lg border transition-all btn-press ${
                 loading || movies.length < pageSize
                   ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
@@ -304,11 +304,12 @@ export default function Home() {
 
       {/* Tag Management Modal */}
       {showTagModal && (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-center justify-center z-50 modal-backdrop-enter" onClick={() => setShowTagModal(false)}>
-          <div role="dialog" aria-modal="true" aria-labelledby="tag-modal-title" className="glass-panel rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto custom-scrollbar modal-content-enter" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-end sm:items-center justify-center z-[60] modal-backdrop-enter" onClick={() => setShowTagModal(false)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="tag-modal-title" className="glass-panel rounded-t-3xl sm:rounded-2xl px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6 max-w-md w-full sm:mx-4 max-h-[85dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar modal-content-enter" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet-handle sm:hidden mb-2" aria-hidden="true" />
             <div className="flex items-center justify-between mb-4">
-              <h3 id="tag-modal-title" className="text-xl font-bold text-gray-900">标签管理 ({mediaType === "movie" ? "电影" : "电视剧"})</h3>
-              <button onClick={() => setShowTagModal(false)} aria-label="关闭" className="flex items-center justify-center size-8 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors btn-press">
+              <h3 id="tag-modal-title" className="text-lg sm:text-xl font-bold text-gray-900">标签管理 ({mediaType === "movie" ? "电影" : "电视剧"})</h3>
+              <button onClick={() => setShowTagModal(false)} aria-label="关闭" className="flex items-center justify-center size-11 sm:size-8 -mr-2 sm:mr-0 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors btn-press">
                 <MaterialSymbolsCloseRounded />
               </button>
             </div>
@@ -316,16 +317,16 @@ export default function Home() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-semibold text-gray-700">当前标签</h4>
-                <button onClick={handleResetTags} className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors btn-press">
+                <button onClick={handleResetTags} className="text-xs px-3 py-1 min-h-9 sm:min-h-0 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors btn-press">
                   恢复默认
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {currentTags.map((tag) => (
-                  <div key={tag} className="group bg-white text-gray-700 ring-1 ring-gray-200 py-1.5 px-3 rounded-lg text-sm font-medium flex items-center gap-2">
+                  <div key={tag} className="group bg-white text-gray-700 ring-1 ring-gray-200 py-1.5 pl-3 pr-1.5 sm:px-3 rounded-lg text-sm font-medium flex items-center gap-1 sm:gap-2">
                     <span>{tag}</span>
                     {tag !== "热门" && (
-                      <button onClick={() => handleDeleteTag(tag)} aria-label={`删除标签 ${tag}`} className="text-gray-400 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer btn-press">
+                      <button onClick={() => handleDeleteTag(tag)} aria-label={`删除标签 ${tag}`} className="flex items-center justify-center size-8 sm:size-auto -my-1 sm:my-0 rounded-md text-gray-400 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer btn-press">
                         <MaterialSymbolsCloseRounded className="text-[16px]" />
                       </button>
                     )}
@@ -352,9 +353,9 @@ export default function Home() {
                   autoFocus
                   autoComplete="off"
                   placeholder="输入标签名称..."
-                  className="flex-1 min-w-0 bg-white border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="flex-1 min-w-0 bg-white border border-gray-200 rounded-lg px-3 py-2.5 sm:py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <button type="submit" className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors btn-press">
+                <button type="submit" className="bg-primary hover:bg-primary-dark text-white px-5 sm:px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors btn-press">
                   添加
                 </button>
               </form>

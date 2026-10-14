@@ -88,7 +88,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
         <div className="absolute inset-y-0 right-4 flex items-center">
           <div className="flex items-center gap-2">
             {inputValue && (
-              <button type="button" onClick={handleClearInput} aria-label="清空输入" className="p-1 hover:bg-gray-100 rounded-md text-gray-400 hover:text-gray-600 transition-colors btn-press">
+              <button type="button" onClick={handleClearInput} aria-label="清空输入" className="p-2 -mr-2 sm:p-1 sm:mr-0 hover:bg-gray-100 rounded-md text-gray-400 hover:text-gray-600 transition-colors btn-press">
                 <MaterialSymbolsCloseRounded className="text-xl" />
               </button>
             )}
@@ -108,7 +108,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
               <MaterialSymbolsHistoryRounded className="text-[18px]" />
               <span className="font-medium">搜索历史</span>
             </div>
-            <button type="button" onClick={clearHistory} className="rounded-lg px-2 py-1 text-xs font-semibold text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer btn-press">
+            <button type="button" onClick={clearHistory} className="rounded-lg px-2 py-1 min-h-9 sm:min-h-0 text-xs font-semibold text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer btn-press">
               清除全部
             </button>
           </div>
@@ -126,7 +126,7 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                   }}
                   type="button"
                   aria-label={`删除搜索记录 ${item}`}
-                  className="md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 p-1 hover:bg-gray-200 rounded-md text-gray-400 hover:text-gray-600 transition-all btn-press"
+                  className="md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 p-2 -my-1 -mr-1 md:p-1 md:my-0 md:mr-0 hover:bg-gray-200 rounded-md text-gray-400 hover:text-gray-600 transition-all btn-press"
                 >
                   <MaterialSymbolsCloseRounded className="text-[18px]" />
                 </button>

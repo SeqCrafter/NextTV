@@ -67,6 +67,7 @@ function EmptyState({ tab }) {
 }
 
 export function LibraryPanel({
+  variant = "dropdown",
   activeTab,
   onTabChange,
   onClose,
@@ -84,6 +85,7 @@ export function LibraryPanel({
   const confirmTimerRef = useRef(null);
   const listRef = useRef(null);
 
+  const isSheet = variant === "sheet";
   const isHistory = activeTab === "history";
   const items = isHistory ? playHistory : favorites;
   const confirmingClear = confirmingTab === activeTab;
@@ -111,9 +113,15 @@ export function LibraryPanel({
   return (
     <div
       role="dialog"
+      aria-modal={isSheet ? "true" : undefined}
       aria-label={isHistory ? "观看历史" : "我的收藏"}
-      className="glass-panel absolute left-0 right-0 top-full z-50 mt-3 flex max-h-[min(560px,calc(100dvh-7rem))] flex-col overflow-hidden rounded-2xl md:left-auto md:w-[400px] dropdown-enter"
+      className={
+        isSheet
+          ? "glass-panel fixed inset-x-0 bottom-0 z-[61] flex max-h-[85dvh] flex-col overflow-hidden rounded-t-3xl pb-safe sheet-enter"
+          : "glass-panel absolute right-0 top-full z-50 mt-3 flex w-[400px] max-h-[min(560px,calc(100dvh-7rem))] flex-col overflow-hidden rounded-2xl dropdown-enter"
+      }
     >
+      {isSheet && <div className="sheet-handle" aria-hidden="true" />}
       {/* Header */}
       <div className="flex items-center gap-2 px-3 pt-3 pb-2">
         <div role="tablist" aria-label="片库" className="flex flex-1 gap-1 rounded-xl bg-gray-900/[0.04] p-1">
@@ -126,7 +134,7 @@ export function LibraryPanel({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => onTabChange(key)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold ${isSheet ? "min-h-10" : "py-1.5"} transition-all duration-200 cursor-pointer ${
                   selected
                     ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
                     : "text-gray-500 hover:text-gray-800"
@@ -150,7 +158,7 @@ export function LibraryPanel({
         <button
           onClick={onClose}
           aria-label="关闭"
-          className="flex size-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-900/5 hover:text-gray-700 cursor-pointer btn-press"
+          className="flex size-11 md:size-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-900/5 hover:text-gray-700 cursor-pointer btn-press"
         >
           <MaterialSymbolsCloseRounded className="text-xl" />
         </button>
@@ -169,7 +177,7 @@ export function LibraryPanel({
                     <li key={`${record.source}-${record.id}`} className="group relative">
                       <button
                         onClick={() => onHistoryClick(record)}
-                        className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
+                        className="flex w-full items-center gap-3 rounded-xl p-2 pr-12 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
                       >
                         <Poster src={record.poster}>
                           <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
@@ -206,7 +214,7 @@ export function LibraryPanel({
                       </button>
                       <button
                         onClick={() => onDeleteHistory(record)}
-                        className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer btn-press"
+                        className="absolute right-1 md:right-2 top-1/2 flex size-11 md:size-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer btn-press"
                         aria-label={`删除 ${record.title} 的观看记录`}
                       >
                         <MaterialSymbolsDeleteOutlineRounded className="text-lg" />
@@ -218,7 +226,7 @@ export function LibraryPanel({
                   <li key={`${favorite.source}-${favorite.id}`} className="group relative">
                     <button
                       onClick={() => onFavoriteClick(favorite)}
-                      className="flex w-full items-center gap-3 rounded-xl p-2 pr-11 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
+                      className="flex w-full items-center gap-3 rounded-xl p-2 pr-12 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
                     >
                       <Poster src={favorite.poster}>
                         <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
@@ -244,7 +252,7 @@ export function LibraryPanel({
                     </button>
                     <button
                       onClick={() => onDeleteFavorite(favorite)}
-                      className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer btn-press"
+                      className="absolute right-1 md:right-2 top-1/2 flex size-11 md:size-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer btn-press"
                       aria-label={`取消收藏 ${favorite.title}`}
                     >
                       <MaterialSymbolsDeleteOutlineRounded className="text-lg" />
@@ -257,13 +265,13 @@ export function LibraryPanel({
 
       {/* Footer */}
       {items.length > 0 && (
-        <div className="flex items-center justify-between border-t border-gray-900/[0.06] px-4 py-2.5">
+        <div className="flex items-center justify-between border-t border-gray-900/[0.06] px-4 py-2 md:py-2.5">
           <span className="text-xs text-gray-400">
             {isHistory ? `最近 ${items.length} 条记录` : `共 ${items.length} 部`}
           </span>
           <button
             onClick={handleClear}
-            className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer btn-press ${
+            className={`rounded-lg px-3 py-1 min-h-10 md:min-h-0 text-xs font-semibold transition-colors cursor-pointer btn-press ${
               confirmingClear
                 ? "bg-red-500 text-white hover:bg-red-600"
                 : "text-gray-500 hover:bg-red-50 hover:text-red-500"

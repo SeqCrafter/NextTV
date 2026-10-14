@@ -24,20 +24,20 @@ export default function DirectInputPage() {
   return (
     <div className="w-full max-w-4xl mx-auto page-enter">
       {/* Hero Section */}
-      <div className="text-center mt-8 mb-10">
+      <div className="text-center mt-4 sm:mt-8 mb-6 sm:mb-10">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-5">
           <MaterialSymbolsDirectionsAltOutlineRounded className="text-3xl text-primary" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
           直链播放
         </h1>
-        <p className="text-gray-500 text-lg max-w-xl mx-auto">
+        <p className="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
           粘贴视频直链，即刻畅享播放体验
         </p>
       </div>
 
       {/* Input Card */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-soft mb-10">
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 shadow-soft mb-6 sm:mb-10">
         <div className="space-y-5">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">

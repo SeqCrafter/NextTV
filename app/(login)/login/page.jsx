@@ -63,7 +63,7 @@ function LoginForm() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="请输入访问密码"
-                  className={`w-full px-4 py-3 pr-11 text-sm rounded-xl border ${
+                  className={`w-full px-4 py-3 pr-12 text-sm rounded-xl border ${
                     state?.error
                       ? "border-red-300 bg-red-50/50 focus:ring-red-300/40 focus:border-red-400"
                       : "border-gray-200 bg-gray-50 focus:ring-primary/40 focus:border-primary"
@@ -75,7 +75,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer p-0.5"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center size-11 rounded-lg text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                   tabIndex={-1}
                   aria-label={showPassword ? "隐藏密码" : "显示密码"}
                 >

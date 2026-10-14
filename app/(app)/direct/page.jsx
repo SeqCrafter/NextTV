@@ -65,8 +65,8 @@ function DirectPlayerContent() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-      <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
+    <div className="w-full max-w-7xl mx-auto pt-1 pb-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+      <nav aria-label="Breadcrumb" className="hidden sm:flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="hover:text-primary flex items-center gap-1 transition-colors">
           <MaterialSymbolsHomeOutlineRounded className="text-[18px]" /> 首页
         </Link>
@@ -76,12 +76,12 @@ function DirectPlayerContent() {
         </span>
       </nav>
 
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
+      <div className="flex flex-col gap-4 sm:gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player */}
-        <div className={`flex flex-col gap-4 transition-all duration-300 ${panelCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
+        <div className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${panelCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
           <div
             ref={playerWrapperRef}
-            className={`relative ${panelCollapsed ? "" : "aspect-video"}`}
+            className={`relative -mx-4 sm:mx-0 ${panelCollapsed ? "" : "aspect-video"}`}
             style={panelCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}
           >
             <VideoPlayerDirect

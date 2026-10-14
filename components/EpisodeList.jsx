@@ -30,16 +30,17 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
-      <div className="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
+      <div className="px-4 py-3 lg:p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
         <div>
           <h3 className="text-lg font-bold text-slate-800 dark:text-white">选集</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{episodes.length > 1 ? `更新至 ${episodes.length} 集` : "电影"}</p>
         </div>
 
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex flex-row lg:flex-col items-center lg:items-end gap-1.5">
+          {/* 折叠选集仅在桌面端侧栏布局下有意义 */}
           {onCollapse && (
             <button
-              className="text-white hover:bg-primary/80 transition-colors flex items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
+              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
               onClick={onCollapse}
               title="隐藏选集"
             >
@@ -48,7 +49,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
             </button>
           )}
           <button
-            className="text-slate-400 hover:text-primary transition-colors flex items-center gap-1 text-xs bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded cursor-pointer"
+            className="text-slate-500 lg:text-slate-400 hover:text-primary transition-colors flex items-center gap-1 text-xs bg-gray-100 dark:bg-slate-700 px-3 lg:px-2 min-h-9 lg:min-h-0 py-1 rounded-lg lg:rounded cursor-pointer"
             onClick={() => setIsReversed(!isReversed)}
           >
             <span>{isReversed ? "倒序" : "正序"}</span>
@@ -69,7 +70,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
                   <button
                     key={idx}
                     onClick={() => setManualPageState({ episodeIndex: currentEpisodeIndex, page: idx })}
-                    className={`whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${isActive
+                    className={`whitespace-nowrap px-3.5 lg:px-3 py-2 lg:py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${isActive
                       ? "bg-white dark:bg-slate-700 text-primary ring-1 ring-primary/20"
                       : "text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-700"
                       }`}
@@ -81,7 +82,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
             </div>
           )}
 
-          <div className="p-4 grid grid-cols-5 gap-3 overflow-y-auto custom-scrollbar flex-1 content-start">
+          <div className="p-4 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5 gap-2.5 sm:gap-3 overflow-y-auto custom-scrollbar flex-1 content-start">
             {currentRangeEpisodes.map((originalIndex) => {
               const episodeTitle = episodesTitles?.[originalIndex] || `第${originalIndex + 1}集`;
               const displayIndex = String(originalIndex + 1).padStart(2, "0");

@@ -22,9 +22,9 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
   const pages = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-center gap-1.5 mt-8 mb-4">
+    <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 mt-8 mb-4">
       <button
-        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2.5 sm:p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
         aria-label="上一页"
@@ -35,13 +35,13 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       {pages[0] > 1 && (
         <>
           <button
-            className="min-w-[36px] h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
             onClick={() => onPageChange(1)}
           >
             1
           </button>
           {pages[0] > 2 && (
-            <span className="min-w-[36px] h-9 flex items-center justify-center text-sm text-gray-400">
+            <span className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 flex items-center justify-center text-sm text-gray-400">
               ...
             </span>
           )}
@@ -51,7 +51,7 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       {pages.map((page) => (
         <button
           key={page}
-          className={`min-w-[36px] h-9 rounded-lg text-sm font-medium transition-colors ${
+          className={`min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium transition-colors ${
             page === currentPage
               ? "bg-primary text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
@@ -65,12 +65,12 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       {pages[pages.length - 1] < pageCount && (
         <>
           {pages[pages.length - 1] < pageCount - 1 && (
-            <span className="min-w-[36px] h-9 flex items-center justify-center text-sm text-gray-400">
+            <span className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 flex items-center justify-center text-sm text-gray-400">
               ...
             </span>
           )}
           <button
-            className="min-w-[36px] h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
             onClick={() => onPageChange(pageCount)}
           >
             {pageCount}
@@ -79,7 +79,7 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       )}
 
       <button
-        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2.5 sm:p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         disabled={currentPage === pageCount}
         onClick={() => onPageChange(currentPage + 1)}
         aria-label="下一页"

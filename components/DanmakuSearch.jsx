@@ -97,7 +97,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
           </div>
           {onCollapse && (
             <button
-              className="text-white hover:bg-primary/80 transition-colors flex items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
+              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
               onClick={onCollapse}
             >
               <span>折叠</span>
@@ -125,7 +125,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
         <div className="flex flex-col items-end gap-1.5">
           {onCollapse && (
             <button
-              className="text-white hover:bg-primary/80 transition-colors flex items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
+              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
               onClick={onCollapse}
             >
               <span>折叠</span>
@@ -144,12 +144,12 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入剧名搜索弹幕..."
-            className="flex-1 min-w-0 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+            className="flex-1 min-w-0 px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
           />
           <button
             onClick={handleSearch}
             disabled={searching || !searchTerm.trim()}
-            className="w-[68px] py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0"
+            className="w-[72px] sm:w-[68px] py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0"
           >
             {searching ? (
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -227,7 +227,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
           <div className="p-4">
             <button
               onClick={handleBackToSearch}
-              className="flex items-center gap-1 text-xs text-slate-500 hover:text-primary mb-3 transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-primary mb-3 -ml-1 px-1 min-h-9 sm:min-h-0 transition-colors cursor-pointer"
             >
               <MaterialSymbolsArrowBackRounded className="text-[14px]" />
               返回搜索结果
@@ -239,7 +239,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
                 return (
                   <div key={ep.episodeId} className="relative group/episode">
                     <button
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center font-medium transition-all duration-200 text-xs cursor-pointer shrink-0
+                      className={`size-11 sm:size-10 rounded-lg flex items-center justify-center font-medium transition-all duration-200 text-xs cursor-pointer shrink-0
                         ${isCurrent
                           ? "bg-primary text-white font-bold transform scale-105"
                           : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
