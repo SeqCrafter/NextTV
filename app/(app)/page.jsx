@@ -290,9 +290,9 @@ export default function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
-            {movies.map((movie) => (
+            {movies.map((movie, index) => (
               <div key={movie.id} className="grid-item-animate">
-                <MovieCard movie={movie} />
+                <MovieCard movie={movie} eager={index < 6} />
               </div>
             ))}
           </div>

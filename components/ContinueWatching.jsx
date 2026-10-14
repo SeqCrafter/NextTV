@@ -11,7 +11,7 @@ const upgradeCache = new Map();
 
 export function ContinueWatching({ playHistory }) {
   const router = useRouter();
-  const { videoSources } = useSettingsStore();
+  const videoSources = useSettingsStore((state) => state.videoSources);
   const [updatedEpisodes, setUpdatedEpisodes] = useState({});
 
   const recentHistory = useMemo(

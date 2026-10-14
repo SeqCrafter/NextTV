@@ -7,7 +7,7 @@ import { MaterialSymbolsStarRounded } from "@/components/icons";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
 
-export function MovieCard({ movie, showSpeedTest = true }) {
+export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
   const router = useRouter();
   const doubanImageProxy = useSettingsStore((state) => state.doubanImageProxy);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
@@ -68,7 +68,9 @@ export function MovieCard({ movie, showSpeedTest = true }) {
           <img
             src={douban_image_url}
             alt=""
-            loading="lazy"
+            // 首屏第一行海报是 LCP 候选，立即加载并提高优先级；其余懒加载
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
             decoding="async"
             referrerPolicy="no-referrer"
             draggable={false}

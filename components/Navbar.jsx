@@ -5,9 +5,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
-import { LibraryPanel } from "@/components/LibraryPanel";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   MaterialSymbolsHistoryRounded,
   MaterialSymbolsFavoriteOutlineRounded,
@@ -15,6 +15,13 @@ import {
   MaterialSymbolsDirectionsAltOutlineRounded,
   SimpleIconsGithub,
 } from "@/components/icons";
+
+// 片库面板仅在点击后展示，按需加载，避免进入每个页面的首屏 JS
+const loadLibraryPanel = () => import("@/components/LibraryPanel");
+const LibraryPanel = dynamic(
+  () => loadLibraryPanel().then((m) => m.LibraryPanel),
+  { ssr: false },
+);
 
 export function Navbar() {
   const router = useRouter();
@@ -94,7 +101,7 @@ export function Navbar() {
             <Image
               src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
               alt=""
-              priority
+              loading="eager"
               width={24}
               height={24}
               className="w-6 h-6 object-contain"
@@ -157,6 +164,8 @@ export function Navbar() {
                   aria-haspopup="dialog"
                   aria-expanded={active}
                   className={`flex items-center justify-center size-10 rounded-full transition-colors cursor-pointer btn-press ${active ? "bg-primary/20 text-gray-900" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
+                  onPointerEnter={loadLibraryPanel}
+                  onFocus={loadLibraryPanel}
                   onClick={() => setOpenPanel(active ? null : key)}
                 >
                   <Icon className="text-2xl" />

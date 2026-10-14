@@ -7,9 +7,9 @@ import { useVideoData } from "@/hooks/useVideoData";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { EpisodeList } from "@/components/EpisodeList";
-import { DanmakuSearchModal } from "@/components/DanmakuSearchModal";
 import { LoadingSpinner } from "@/components/PlayerPageLoading";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   MaterialSymbolsHomeOutlineRounded,
   MaterialSymbolsMovieOutlineRounded,
@@ -18,6 +18,12 @@ import {
   MaterialSymbolsPerson2OutlineRounded,
   MaterialSymbolsChevronLeftRounded,
 } from "@/components/icons";
+
+// 弹幕搜索弹窗只在用户点击时才需要，按需加载以减小播放页首屏 JS
+const DanmakuSearchModal = dynamic(
+  () => import("@/components/DanmakuSearchModal").then((m) => m.DanmakuSearchModal),
+  { ssr: false },
+);
 
 export default function PlayerPage() {
   const params = useParams();
@@ -158,7 +164,6 @@ export default function PlayerPage() {
                 fill
                 sizes="(max-width: 768px) 100vw, 300px"
                 unoptimized
-                priority
               />
               <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">HD</div>
             </div>
@@ -255,12 +260,14 @@ export default function PlayerPage() {
       </div>
 
       {/* Danmaku Search Modal */}
-      <DanmakuSearchModal
-        isOpen={showDanmakuModal}
-        onClose={handleCloseDanmakuModal}
-        initialTitle={videoDetail.title}
-        onEpisodeConfirm={handleDanmakuEpisodeConfirm}
-      />
+      {showDanmakuModal && (
+        <DanmakuSearchModal
+          isOpen
+          onClose={handleCloseDanmakuModal}
+          initialTitle={videoDetail.title}
+          onEpisodeConfirm={handleDanmakuEpisodeConfirm}
+        />
+      )}
     </div>
   );
 }

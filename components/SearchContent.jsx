@@ -193,7 +193,7 @@ export default function SearchContent() {
                 key={`${movie.source}-${movie.id}`}
                 className="grid-item-animate"
               >
-                <MovieCard movie={movie} />
+                <MovieCard movie={movie} eager={index < 6} />
               </div>
             ))}
           </div>
