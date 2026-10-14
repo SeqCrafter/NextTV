@@ -116,15 +116,15 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!shouldRender) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out ${isAnimating ? "opacity-100" : "opacity-0"}`}>
+    <div className={`fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out ${isAnimating ? "opacity-100" : "opacity-0"}`}>
       <div
-        className={`bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out ${
+        className={`glass-panel rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar transition-all duration-300 ease-out ${
           isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"
         }`}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 z-10 bg-white/85 backdrop-blur-xl border-b border-gray-900/[0.06] px-6 py-4 flex items-center justify-between rounded-t-2xl">
           <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+          <button onClick={onClose} aria-label="关闭" className="flex items-center justify-center size-8 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-900/5 transition-colors cursor-pointer btn-press">
             <MaterialSymbolsCloseRounded />
           </button>
         </div>

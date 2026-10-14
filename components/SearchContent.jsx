@@ -157,7 +157,7 @@ export default function SearchContent() {
   function renderContent() {
     if (loading) {
       return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
           {Array.from({ length: 12 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))}
@@ -187,7 +187,7 @@ export default function SearchContent() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
             {filteredResults.map((movie, index) => (
               <div
                 key={`${movie.source}-${movie.id}`}

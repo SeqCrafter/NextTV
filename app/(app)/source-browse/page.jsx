@@ -187,7 +187,7 @@ export default function SourceBrowsePage() {
             </div>
           ) : videos.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
                 {videos.map(video => (
                   <MovieCard
                     key={video.vod_id}
