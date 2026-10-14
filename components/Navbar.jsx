@@ -1,30 +1,46 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter, usePathname } from "next/navigation";
+import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
-import { formatTimeShort } from "@/lib/util";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   MaterialSymbolsHistoryRounded,
   MaterialSymbolsFavoriteOutlineRounded,
   MaterialSymbolsSettingsOutlineRounded,
-  MaterialSymbolsDeleteOutlineRounded,
-  MaterialSymbolsVideoLibraryOutlineRounded,
   MaterialSymbolsDirectionsAltOutlineRounded,
+  MaterialSymbolsHomeOutlineRounded,
   SimpleIconsGithub,
 } from "@/components/icons";
+
+const LIBRARY_TABS = [
+  { key: "history", label: "观看历史", shortLabel: "历史", Icon: MaterialSymbolsHistoryRounded },
+  { key: "favorites", label: "我的收藏", shortLabel: "收藏", Icon: MaterialSymbolsFavoriteOutlineRounded },
+];
+
+// 片库面板仅在点击后展示，按需加载，避免进入每个页面的首屏 JS
+const loadLibraryPanel = () => import("@/components/LibraryPanel");
+const LibraryPanel = dynamic(
+  () => loadLibraryPanel().then((m) => m.LibraryPanel),
+  { ssr: false },
+);
 
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
-  const [showFavoritesDropdown, setShowFavoritesDropdown] = useState(false);
-  const dropdownRef = useRef(null);
-  const favoritesDropdownRef = useRef(null);
+  // 当前打开的片库面板：null | "history" | "favorites"
+  const [openPanel, setOpenPanel] = useState(null);
+  const panelRef = useRef(null);
+  const bottomNavRef = useRef(null);
+  const sheetRef = useRef(null);
+  // 手机端片库以底部抽屉形式展示，桌面端仍为导航栏下拉面板
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   // 获取播放历史
   const playHistory = usePlayHistoryStore((state) => state.playHistory);
@@ -40,32 +56,38 @@ export function Navbar() {
   const removeFavorite = useFavoritesStore((state) => state.removeFavorite);
   const clearFavorites = useFavoritesStore((state) => state.clearFavorites);
 
-  // 点击外部关闭下拉菜单
+  // 点击外部或按 Esc 关闭面板
   useEffect(() => {
+    if (!openPanel) return;
+
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowHistoryDropdown(false);
-      }
-      if (
-        favoritesDropdownRef.current &&
-        !favoritesDropdownRef.current.contains(event.target)
-      ) {
-        setShowFavoritesDropdown(false);
-      }
+      const inside = [panelRef, bottomNavRef, sheetRef].some((ref) => ref.current?.contains(event.target));
+      if (!inside) setOpenPanel(null);
+    };
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setOpenPanel(null);
     };
 
-    if (showHistoryDropdown || showFavoritesDropdown) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [showHistoryDropdown, showFavoritesDropdown]);
+  }, [openPanel]);
 
+  // 手机端抽屉打开时锁定背景滚动
+  useEffect(() => {
+    if (!openPanel || !isMobile) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [openPanel, isMobile]);
 
   const handleHistoryClick = (record) => {
-    setShowHistoryDropdown(false);
+    setOpenPanel(null);
     if (record.source_name === "直链播放") {
       const params = new URLSearchParams({
         playerurl: record.source,
@@ -78,296 +100,209 @@ export function Navbar() {
     }
   };
 
-  const handleDeleteHistory = (e, record) => {
-    e.stopPropagation();
-    removePlayRecord(record.source, record.id);
-  };
-
-  const handleClearAll = () => {
-    if (confirm("确定要清空所有观看历史吗？")) {
-      clearPlayHistory();
-      setShowHistoryDropdown(false);
-    }
-  };
-
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
   const handleFavoriteClick = (favorite) => {
-    setShowFavoritesDropdown(false);
+    setOpenPanel(null);
     clearScrollPosition();
     router.push(`/search?q=${encodeURIComponent(favorite.title)}`);
   };
 
-  const handleDeleteFavorite = (e, favorite) => {
-    e.stopPropagation();
-    removeFavorite(favorite.source, favorite.id);
-  };
+  const libraryPanel = openPanel && (
+    <LibraryPanel
+      variant={isMobile ? "sheet" : "dropdown"}
+      activeTab={openPanel}
+      onTabChange={setOpenPanel}
+      onClose={() => setOpenPanel(null)}
+      playHistory={playHistory}
+      favorites={favorites}
+      onHistoryClick={handleHistoryClick}
+      onDeleteHistory={(record) => removePlayRecord(record.source, record.id)}
+      onClearHistory={clearPlayHistory}
+      onFavoriteClick={handleFavoriteClick}
+      onDeleteFavorite={(favorite) => removeFavorite(favorite.source, favorite.id)}
+      onClearFavorites={clearFavorites}
+    />
+  );
 
-  const handleClearAllFavorites = () => {
-    if (confirm("确定要清空所有收藏吗？")) {
-      clearFavorites();
-      setShowFavoritesDropdown(false);
-    }
-  };
-
-
+  const isActiveRoute = (href) => !openPanel && pathname === href;
 
   return (
-    <div className="sticky top-0 z-50 w-full px-4 md:px-8 py-4">
-      <header
-        className="relative max-w-7xl mx-auto rounded-xl flex items-center justify-between px-6 py-3"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.25)",
-          boxShadow:
-            "0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.03), inset 0 1px 0 0 rgba(255, 255, 255, 0.15)",
-        }}
+    <>
+      <div className="sticky top-0 z-50 w-full px-3 md:px-8 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 md:py-4">
+        <header className="glass-bar relative max-w-7xl mx-auto rounded-2xl flex items-center justify-between gap-2 px-3 sm:px-6 py-2 sm:py-3">
+          <Link
+            href="/"
+            aria-label="NextTV 首页"
+            className="flex items-center content-center gap-2 sm:gap-3 cursor-pointer select-none group shrink-0 rounded-lg min-h-11"
+          >
+            <div className="relative group-hover:scale-105 transition-transform duration-200">
+              <Image
+                src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
+                alt=""
+                loading="eager"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-contain"
+              />
+            </div>
+            <div className="flex flex-col justify-center h-full">
+              <h1 className="text-xl font-extrabold leading-none tracking-tight">
+                <span className="text-gray-900">Next</span>
+                <span className="text-primary">TV</span>
+              </h1>
+              <span className="text-[10px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
+                影视无限畅享
+              </span>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex flex-1 max-w-md mx-6">
+            {/* Minimal search for navbar if needed */}
+          </div>
+
+          <nav aria-label="主导航" className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
+            <Link
+              href="https://github.com/SeqCrafter/NextTV"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="flex items-center justify-center size-11 md:size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors btn-press"
+            >
+              <SimpleIconsGithub
+                aria-hidden="true"
+                className="size-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              />
+            </Link>
+
+            {/* 以下入口在手机端移到底部导航栏 */}
+            <Link
+              href="/direct-input"
+              aria-label="直链播放"
+              title="直链播放"
+              aria-current={pathname === "/direct-input" ? "page" : undefined}
+              className={`hidden md:flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/direct-input" ? "bg-gray-100 text-gray-900" : ""}`}
+            >
+              <MaterialSymbolsDirectionsAltOutlineRounded className="text-2xl" />
+            </Link>
+
+            {/* 片库：观看历史 / 我的收藏 */}
+            <div className="relative hidden md:flex items-center gap-2 md:gap-3" ref={panelRef}>
+              {LIBRARY_TABS.map(({ key, label, Icon }) => {
+                const active = openPanel === key;
+                return (
+                  <button
+                    key={key}
+                    aria-label={label}
+                    title={label}
+                    aria-haspopup="dialog"
+                    aria-expanded={active}
+                    className={`flex items-center justify-center size-10 rounded-full transition-colors cursor-pointer btn-press ${active ? "bg-primary/20 text-gray-900" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
+                    onPointerEnter={loadLibraryPanel}
+                    onFocus={loadLibraryPanel}
+                    onClick={() => setOpenPanel(active ? null : key)}
+                  >
+                    <Icon className="text-2xl" />
+                  </button>
+                );
+              })}
+
+              {!isMobile && libraryPanel}
+            </div>
+
+            <Link
+              href="/settings"
+              aria-label="设置"
+              title="设置"
+              aria-current={pathname === "/settings" ? "page" : undefined}
+              className={`hidden md:flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
+            >
+              <MaterialSymbolsSettingsOutlineRounded className="text-2xl" />
+            </Link>
+          </nav>
+        </header>
+      </div>
+
+      {/* 手机端底部导航栏 */}
+      <nav
+        ref={bottomNavRef}
+        aria-label="底部导航"
+        className="mobile-nav md:hidden fixed inset-x-0 bottom-0 z-50 flex items-stretch justify-around px-[max(0.5rem,env(safe-area-inset-left))]"
       >
-        <div
-          className="flex items-center content-center gap-3 cursor-pointer select-none group"
-          onClick={() => router.push("/")}
-        >
-          <div className="relative group-hover:scale-105 transition-transform duration-200">
-            <Image
-              src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
-              alt="NextTV"
-              width={24}
-              height={24}
-              className="w-6 h-6 object-contain"
-            />
-          </div>
-          <div className="flex flex-col justify-center h-full">
-            <h1 className="text-xl font-extrabold leading-none tracking-tight">
-              <span className="text-gray-900">Next</span>
-              <span className="text-primary">TV</span>
-            </h1>
-            <span className="text-[10px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
-              影视无限畅享
-            </span>
-          </div>
-        </div>
+        <BottomNavLink href="/" label="首页" Icon={MaterialSymbolsHomeOutlineRounded} active={isActiveRoute("/")} />
+        <BottomNavLink
+          href="/direct-input"
+          label="直链"
+          Icon={MaterialSymbolsDirectionsAltOutlineRounded}
+          active={isActiveRoute("/direct-input")}
+        />
+        {LIBRARY_TABS.map(({ key, shortLabel, label, Icon }) => {
+          const active = openPanel === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              aria-label={label}
+              aria-haspopup="dialog"
+              aria-expanded={active}
+              onPointerDown={loadLibraryPanel}
+              onClick={() => setOpenPanel(active ? null : key)}
+              className={bottomNavItemClass(active)}
+            >
+              <BottomNavItemContent Icon={Icon} label={shortLabel} active={active} />
+            </button>
+          );
+        })}
+        <BottomNavLink
+          href="/settings"
+          label="设置"
+          Icon={MaterialSymbolsSettingsOutlineRounded}
+          active={isActiveRoute("/settings")}
+        />
+      </nav>
 
-        <div className="hidden md:flex flex-1 max-w-md mx-6">
-          {/* Minimal search for navbar if needed */}
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            href="https://github.com/SeqCrafter/NextTV"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors btn-press"
-          >
-            <SimpleIconsGithub
+      {isMobile &&
+        openPanel &&
+        createPortal(
+          <div ref={sheetRef}>
+            <div
               aria-hidden="true"
-              className="size-5"
-              fill="currentColor"
-              viewBox="0 0 24 24"
+              className="fixed inset-0 z-[60] bg-gray-900/40 backdrop-blur-sm modal-backdrop-enter"
+              onClick={() => setOpenPanel(null)}
             />
-          </Link>
+            {libraryPanel}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
 
-          {/* Direct Play Link */}
-          <Link
-            href="/direct-input"
-            aria-label="直链播放"
-            className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/direct-input" ? "bg-gray-100 text-gray-900" : ""}`}
-          >
-            <MaterialSymbolsDirectionsAltOutlineRounded className="text-2xl" />
-          </Link>
+function bottomNavItemClass(active) {
+  return `flex flex-1 flex-col items-center justify-center gap-0.5 min-w-0 text-[11px] font-medium transition-colors cursor-pointer btn-press ${
+    active ? "text-gray-900" : "text-gray-500"
+  }`;
+}
 
-          {/* History Dropdown */}
-          <div className="static md:relative" ref={dropdownRef}>
-            <button
-              aria-label="History"
-              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${showHistoryDropdown ? "bg-gray-100 text-gray-900" : ""
-                }`}
-              onClick={() => setShowHistoryDropdown(!showHistoryDropdown)}
-            >
-              <MaterialSymbolsHistoryRounded className="text-2xl" />
-            </button>
+function BottomNavLink({ href, label, Icon, active }) {
+  return (
+    <Link href={href} aria-current={active ? "page" : undefined} className={bottomNavItemClass(active)}>
+      <BottomNavItemContent Icon={Icon} label={label} active={active} />
+    </Link>
+  );
+}
 
-            {/* Dropdown Menu */}
-            {showHistoryDropdown && (
-              <div className="absolute left-0 right-0 md:left-auto md:right-0 top-full mt-2 w-full md:w-96 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 dropdown-enter">
-                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                  <h3 className="font-bold text-gray-900">观看历史</h3>
-                  {playHistory.length > 0 && (
-                    <button
-                      onClick={handleClearAll}
-                      className="text-xs text-red-500 hover:text-red-600 cursor-pointer font-medium transition-colors btn-press"
-                    >
-                      清空全部
-                    </button>
-                  )}
-                </div>
-
-                <div className="max-h-[400px] overflow-y-auto">
-                  {playHistory.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400">
-                      <MaterialSymbolsVideoLibraryOutlineRounded className="text-2xl mb-2 mx-auto block" />
-                      <p>暂无观看历史</p>
-                    </div>
-                  ) : (
-                    playHistory.map((record) => (
-                      <div
-                        key={`${record.source}-${record.id}`}
-                        className="p-3 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 group"
-                        onClick={() => handleHistoryClick(record)}
-                      >
-                        <div className="flex gap-3">
-                          <div className="relative w-16 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                            <img
-                              src={record.poster}
-                              alt={record.title}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-900/20">
-                              <div
-                                className="h-full bg-primary"
-                                style={{
-                                  width: `${Math.min(record.progress, 100)}%`,
-                                }}
-                              ></div>
-                            </div>
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-gray-900 text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                              {record.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {record.totalEpisodes > 1
-                                ? `第${record.currentEpisodeIndex + 1}集`
-                                : "电影"}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {formatTimeShort(record.currentTime)} /{" "}
-                              {formatTimeShort(record.duration)}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">
-                                {Math.floor(record.progress)}%
-                              </span>
-                            </div>
-                            {record.source_name && (
-                              <p className="text-xs text-gray-400 mt-1">
-                                {record.source_name}
-                              </p>
-                            )}
-                          </div>
-
-                          <button
-                            onClick={(e) => handleDeleteHistory(e, record)}
-                            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-50 rounded-lg btn-press"
-                            aria-label="删除"
-                          >
-                            <span className="flex items-center justify-center text-red-500">
-                              <MaterialSymbolsDeleteOutlineRounded className="text-[18px]" />
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Favorites Dropdown */}
-          <div className="static md:relative" ref={favoritesDropdownRef}>
-            <button
-              aria-label="Favorites"
-              className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${showFavoritesDropdown ? "bg-gray-100 text-gray-900" : ""
-                }`}
-              onClick={() => setShowFavoritesDropdown(!showFavoritesDropdown)}
-            >
-              <MaterialSymbolsFavoriteOutlineRounded className="text-2xl" />
-            </button>
-
-            {/* Favorites Dropdown Menu */}
-            {showFavoritesDropdown && (
-              <div className="absolute left-0 right-0 md:left-auto md:right-0 top-full mt-2 w-full md:w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 dropdown-enter">
-                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                  <h3 className="font-bold text-gray-900">我的收藏</h3>
-                  {favorites.length > 0 && (
-                    <button
-                      onClick={handleClearAllFavorites}
-                      className="text-xs text-red-500 hover:text-red-600 cursor-pointer font-medium transition-colors btn-press"
-                    >
-                      清空全部
-                    </button>
-                  )}
-                </div>
-
-                <div className="max-h-[400px] overflow-y-auto">
-                  {favorites.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400">
-                      <MaterialSymbolsFavoriteOutlineRounded className="text-2xl mb-2 mx-auto block" />
-                      <p>暂无收藏</p>
-                    </div>
-                  ) : (
-                    favorites.map((favorite) => (
-                      <div
-                        key={`${favorite.source}-${favorite.id}`}
-                        className="p-3 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 group"
-                        onClick={() => handleFavoriteClick(favorite)}
-                      >
-                        <div className="flex gap-3">
-                          <div className="relative w-16 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                            <img
-                              src={favorite.poster}
-                              alt={favorite.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                              {favorite.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {favorite.type === "tv" ? "电视剧" : "电影"}
-                            </p>
-                            {favorite.genre && (
-                              <p className="text-xs text-gray-400 mt-1 line-clamp-1">
-                                {favorite.genre}
-                              </p>
-                            )}
-                          </div>
-
-                          <button
-                            onClick={(e) => handleDeleteFavorite(e, favorite)}
-                            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-50 rounded-lg btn-press"
-                            aria-label="删除"
-                          >
-                            <span className="flex items-center justify-center text-red-500">
-                              <MaterialSymbolsDeleteOutlineRounded className="text-[18px]" />
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <Link
-            href="/settings"
-            aria-label="Settings"
-            className={`flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/settings" ? "bg-gray-100 text-gray-900" : ""
-              }`}
-          >
-            <MaterialSymbolsSettingsOutlineRounded className="text-2xl" />
-          </Link>
-        </div>
-      </header>
-    </div>
+function BottomNavItemContent({ Icon, label, active }) {
+  return (
+    <>
+      <span
+        className={`flex items-center justify-center h-7 w-12 rounded-full transition-colors ${active ? "bg-primary/25" : ""}`}
+      >
+        <Icon className="text-[24px]" aria-hidden="true" />
+      </span>
+      <span>{label}</span>
+    </>
   );
 }

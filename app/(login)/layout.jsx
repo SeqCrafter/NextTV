@@ -23,6 +23,13 @@ export const metadata = {
   description: "请输入密码以访问 NextTV",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f9fafb",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html
@@ -30,7 +37,7 @@ export default function RootLayout({ children }) {
       className={`${inter.className} antialiased`}
       data-scroll-behavior="smooth"
     >
-      <body className="bg-background-light text-gray-900 min-h-screen flex flex-col selection:bg-primary selection:text-white">
+      <body className="bg-background-light text-gray-900 min-h-dvh flex flex-col selection:bg-primary selection:text-white">
         <main className="flex-1 flex flex-col items-center w-full px-4 md:px-8 pb-12">
           {children}
         </main>

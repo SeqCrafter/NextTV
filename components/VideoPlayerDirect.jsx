@@ -9,7 +9,7 @@ export function VideoPlayerDirect({ currentUrl, searchTitle, searchPoster, searc
   });
 
   return (
-    <div className="relative w-full h-full bg-black rounded-xl overflow-hidden group border border-gray-800/50">
+    <div className="relative w-full h-full bg-black sm:rounded-xl overflow-hidden group sm:border sm:border-gray-800/50">
       <div ref={artRef} className="w-full h-full" />
     </div>
   );

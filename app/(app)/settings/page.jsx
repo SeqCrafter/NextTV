@@ -116,19 +116,22 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!shouldRender) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out ${isAnimating ? "opacity-100" : "opacity-0"}`}>
+    <div className={`fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-end sm:items-center justify-center z-[60] sm:p-4 transition-opacity duration-300 ease-out ${isAnimating ? "opacity-100" : "opacity-0"}`}>
       <div
-        className={`bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out ${
-          isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`glass-panel rounded-t-3xl sm:rounded-2xl max-w-md w-full max-h-[90dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar pb-safe transition-all duration-300 ease-out ${
+          isAnimating ? "opacity-100 translate-y-0 sm:scale-100" : "opacity-100 translate-y-full sm:opacity-0 sm:scale-95 sm:translate-y-4"
         }`}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+        <div className="sticky top-0 z-10 bg-white/85 backdrop-blur-xl border-b border-gray-900/[0.06] px-5 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-t-3xl sm:rounded-t-2xl">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900">{title}</h3>
+          <button onClick={onClose} aria-label="关闭" className="flex items-center justify-center size-11 sm:size-8 -mr-2 sm:mr-0 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-900/5 transition-colors cursor-pointer btn-press">
             <MaterialSymbolsCloseRounded />
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-5 sm:p-6">{children}</div>
       </div>
     </div>
   );
@@ -179,7 +182,7 @@ const CustomSelect = ({ value, onChange, options, label }) => {
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-150 flex items-center justify-between ${
+              className={`w-full text-left px-4 py-3 sm:py-2.5 text-sm transition-colors duration-150 flex items-center justify-between ${
                 option.value === value ? "bg-primary/5 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
@@ -498,7 +501,7 @@ export default function Settings() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button
             onClick={handleImport}
-            className="group flex items-center justify-between p-6 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:border-primary hover:shadow-card hover:ring-1 hover:ring-primary/20 transition-all duration-300 text-left cursor-pointer"
+            className="group flex items-center justify-between p-4 sm:p-6 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:border-primary hover:shadow-card hover:ring-1 hover:ring-primary/20 transition-all duration-300 text-left cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
@@ -513,7 +516,7 @@ export default function Settings() {
           </button>
           <button
             onClick={handleExport}
-            className="group flex items-center justify-between p-6 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:border-primary hover:shadow-card hover:ring-1 hover:ring-primary/20 transition-all duration-300 text-left cursor-pointer"
+            className="group flex items-center justify-between p-4 sm:p-6 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:border-primary hover:shadow-card hover:ring-1 hover:ring-primary/20 transition-all duration-300 text-left cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
@@ -537,7 +540,7 @@ export default function Settings() {
             <input
               type="text"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg"
               placeholder="例如：资源站A"
               value={videoForm.name}
               onChange={(e) => setVideoForm({ ...videoForm, name: e.target.value })}
@@ -548,7 +551,7 @@ export default function Settings() {
             <input
               type="text"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg"
               placeholder="例如：source_a"
               value={videoForm.key}
               onChange={(e) => setVideoForm({ ...videoForm, key: e.target.value })}
@@ -559,7 +562,7 @@ export default function Settings() {
             <input
               type="url"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg"
               placeholder="https://api.example.com/vod"
               value={videoForm.url}
               onChange={(e) => setVideoForm({ ...videoForm, url: e.target.value })}
@@ -568,7 +571,7 @@ export default function Settings() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
             <textarea
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg resize-none"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg resize-none"
               placeholder="可选的描述信息"
               rows="3"
               value={videoForm.description}
@@ -598,7 +601,7 @@ export default function Settings() {
             <input
               type="text"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg"
               placeholder="例如：弹幕库A"
               value={danmakuForm.name}
               onChange={(e) => setDanmakuForm({ ...danmakuForm, name: e.target.value })}
@@ -609,7 +612,7 @@ export default function Settings() {
             <input
               type="url"
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg"
               placeholder="https://api.example.com/danmaku"
               value={danmakuForm.url}
               onChange={(e) => setDanmakuForm({ ...danmakuForm, url: e.target.value })}

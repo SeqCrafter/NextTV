@@ -7,9 +7,9 @@ import { useVideoData } from "@/hooks/useVideoData";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { EpisodeList } from "@/components/EpisodeList";
-import { DanmakuSearchModal } from "@/components/DanmakuSearchModal";
 import { LoadingSpinner } from "@/components/PlayerPageLoading";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   MaterialSymbolsHomeOutlineRounded,
   MaterialSymbolsMovieOutlineRounded,
@@ -18,6 +18,12 @@ import {
   MaterialSymbolsPerson2OutlineRounded,
   MaterialSymbolsChevronLeftRounded,
 } from "@/components/icons";
+
+// 弹幕搜索弹窗只在用户点击时才需要，按需加载以减小播放页首屏 JS
+const DanmakuSearchModal = dynamic(
+  () => import("@/components/DanmakuSearchModal").then((m) => m.DanmakuSearchModal),
+  { ssr: false },
+);
 
 export default function PlayerPage() {
   const params = useParams();
@@ -28,6 +34,7 @@ export default function PlayerPage() {
   const [episodesCollapsed, setEpisodesCollapsed] = useState(false);
   const [fixedPlayerHeight, setFixedPlayerHeight] = useState(null);
   const [showDanmakuModal, setShowDanmakuModal] = useState(false);
+  const [descExpanded, setDescExpanded] = useState(false);
   const playerWrapperRef = useRef(null);
   const loadManualDanmakuRef = useRef(null);
   const { videoDetail, doubanActors, loading, error } = useVideoData(id, source, setCurrentEpisodeIndex);
@@ -85,8 +92,8 @@ export default function PlayerPage() {
 
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-      <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
+    <div className="w-full max-w-7xl mx-auto pt-1 pb-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+      <nav aria-label="Breadcrumb" className="hidden sm:flex text-sm text-slate-500 dark:text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="hover:text-primary flex items-center gap-1 transition-colors">
           <MaterialSymbolsHomeOutlineRounded className="text-[18px]" /> 首页
         </Link>
@@ -98,10 +105,10 @@ export default function PlayerPage() {
         <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[200px]">{videoDetail.title}</span>
       </nav>
 
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
+      <div className="flex flex-col gap-4 sm:gap-6 lg:grid lg:grid-cols-12 transition-all duration-300 items-stretch">
         {/* Left Column: Player and Info */}
-        <div className={`flex flex-col gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
-          <div ref={playerWrapperRef} className={`relative ${episodesCollapsed ? "" : "aspect-video"}`} style={episodesCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}>
+        <div className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${episodesCollapsed ? "lg:col-span-12" : "lg:col-span-8 xl:col-span-9"}`}>
+          <div ref={playerWrapperRef} className={`relative -mx-4 sm:mx-0 ${episodesCollapsed ? "" : "aspect-video"}`} style={episodesCollapsed && fixedPlayerHeight ? { height: fixedPlayerHeight } : undefined}>
             <VideoPlayer
               key={id}
               videoDetail={videoDetail}
@@ -122,15 +129,22 @@ export default function PlayerPage() {
           </div>
 
           {/* Mobile Actions Bar (Visible only on mobile/tablet) */}
-          <div className="flex lg:hidden justify-between items-center px-2 py-3 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-800">
-            <div className="flex gap-3 items-center">
-              <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="flex flex-col items-center gap-1 text-xs text-slate-500 hover:text-primary" />
-              <button className="danmaku-trigger-btn" onClick={handleOpenDanmakuModal} title="手动搜索弹幕">弹</button>
+          <div className="flex lg:hidden items-center gap-2 pl-4 pr-1.5 py-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-800">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base font-bold text-slate-900 dark:text-white line-clamp-1">{videoDetail.title}</h1>
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500 min-w-0">
+                {videoDetail.rating && (
+                  <span className="flex items-center gap-0.5 font-semibold text-primary-dark shrink-0">
+                    <MaterialSymbolsStarOutlineRounded className="text-[14px]" aria-hidden="true" />
+                    {videoDetail.rating}
+                  </span>
+                )}
+                {videoDetail.year && <span className="shrink-0">{videoDetail.year}</span>}
+                <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded truncate">{videoDetail.source_name || source}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-[150px]">{videoDetail.title}</div>
-              <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded text-xs">{videoDetail.source_name || source}</span>
-            </div>
+            <FavoriteButton source={source} id={id} videoDetail={videoDetail} className="size-11! shrink-0" />
+            <button className="danmaku-trigger-btn size-11 shrink-0 text-base" onClick={handleOpenDanmakuModal} title="手动搜索弹幕" aria-label="手动搜索弹幕">弹</button>
           </div>
         </div>
 
@@ -146,10 +160,11 @@ export default function PlayerPage() {
         </div>
       </div>
 
-      {/* Bottom Section: Full Info Card (Hidden on Mobile) */}
-      <div className="hidden lg:block bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden">
-        <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-56 shrink-0 mx-auto md:mx-0 max-w-[240px]">
+      {/* Bottom Section: Full Info Card（手机端为紧凑排布，标题与评分已在上方操作栏展示） */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden">
+        <div className="p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-4 lg:gap-8">
+          <div className="flex lg:block gap-4 shrink-0">
+          <div className="w-24 sm:w-32 lg:w-56 shrink-0 max-w-[240px]">
             <div className="relative aspect-2/3 rounded-lg overflow-hidden group">
               <Image
                 alt={`${videoDetail.title} Poster`}
@@ -158,14 +173,31 @@ export default function PlayerPage() {
                 fill
                 sizes="(max-width: 768px) 100vw, 300px"
                 unoptimized
-                priority
               />
-              <div className="absolute top-2 left-2 bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">HD</div>
+              <div className="absolute top-1.5 left-1.5 lg:top-2 lg:left-2 bg-primary/90 text-white text-[10px] lg:text-xs font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded backdrop-blur-sm">HD</div>
             </div>
           </div>
 
-          <div className="flex-1 space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-gray-100 dark:border-slate-700 pb-4">
+          {/* 手机端：海报旁的基本信息 */}
+          <div className="lg:hidden min-w-0 flex-1 flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+            {videoDetail.genre && (
+              <span className="flex items-start gap-1.5">
+                <MaterialSymbolsMovieOutlineRounded className="text-[16px] text-slate-400 shrink-0 mt-0.5" aria-hidden="true" />
+                <span className="line-clamp-2">{videoDetail.genre}</span>
+              </span>
+            )}
+            {videoDetail.class && videoDetail.type_name && (
+              <span className="flex items-center gap-1.5">
+                <MaterialSymbolsPublic className="text-[16px] text-slate-400 shrink-0" aria-hidden="true" /> {videoDetail.type_name}
+              </span>
+            )}
+            <span>更新至 {videoDetail.episodes?.length || 1} 集</span>
+            {videoDetail.rating && <span className="text-xs text-slate-400">豆瓣评分 {videoDetail.rating} / 10</span>}
+          </div>
+          </div>
+
+          <div className="flex-1 min-w-0 space-y-4 lg:space-y-6">
+            <div className="hidden lg:flex flex-row justify-between items-start gap-4 border-b border-gray-100 dark:border-slate-700 pb-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{videoDetail.title}</h1>
@@ -209,16 +241,24 @@ export default function PlayerPage() {
             {videoDetail.desc && (
               <div className="space-y-2">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">剧情简介</h3>
-                <p className="text-slate-600 dark:text-slate-300 text-sm leading-loose tracking-wide text-justify">{videoDetail.desc}</p>
+                <p className={`text-slate-600 dark:text-slate-300 text-sm leading-relaxed lg:leading-loose tracking-wide text-justify ${descExpanded ? "" : "line-clamp-4 lg:line-clamp-none"}`}>{videoDetail.desc}</p>
+                <button
+                  type="button"
+                  onClick={() => setDescExpanded((v) => !v)}
+                  className="lg:hidden -ml-2 px-2 min-h-9 text-sm font-medium text-primary-dark cursor-pointer"
+                  aria-expanded={descExpanded}
+                >
+                  {descExpanded ? "收起" : "展开全部"}
+                </button>
               </div>
             )}
 
             {(doubanActors.length > 0 || (videoDetail.actors && videoDetail.actors.length > 0)) && (
               <div className="space-y-3 pt-2">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">演员表</h3>
-                <div className="flex flex-wrap gap-6">
+                <div className="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 lg:flex-wrap lg:gap-6 lg:overflow-visible">
                   {(doubanActors.length > 0 ? doubanActors : videoDetail.actors).map((actor, idx) => (
-                    <div key={actor.id || idx} className="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div key={actor.id || idx} className="flex flex-col items-center gap-2 group cursor-pointer shrink-0">
                       <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
                         {actor.avatar ? (
                           <Image
@@ -255,12 +295,14 @@ export default function PlayerPage() {
       </div>
 
       {/* Danmaku Search Modal */}
-      <DanmakuSearchModal
-        isOpen={showDanmakuModal}
-        onClose={handleCloseDanmakuModal}
-        initialTitle={videoDetail.title}
-        onEpisodeConfirm={handleDanmakuEpisodeConfirm}
-      />
+      {showDanmakuModal && (
+        <DanmakuSearchModal
+          isOpen
+          onClose={handleCloseDanmakuModal}
+          initialTitle={videoDetail.title}
+          onEpisodeConfirm={handleDanmakuEpisodeConfirm}
+        />
+      )}
     </div>
   );
 }

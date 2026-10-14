@@ -11,7 +11,7 @@ const upgradeCache = new Map();
 
 export function ContinueWatching({ playHistory }) {
   const router = useRouter();
-  const { videoSources } = useSettingsStore();
+  const videoSources = useSettingsStore((state) => state.videoSources);
   const [updatedEpisodes, setUpdatedEpisodes] = useState({});
 
   const recentHistory = useMemo(
@@ -138,19 +138,28 @@ export function ContinueWatching({ playHistory }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <span className="w-1 h-6 bg-primary rounded-full"></span>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span className="w-1 h-6 bg-primary rounded-full" aria-hidden="true"></span>
           继续观看
         </h2>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+      <div className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 snap-x snap-mandatory">
         {recentHistory.map((record) => (
           <div
             key={`${record.source}-${record.id}`}
-            className="group relative shrink-0 w-[280px] bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-primary transition-colors duration-300 cursor-pointer"
+            role="link"
+            tabIndex={0}
+            aria-label={`继续观看 ${record.title}`}
+            className="group relative shrink-0 snap-start w-[260px] sm:w-[280px] bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-primary hover:shadow-md transition-[border-color,box-shadow] duration-300 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
             onClick={() => handlePlayClick(record)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handlePlayClick(record);
+              }
+            }}
           >
             {updatedEpisodes[`${record.source}-${record.id}`] > 0 && (
               <div className="absolute top-0 right-0 z-20">
@@ -165,11 +174,12 @@ export function ContinueWatching({ playHistory }) {
             <div className="flex gap-4 p-4">
               {/* 海报 */}
               <div className="relative w-24 h-36 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                <img src={record.poster} alt={record.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={record.poster} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
 
                 {record.source && (
                   <div className="absolute top-1 left-1 z-10">
-                    <span className="bg-primary/90 text-white text-xs px-2 py-1 rounded-md font-medium shadow-sm">{record.source_name || record.source}</span>
+                    <span className="block max-w-[5.5rem] truncate bg-primary/90 text-white text-[10px] px-1.5 py-0.5 rounded-md font-medium shadow-sm">{record.source_name || record.source}</span>
                   </div>
                 )}
                 {/* 播放图标 */}
@@ -190,10 +200,10 @@ export function ContinueWatching({ playHistory }) {
 
                 {/* 进度条 */}
                 <div className="mt-2">
-                  <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-1 bg-gray-200 rounded-full overflow-hidden" role="progressbar" aria-label="观看进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.floor(Math.min(record.progress, 100))}>
                     <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(record.progress, 100)}%` }}></div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{Math.floor(record.progress)}%</p>
+                  <p className="text-xs text-gray-400 mt-1 tabular-nums">{Math.floor(record.progress)}%</p>
                 </div>
               </div>
             </div>

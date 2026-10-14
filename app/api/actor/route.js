@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDoubanActors } from "@/lib/doubanApi";
+import { getDoubanActors } from "@/lib/doubanServer";
 import { unstable_cache } from "next/cache";
 
 // 使用 Next.js 缓存包装，缓存1小时

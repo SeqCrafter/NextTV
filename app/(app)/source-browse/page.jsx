@@ -114,19 +114,19 @@ export default function SourceBrowsePage() {
 
   return (
     <div className="w-full min-h-[calc(100vh-64px)] bg-gray-50 flex flex-col">
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-0 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* Header Options */}
         <section>
           <h1 className="text-2xl font-bold text-gray-900 mb-6">源浏览</h1>
           
           {/* Source Selector */}
-          <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
             {activeSources.map(source => (
               <button
                 key={source.id}
                 onClick={() => setSelectedSourceId(source.id)}
-                className={`shrink-0 flex items-center justify-between gap-4 px-6 py-4 rounded-xl border transition-all min-w-[240px] cursor-pointer ${
+                className={`shrink-0 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all w-full sm:w-auto sm:min-w-[240px] cursor-pointer ${
                   activeSourceId === source.id
                     ? 'border-primary ring-1 ring-primary bg-white shadow-sm'
                     : 'border-gray-200 bg-white hover:border-primary/50 hover:shadow-sm'
@@ -158,7 +158,7 @@ export default function SourceBrowsePage() {
 
           {/* Category Selector */}
           {categories.length > 0 && (
-             <div className="flex flex-wrap gap-3 items-center mb-8 pb-4 border-b border-gray-200/60">
+             <div className="flex flex-wrap gap-2 sm:gap-3 items-center mb-6 sm:mb-8 pb-4 border-b border-gray-200/60">
               {categories.map(category => (
                 <button
                   key={category.type_id}
@@ -166,7 +166,7 @@ export default function SourceBrowsePage() {
                     setActiveCategoryId(category.type_id);
                     setPage(1);
                   }}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                  className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                     activeCategoryId === category.type_id
                       ? 'bg-primary text-white shadow-md'
                       : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
@@ -187,7 +187,7 @@ export default function SourceBrowsePage() {
             </div>
           ) : videos.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
                 {videos.map(video => (
                   <MovieCard
                     key={video.vod_id}

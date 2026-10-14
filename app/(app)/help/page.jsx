@@ -10,7 +10,7 @@ function Section({ id, number, title, children }) {
     <section id={id} className="scroll-mt-24">
       <div className="flex items-center gap-3 mb-6">
         <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-sm font-bold shrink-0">{number}</span>
-        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
       </div>
       {children}
     </section>
@@ -28,18 +28,18 @@ export default function HelpPage() {
   return (
     <div className="w-full max-w-4xl mx-auto page-enter">
       {/* Header */}
-      <div className="text-center mt-8 mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">帮助中心</h1>
-        <p className="text-gray-500 text-lg max-w-2xl mx-auto">了解 NextTV 的核心功能与使用方法</p>
+      <div className="text-center mt-4 sm:mt-8 mb-6 sm:mb-10">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">帮助中心</h1>
+        <p className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto">了解 NextTV 的核心功能与使用方法</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-wrap justify-center gap-2 mb-10">
+      <nav className="flex flex-wrap justify-center gap-2 mb-8 sm:mb-10">
         {navItems.map((item) => (
           <a
             key={item.id}
             href={`#${item.id}`}
-            className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-full hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+            className="px-4 py-2.5 sm:py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-full hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
           >
             {item.label}
           </a>
@@ -47,7 +47,7 @@ export default function HelpPage() {
       </nav>
 
       {/* Content */}
-      <div className="space-y-12">
+      <div className="space-y-10 sm:space-y-12">
         {/* Section 1: Highlights */}
         <Section id="highlights" number="1" title="网站亮点">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -87,7 +87,7 @@ export default function HelpPage() {
 
         {/* Section 2: Add Video Source */}
         <Section id="video-source" number="2" title="如何添加视频源">
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 space-y-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
             <p className="text-gray-600 leading-relaxed">视频源是 NextTV 搜索和播放视频的数据来源。你可以添加兼容 CMS 接口的资源站来扩展可搜索的内容范围。</p>
             <div className="space-y-4">
               <h3 className="font-bold text-gray-900">操作步骤</h3>
@@ -140,7 +140,7 @@ export default function HelpPage() {
 
         {/* Section 3: Add Danmaku Source */}
         <Section id="danmaku-source" number="3" title="如何添加弹幕源">
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 space-y-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
             <p className="text-gray-600 leading-relaxed">弹幕源提供视频播放时的实时弹幕数据。目前 NextTV 支持配置一个弹幕源。本项目调取弹幕采用客户端直接流式获取，未经过服务器代理。</p>
             <div className="space-y-4">
               <h3 className="font-bold text-gray-900">操作步骤</h3>
@@ -203,7 +203,7 @@ export default function HelpPage() {
 
         {/* Section 4: Import & Export */}
         <Section id="import-export" number="4" title="如何导入与导出">
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 space-y-6">
+          <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
             <p className="text-gray-600 leading-relaxed">NextTV 支持将所有配置（包括视频源、弹幕源、豆瓣代理设置等）导出为 JSON 文件，方便备份和迁移到其他设备。</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

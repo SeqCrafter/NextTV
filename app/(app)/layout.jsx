@@ -25,6 +25,14 @@ export const metadata = {
   description: "NextTV 影视播放平台",
 };
 
+// viewportFit: cover 让页面延伸到刘海/底部手势条区域，配合 env(safe-area-inset-*) 留白
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f9fafb",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html
@@ -32,7 +40,7 @@ export default function RootLayout({ children }) {
       className={`${inter.className} antialiased`}
       data-scroll-behavior="smooth"
     >
-      <body className="bg-background-light text-gray-900 min-h-screen flex flex-col selection:bg-primary selection:text-white">
+      <body className="bg-background-light text-gray-900 min-h-dvh flex flex-col pb-mobile-nav selection:bg-primary selection:text-white">
         <Navbar />
         <main className="flex-1 flex flex-col items-center w-full px-4 md:px-8 pb-12">
           {children}

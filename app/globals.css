@@ -458,9 +458,9 @@ input:checked + .media-toggle-btn .material-symbols-outlined {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%);
+  background: linear-gradient(90deg, #eceef1 0%, #f6f7f9 50%, #eceef1 100%);
   background-size: 1000px 100%;
-  animation: shimmer 2s infinite linear;
+  animation: shimmer 1.6s infinite linear;
 }
 
 .skeleton-dark {
@@ -475,17 +475,76 @@ html {
 }
 
 /* ===== Focus Visible Enhancement ===== */
-*:focus-visible {
-  outline: 1px solid var(--color-primary);
-  outline-offset: -1px;
-  border-radius: 4px;
+/* 键盘聚焦时给出清晰可见的焦点环（鼠标点击不显示） */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 已用 Tailwind ring 自定义焦点样式的元素不再叠加 outline */
+.focus-visible\:ring-2:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* type="search" 自带的清除按钮与自定义按钮重复，隐藏之 */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ===== Reduced Motion ===== */
+/* 尊重系统“减少动态效果”设置 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== Glass Surfaces ===== */
+/* 全站统一的毛玻璃层级：导航栏（glass-bar）与浮层面板（glass-panel） */
+.glass-bar {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(17, 24, 39, 0.04);
+  box-shadow: 0 1px 2px 0 rgba(17, 24, 39, 0.03);
+}
+
+.glass-panel {
+  /* 浮层内容密集，背景接近不透明以保证文字清晰，仅保留轻微的毛玻璃质感 */
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  box-shadow:
+    0 16px 40px -12px rgba(17, 24, 39, 0.14),
+    0 4px 12px -6px rgba(17, 24, 39, 0.06);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-bar,
+  .glass-panel {
+    background: #fff;
+  }
 }
 
 /* ===== Dropdown Animations ===== */
 @keyframes dropdownSlideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -494,7 +553,8 @@ html {
 }
 
 .dropdown-enter {
-  animation: dropdownSlideDown 0.2s ease-out;
+  transform-origin: top right;
+  animation: dropdownSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ===== Danmaku Search Modal ===== */
@@ -619,4 +679,116 @@ html {
 
 .animate-shake {
   animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* ============================================
+   Mobile Adaptation
+   手机端适配：安全区、底部导航、底部抽屉、输入防缩放
+   ============================================ */
+
+/* 底部导航栏高度（不含安全区） */
+:root {
+  --mobile-nav-height: 4rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* 横屏时避开刘海 */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 消除移动端点击延迟 */
+a,
+button,
+label,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"] {
+  touch-action: manipulation;
+}
+
+/* 手机端为底部导航预留空间，桌面端不受影响 */
+@media (max-width: 767px) {
+  .pb-mobile-nav {
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+  }
+
+  /* iOS 输入框字号小于 16px 时聚焦会自动放大页面 */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+.mobile-nav {
+  height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-top: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== Bottom Sheet ===== */
+/* 手机端弹窗统一改为从底部滑出的抽屉 */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-enter {
+  animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 小屏用抽屉动画，sm 及以上沿用原来的缩放弹出 */
+@media (max-width: 639px) {
+  .modal-content-enter,
+  .danmaku-modal-content {
+    animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .danmaku-modal-overlay {
+    align-items: flex-end;
+  }
+
+  .danmaku-modal-content {
+    width: 100%;
+    max-width: none;
+    max-height: 85dvh;
+    border-radius: 20px 20px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .danmaku-modal-close {
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 8px;
+  }
+}
+
+/* 抽屉顶部的拖拽把手（装饰） */
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(17, 24, 39, 0.15);
+  margin: 8px auto 0;
 }

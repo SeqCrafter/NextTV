@@ -5,6 +5,7 @@ import {unstable_cache} from "next/cache";
 const getDoubanData = unstable_cache(
   async (url) => {
     const response = await fetch(url, {
+      signal: AbortSignal.timeout(8000),
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -49,15 +50,20 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    console.error("豆瓣API请求失败:", error);
+    console.error(
+      "豆瓣API请求失败:",
+      error.message,
+      error.cause?.code || error.cause?.message || "",
+    );
 
+    // 豆瓣代理不可达时降级为空列表，不缓存失败结果
     return NextResponse.json(
       {
         error: "获取数据失败",
         message: error.message,
         subjects: [],
       },
-      {status: 500},
+      {status: 200, headers: {"Cache-Control": "no-store"}},
     );
   }
 }
