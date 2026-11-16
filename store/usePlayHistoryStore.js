@@ -73,7 +73,7 @@ export const usePlayHistoryStore = create(
       },
     }),
     {
-      name: 'streambox-play-history',
+      name: 'NextTV-play-history',
     }
   )
 );

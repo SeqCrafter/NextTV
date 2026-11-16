@@ -83,7 +83,7 @@ export const useFavoritesStore = create(
       clearFavorites: () => set({ favorites: [] }),
     }),
     {
-      name: 'streambox-favorites',
+      name: 'NextTV-favorites',
     }
   )
 );
