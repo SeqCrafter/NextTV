@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId } from "react";
+import { AnimatePresence, LayoutGroup, useIsPresent } from "motion/react";
+import * as m from "motion/react-m";
+import { backdropMotion, snappySpring } from "@/lib/motion";
 import { createPortal } from "react-dom";
 import { useRouter, usePathname } from "next/navigation";
 import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
@@ -41,6 +44,7 @@ export function Navbar() {
   const panelRef = useRef(null);
   const bottomNavRef = useRef(null);
   const sheetRef = useRef(null);
+  const navId = useId();
   // 手机端片库以底部抽屉形式展示，桌面端仍为导航栏下拉面板
   const isMobile = useMediaQuery(MOBILE_QUERY);
 
@@ -66,27 +70,12 @@ export function Navbar() {
       const inside = [panelRef, bottomNavRef, sheetRef].some((ref) => ref.current?.contains(event.target));
       if (!inside) setOpenPanel(null);
     };
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") setOpenPanel(null);
-    };
 
     document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [openPanel]);
-
-  // 手机端抽屉打开时锁定背景滚动
-  useEffect(() => {
-    if (!openPanel || !isMobile) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [openPanel, isMobile]);
 
   const handleHistoryClick = (record) => {
     setOpenPanel(null);
@@ -112,6 +101,7 @@ export function Navbar() {
 
   const libraryPanel = openPanel && (
     <LibraryPanel
+      key={isMobile ? "sheet" : "dropdown"}
       variant={isMobile ? "sheet" : "dropdown"}
       activeTab={openPanel}
       onTabChange={setOpenPanel}
@@ -192,7 +182,9 @@ export function Navbar() {
                 );
               })}
 
-              {!isMobile && libraryPanel}
+              <AnimatePresence>
+                {!isMobile && libraryPanel}
+              </AnimatePresence>
             </div>
 
             <Link
@@ -220,7 +212,9 @@ export function Navbar() {
       </div>
 
       {/* 手机端底部导航栏 */}
-      <nav
+      <LayoutGroup id={`bottom-nav-${navId}`}>
+      <m.nav
+        layoutRoot
         ref={bottomNavRef}
         aria-label="底部导航"
         className="mobile-nav md:hidden fixed inset-x-0 bottom-0 z-50 flex items-stretch justify-around px-[max(0.5rem,env(safe-area-inset-left))]"
@@ -255,22 +249,30 @@ export function Navbar() {
           Icon={MaterialSymbolsSettingsOutlineRounded}
           active={isActiveRoute("/settings")}
         />
-      </nav>
+      </m.nav>
+      </LayoutGroup>
 
-      {isMobile &&
-        openPanel &&
-        createPortal(
-          <div ref={sheetRef}>
-            <div
-              aria-hidden="true"
-              className="fixed inset-0 z-[60] bg-gray-900/40 backdrop-blur-sm modal-backdrop-enter"
-              onClick={() => setOpenPanel(null)}
-            />
-            {libraryPanel}
-          </div>,
-          document.body,
-        )}
+      {isMobile && createPortal(
+        <AnimatePresence>
+          {openPanel && (
+            <LibrarySheet key="library-sheet" sheetRef={sheetRef} onClose={() => setOpenPanel(null)}>
+              {libraryPanel}
+            </LibrarySheet>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
+  );
+}
+
+function LibrarySheet({ children, onClose, sheetRef }) {
+  const isPresent = useIsPresent();
+  return (
+    <div ref={sheetRef} inert={!isPresent} aria-hidden={!isPresent || undefined}>
+      <m.div {...backdropMotion} aria-hidden="true" className="fixed inset-0 z-[60] bg-gray-900/40 backdrop-blur-sm" onClick={onClose} />
+      {children}
+    </div>
   );
 }
 
@@ -291,9 +293,8 @@ function BottomNavLink({ href, label, Icon, active }) {
 function BottomNavItemContent({ Icon, label, active }) {
   return (
     <>
-      <span
-        className={`flex items-center justify-center h-7 w-12 rounded-lg transition-colors ${active ? "bg-primary-soft" : ""}`}
-      >
+      <span className="relative isolate flex items-center justify-center h-7 w-12 rounded-lg">
+        {active && <m.span layoutId="active" aria-hidden="true" transition={snappySpring} className="absolute inset-0 -z-10 rounded-lg bg-primary-soft" />}
         <Icon className="text-[24px]" aria-hidden="true" />
       </span>
       <span>{label}</span>

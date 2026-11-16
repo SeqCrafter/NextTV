@@ -552,7 +552,6 @@ input[type="search"]::-webkit-search-decoration {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  animation: modalBackdropFadeIn 0.2s ease-out;
 }
 
 .danmaku-modal-content {
@@ -565,7 +564,6 @@ input[type="search"]::-webkit-search-decoration {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalContentScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .danmaku-modal-content > .danmaku-modal-body {
@@ -738,8 +736,7 @@ textarea,
 
 /* 小屏用抽屉动画，sm 及以上沿用原来的缩放弹出 */
 @media (max-width: 639px) {
-  .modal-content-enter,
-  .danmaku-modal-content {
+  .modal-content-enter {
     animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   }
 

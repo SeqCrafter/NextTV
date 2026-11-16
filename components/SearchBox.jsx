@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, useIsPresent } from "motion/react";
+import * as m from "motion/react-m";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { pressSpring, reducedMotionQuery, surfaceMotion, snappySpring } from "@/lib/motion";
 import { useRouter } from "next/navigation";
 import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
@@ -96,14 +100,15 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
             <MaterialSymbolsCloseRounded className="text-xl" aria-hidden="true" />
           </button>
         )}
-        <button type="submit" aria-label="搜索" className={`flex shrink-0 items-center justify-center rounded-[10px] bg-primary text-ink font-semibold hover:bg-primary-hover transition-colors btn-press cursor-pointer ${compact ? "size-9" : "h-11 px-4 text-sm"}`}>
+        <m.button type="submit" aria-label="搜索" whileTap={{ scale: 0.95 }} transition={pressSpring} className={`flex shrink-0 items-center justify-center rounded-[10px] bg-primary text-ink font-semibold hover:bg-primary-hover transition-colors cursor-pointer ${compact ? "size-9" : "h-11 px-4 text-sm"}`}>
           {compact ? <MaterialSymbolsSearchRounded className="text-xl" aria-hidden="true" /> : "搜索"}
-        </button>
+        </m.button>
       </form>
 
       {/* Search History Dropdown */}
+      <AnimatePresence>
       {showHistory && searchHistory.length > 0 && (
-        <div className="glass-panel absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-hidden z-50 dropdown-enter">
+        <SearchHistoryDropdown key="history">
           <div className="flex items-center justify-between px-4 py-2 border-b border-line">
             <div className="flex items-center gap-2 text-muted text-sm">
               <MaterialSymbolsHistoryRounded className="text-[18px]" aria-hidden="true" />
@@ -113,9 +118,10 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
               清除全部
             </button>
           </div>
-          <div className="max-h-80 overflow-y-auto overscroll-contain p-1.5 custom-scrollbar">
-            {searchHistory.map((item, index) => (
-               <div key={index} className="flex items-center gap-1 rounded-xl hover:bg-surface-active transition-colors">
+          <m.div layoutScroll className="relative max-h-80 overflow-y-auto overscroll-contain p-1.5 custom-scrollbar">
+            <AnimatePresence initial={false} mode="popLayout">
+            {searchHistory.map((item) => (
+               <m.div layout="position" key={item} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={snappySpring} className="flex items-center gap-1 rounded-xl hover:bg-surface-active transition-colors">
                  <button type="button" className="flex min-h-11 items-center gap-3 flex-1 min-w-0 px-3 text-left rounded-lg cursor-pointer" onClick={() => handleHistoryItemClick(item)}>
                    <MaterialSymbolsSearchRounded className="text-[18px] text-muted shrink-0" aria-hidden="true" />
                    <span className="text-ink truncate">{item}</span>
@@ -131,11 +137,29 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
                  >
                    <MaterialSymbolsCloseRounded className="text-[18px]" aria-hidden="true" />
                 </button>
-              </div>
+              </m.div>
             ))}
-          </div>
-        </div>
+            </AnimatePresence>
+          </m.div>
+        </SearchHistoryDropdown>
       )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function SearchHistoryDropdown({ children }) {
+  const isPresent = useIsPresent();
+  const reduceMotion = useMediaQuery(reducedMotionQuery);
+  return (
+    <m.div
+      {...surfaceMotion(false, reduceMotion)}
+      inert={!isPresent}
+      aria-hidden={!isPresent || undefined}
+      style={{ transformOrigin: "top center" }}
+      className="glass-panel absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-hidden z-50"
+    >
+      {children}
+    </m.div>
   );
 }

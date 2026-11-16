@@ -4,13 +4,16 @@ import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { SearchBox } from "@/components/SearchBox";
+import { MediaTypeSwitch } from "@/components/MediaTypeSwitch";
+import { ResultItem } from "@/components/ResultItem";
+import { AnimatedDialog } from "@/components/AnimatedDialog";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { fetchRecommendations, loadUserTags, saveUserTags, defaultMovieTags, defaultTvTags, convertDoubanToMovie } from "@/lib/doubanApi";
 import {
   MaterialSymbolsMovieOutlineRounded,
-  MaterialSymbolsTvOutlineRounded,
-  MaterialSymbolsSmartphoneOutline,
   MaterialSymbolsAdd,
   MaterialSymbolsChevronLeftRounded,
   MaterialSymbolsChevronRightRounded,
@@ -77,15 +80,6 @@ export default function Home() {
 
     loadMovies();
   }, [mediaType, currentTag, page, doubanProxy]);
-
-  useEffect(() => {
-    if (!showTagModal) return;
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") setShowTagModal(false);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [showTagModal]);
 
   const handleMediaTypeChange = (type) => {
     setMediaType(type);
@@ -190,20 +184,7 @@ export default function Home() {
 
       <section aria-label="内容筛选" className="surface-panel px-3 py-3 sm:px-5 sm:py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div role="radiogroup" aria-label="内容类型" className="bg-surface-active p-1 rounded-xl inline-flex items-center gap-1 max-w-full">
-            {[
-              { value: "movie", label: "电影", Icon: MaterialSymbolsMovieOutlineRounded },
-              { value: "tv", label: "电视剧", Icon: MaterialSymbolsTvOutlineRounded },
-              { value: "short", label: "短剧", Icon: MaterialSymbolsSmartphoneOutline },
-            ].map(({ value, label, Icon }) => (
-              <label key={value} className="cursor-pointer relative">
-                <input className="peer sr-only" name="media-type" type="radio" value={value} checked={mediaType === value} onChange={() => handleMediaTypeChange(value)} />
-                <span className="media-toggle-btn min-h-11 px-3 sm:px-5 rounded-lg text-sm font-medium text-muted hover:text-ink peer-checked:bg-surface-light peer-checked:text-ink peer-checked:font-semibold peer-checked:shadow-card peer-focus-visible:ring-2 peer-focus-visible:ring-primary-dark flex items-center gap-1.5">
-                  <Icon className="text-lg" aria-hidden="true" />{label}
-                </span>
-              </label>
-            ))}
-          </div>
+          <MediaTypeSwitch value={mediaType} onChange={handleMediaTypeChange} />
           <p className="hidden md:block text-xs text-muted">{mediaType === "short" ? "红果热门短剧推荐" : "从豆瓣热门片单发现新内容"}</p>
         </div>
 
@@ -267,18 +248,23 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
             {movies.map((movie, index) => (
-              <div key={movie.id} className="grid-item-animate">
+              <ResultItem key={movie.id} index={index}>
                 <MovieCard movie={movie} eager={index < 6} />
-              </div>
+              </ResultItem>
             ))}
           </div>
         )}
       </section>
 
       {/* Tag Management Modal */}
-      {showTagModal && (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-end sm:items-center justify-center z-[60] modal-backdrop-enter" onClick={() => setShowTagModal(false)}>
-          <div role="dialog" aria-modal="true" aria-labelledby="tag-modal-title" className="glass-panel rounded-t-3xl sm:rounded-2xl px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6 max-w-md w-full sm:mx-4 max-h-[85dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar modal-content-enter" onClick={(e) => e.stopPropagation()}>
+      <AnimatedDialog
+        isOpen={showTagModal}
+        onClose={() => setShowTagModal(false)}
+        labelledBy="tag-modal-title"
+        initialFocusSelector='input[name="tagName"]'
+        overlayClassName="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex items-end sm:items-center justify-center z-[60]"
+        className="glass-panel relative rounded-t-3xl sm:rounded-2xl px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6 max-w-md w-full sm:mx-4 max-h-[85dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain custom-scrollbar outline-none"
+      >
             <div className="sheet-handle sm:hidden mb-2" aria-hidden="true" />
             <div className="flex items-center justify-between mb-4">
               <h3 id="tag-modal-title" className="text-lg sm:text-xl font-bold text-gray-900">标签管理 ({mediaType === "movie" ? "电影" : "电视剧"})</h3>
@@ -294,18 +280,20 @@ export default function Home() {
                   恢复默认
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <m.div layoutScroll className="relative flex flex-wrap gap-2">
+                <AnimatePresence initial={false} mode="popLayout">
                 {currentTags.map((tag) => (
-                  <div key={tag} className="group bg-white text-gray-700 ring-1 ring-gray-200 py-1.5 pl-3 pr-1.5 sm:px-3 rounded-lg text-sm font-medium flex items-center gap-1 sm:gap-2">
+                  <m.div layout="position" key={tag} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.12 } }} className="group bg-white text-gray-700 ring-1 ring-gray-200 py-1.5 pl-3 pr-1.5 sm:px-3 rounded-lg text-sm font-medium flex items-center gap-1 sm:gap-2">
                     <span>{tag}</span>
                     {tag !== "热门" && (
                       <button onClick={() => handleDeleteTag(tag)} aria-label={`删除标签 ${tag}`} className="flex items-center justify-center size-8 sm:size-auto -my-1 sm:my-0 rounded-md text-gray-400 hover:text-red-500 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer btn-press">
                         <MaterialSymbolsCloseRounded className="text-[16px]" />
                       </button>
                     )}
-                  </div>
+                  </m.div>
                 ))}
-              </div>
+                </AnimatePresence>
+              </m.div>
             </div>
 
             <div className="border-t border-gray-900/[0.06] pt-4">
@@ -323,7 +311,6 @@ export default function Home() {
                   type="text"
                   name="tagName"
                   aria-label="新标签名称"
-                  autoFocus
                   autoComplete="off"
                   placeholder="输入标签名称..."
                   className="flex-1 min-w-0 bg-white border border-gray-200 rounded-lg px-3 py-2.5 sm:py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -333,9 +320,7 @@ export default function Home() {
                 </button>
               </form>
             </div>
-          </div>
-        </div>
-      )}
+      </AnimatedDialog>
     </div>
   );
 }

@@ -187,9 +187,7 @@ export default function PlayerPage() {
         </div>
       </section>
 
-      {showDanmakuModal && (
-        <DanmakuSearchModal isOpen onClose={handleCloseDanmakuModal} initialTitle={videoDetail.title} onEpisodeConfirm={handleDanmakuEpisodeConfirm} />
-      )}
+      <DanmakuSearchModal isOpen={showDanmakuModal} onClose={handleCloseDanmakuModal} initialTitle={videoDetail.title} onEpisodeConfirm={handleDanmakuEpisodeConfirm} />
     </div>
   );
 }

@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
+import { AnimatePresence, useIsPresent } from "motion/react";
+import * as m from "motion/react-m";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useDialogLifecycle } from "@/hooks/useDialogLifecycle";
+import { reducedMotionQuery, surfaceMotion, snappySpring } from "@/lib/motion";
 import { formatTimeShort } from "@/lib/util";
 import {
   MaterialSymbolsHistoryRounded,
@@ -84,8 +89,13 @@ export function LibraryPanel({
   const [confirmingTab, setConfirmingTab] = useState(null);
   const confirmTimerRef = useRef(null);
   const listRef = useRef(null);
+  const dialogRef = useRef(null);
+  const id = useId();
+  const isPresent = useIsPresent();
+  const reduceMotion = useMediaQuery(reducedMotionQuery);
 
   const isSheet = variant === "sheet";
+  useDialogLifecycle({ dialogRef, onClose, isPresent, modal: isSheet });
   const isHistory = activeTab === "history";
   const items = isHistory ? playHistory : favorites;
   const confirmingClear = confirmingTab === activeTab;
@@ -111,14 +121,21 @@ export function LibraryPanel({
   };
 
   return (
-    <div
+    <m.div
+      {...surfaceMotion(isSheet, reduceMotion)}
+      ref={dialogRef}
+      layoutRoot={isSheet}
+      inert={!isPresent}
+      aria-hidden={!isPresent || undefined}
+      tabIndex={-1}
+      style={{ transformOrigin: isSheet ? "bottom center" : "top right" }}
       role="dialog"
       aria-modal={isSheet ? "true" : undefined}
       aria-label={isHistory ? "观看历史" : "我的收藏"}
       className={
         isSheet
-          ? "glass-panel fixed inset-x-0 bottom-0 z-[61] flex max-h-[85dvh] flex-col overflow-hidden rounded-t-3xl pb-safe sheet-enter"
-          : "glass-panel absolute right-0 top-full z-50 mt-3 flex w-[400px] max-h-[min(560px,calc(100dvh-7rem))] flex-col overflow-hidden rounded-2xl dropdown-enter"
+          ? "glass-panel fixed inset-x-0 bottom-0 z-[61] flex max-h-[85dvh] flex-col overflow-hidden rounded-t-3xl pb-safe outline-none"
+          : "glass-panel absolute right-0 top-full z-50 mt-3 flex w-[400px] max-h-[min(560px,calc(100dvh-7rem))] flex-col overflow-hidden rounded-2xl outline-none"
       }
     >
       {isSheet && <div className="sheet-handle" aria-hidden="true" />}
@@ -134,12 +151,11 @@ export function LibraryPanel({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => onTabChange(key)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold ${isSheet ? "min-h-10" : "py-1.5"} transition-all duration-200 cursor-pointer ${
-                  selected
-                    ? "bg-white text-gray-900 shadow-sm ring-1 ring-black/5"
-                    : "text-gray-500 hover:text-gray-800"
+                className={`relative isolate flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold ${isSheet ? "min-h-10" : "py-1.5"} transition-colors cursor-pointer ${
+                  selected ? "text-gray-900" : "text-gray-500 hover:text-gray-800"
                 }`}
               >
+                {selected && <m.span layoutId={`library-tab-${id}`} aria-hidden="true" className="absolute inset-0 -z-10 rounded-lg bg-white shadow-sm ring-1 ring-black/5" transition={snappySpring} />}
                 <Icon className={`text-lg ${selected ? "text-primary-dark" : ""}`} aria-hidden="true" />
                 {label}
                 {count > 0 && (
@@ -165,16 +181,15 @@ export function LibraryPanel({
       </div>
 
       {/* List */}
-      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-2 custom-scrollbar">
-        {items.length === 0 ? (
-          <EmptyState tab={activeTab} />
-        ) : (
-          <ul className="flex flex-col gap-0.5">
+      <m.div key={activeTab} ref={listRef} layoutScroll initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: "tween", duration: 0.15 }} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-2 custom-scrollbar">
+        {items.length === 0 && <EmptyState tab={activeTab} />}
+          <ul className="relative flex flex-col gap-0.5">
+            <AnimatePresence initial={false} mode="popLayout">
             {isHistory
               ? playHistory.map((record) => {
                   const progress = Math.min(Math.max(record.progress || 0, 0), 100);
                   return (
-                    <li key={`${record.source}-${record.id}`} className="group relative">
+                    <m.li layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: reduceMotion ? 0 : 12, transition: { duration: 0.14 } }} key={`${record.source}-${record.id}`} className="group relative">
                       <button
                         onClick={() => onHistoryClick(record)}
                         className="flex w-full items-center gap-3 rounded-xl p-2 pr-12 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
@@ -219,11 +234,11 @@ export function LibraryPanel({
                       >
                         <MaterialSymbolsDeleteOutlineRounded className="text-lg" />
                       </button>
-                    </li>
+                    </m.li>
                   );
                 })
               : favorites.map((favorite) => (
-                  <li key={`${favorite.source}-${favorite.id}`} className="group relative">
+                  <m.li layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: reduceMotion ? 0 : 12, transition: { duration: 0.14 } }} key={`${favorite.source}-${favorite.id}`} className="group relative">
                     <button
                       onClick={() => onFavoriteClick(favorite)}
                       className="flex w-full items-center gap-3 rounded-xl p-2 pr-12 text-left transition-colors hover:bg-gray-900/[0.04] cursor-pointer"
@@ -257,11 +272,11 @@ export function LibraryPanel({
                     >
                       <MaterialSymbolsDeleteOutlineRounded className="text-lg" />
                     </button>
-                  </li>
+                  </m.li>
                 ))}
+            </AnimatePresence>
           </ul>
-        )}
-      </div>
+      </m.div>
 
       {/* Footer */}
       {items.length > 0 && (
@@ -281,6 +296,6 @@ export function LibraryPanel({
           </button>
         </div>
       )}
-    </div>
+    </m.div>
   );
 }

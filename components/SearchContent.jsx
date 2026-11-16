@@ -6,15 +6,13 @@ import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { SearchBox } from "@/components/SearchBox";
 import { Pagination } from "@/components/Pagination";
+import { MediaTypeSwitch } from "@/components/MediaTypeSwitch";
+import { ResultItem } from "@/components/ResultItem";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
 import { searchVideos } from "@/lib/cmsApi";
 import {
   MaterialSymbolsSearchRounded,
-  MaterialSymbolsGridViewOutlineRounded,
-  MaterialSymbolsMovieOutlineRounded,
-  MaterialSymbolsTvOutlineRounded,
-  MaterialSymbolsSmartphoneOutline,
 } from "@/components/icons";
 
 export default function SearchContent() {
@@ -190,12 +188,9 @@ export default function SearchContent() {
           )}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
             {filteredResults.map((movie, index) => (
-              <div
-                key={`${movie.source}-${movie.id}`}
-                className="grid-item-animate"
-              >
+              <ResultItem key={`${movie.source}-${movie.id}`} index={index}>
                 <MovieCard movie={movie} eager={index < 6} />
-              </div>
+              </ResultItem>
             ))}
           </div>
 
@@ -230,21 +225,7 @@ export default function SearchContent() {
       </section>
 
       <section aria-label="搜索筛选" className="surface-panel px-3 py-3 sm:px-5 sm:py-4">
-        <div role="radiogroup" aria-label="内容类型" className="bg-surface-active p-1 rounded-xl inline-flex items-center gap-1 max-w-full">
-          {[
-            { value: "all", label: "全部", Icon: MaterialSymbolsGridViewOutlineRounded },
-            { value: "movie", label: "电影", Icon: MaterialSymbolsMovieOutlineRounded },
-            { value: "tv", label: "电视剧", Icon: MaterialSymbolsTvOutlineRounded },
-            { value: "short", label: "短剧", Icon: MaterialSymbolsSmartphoneOutline },
-          ].map(({ value, label, Icon }) => (
-            <label key={value} className="cursor-pointer relative">
-              <input className="peer sr-only" name="media-type" type="radio" value={value} checked={mediaType === value} onChange={(e) => setMediaType(e.target.value)} />
-              <span className="media-toggle-btn min-h-11 px-3 sm:px-5 rounded-lg text-sm font-medium text-muted peer-checked:bg-surface-light peer-checked:text-ink peer-checked:font-semibold peer-checked:shadow-card peer-focus-visible:ring-2 peer-focus-visible:ring-primary-dark flex items-center gap-1.5 whitespace-nowrap">
-                <Icon className="hidden sm:inline text-lg" aria-hidden="true" />{label}
-              </span>
-            </label>
-          ))}
-        </div>
+        <MediaTypeSwitch value={mediaType} onChange={setMediaType} includeAll />
 
         {query && enabledSources.length > 0 && (
           <div className="mt-3 border-t border-line pt-3 flex items-center gap-3">

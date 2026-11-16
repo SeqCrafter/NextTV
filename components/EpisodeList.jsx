@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
+import * as m from "motion/react-m";
+import { pressSpring, snappySpring } from "@/lib/motion";
 import { MaterialSymbolsSwapVertRounded, MaterialSymbolsChevronRightRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
 export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onEpisodeClick, onCollapse }) {
   const [isReversed, setIsReversed] = useState(false);
+  const id = useId();
   const [manualPageState, setManualPageState] = useState(null);
   const pageSize = 35;
 
@@ -78,26 +81,30 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
         </div>
       )}
 
-      <div className={`p-4 grid gap-2 overflow-y-auto custom-scrollbar flex-1 min-h-0 max-h-80 lg:max-h-none content-start ${episodes.length === 1 ? "grid-cols-1" : "grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"}`}>
+      <m.div layoutScroll className={`p-4 grid gap-2 overflow-y-auto custom-scrollbar flex-1 min-h-0 max-h-80 lg:max-h-none content-start ${episodes.length === 1 ? "grid-cols-1" : "grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"}`}>
         {currentRangeEpisodes.map((originalIndex) => {
           const episodeTitle = episodesTitles?.[originalIndex] || (episodes.length === 1 ? "正片" : `第 ${originalIndex + 1} 集`);
           const isCurrent = originalIndex === currentEpisodeIndex;
           return (
-            <button
+            <m.button
+              layout="position"
+              whileTap={{ scale: 0.94 }}
+              transition={{ ...pressSpring, layout: snappySpring }}
               type="button"
               key={originalIndex}
-              className={`min-h-11 min-w-0 px-1 rounded-lg border flex items-center justify-center gap-0.5 text-sm tabular-nums transition-colors cursor-pointer ${isCurrent ? "bg-primary-soft border-primary text-primary-dark font-semibold" : "bg-background-light/70 border-transparent text-muted hover:border-line hover:bg-surface-active hover:text-ink"}`}
+              className={`relative isolate min-h-11 min-w-0 px-1 rounded-lg border flex items-center justify-center gap-0.5 text-sm tabular-nums transition-colors cursor-pointer ${isCurrent ? "border-primary text-primary-dark font-semibold" : "bg-background-light/70 border-transparent text-muted hover:border-line hover:bg-surface-active hover:text-ink"}`}
               onClick={() => onEpisodeClick(originalIndex)}
               title={episodeTitle}
               aria-label={episodeTitle}
               aria-current={isCurrent ? "true" : undefined}
             >
+              {isCurrent && <m.span layoutId={`episode-${id}`} className="absolute inset-0 -z-10 rounded-lg bg-primary-soft" aria-hidden="true" transition={snappySpring} />}
               {isCurrent && <MaterialSymbolsPlayArrowRounded className="text-base shrink-0" aria-hidden="true" />}
               <span className="truncate">{episodes.length === 1 ? episodeTitle : String(originalIndex + 1).padStart(2, "0")}</span>
-            </button>
+            </m.button>
           );
         })}
-      </div>
+      </m.div>
 
       <div className="mt-auto border-t border-line px-4 py-3 bg-background-light/50 shrink-0">
         <p className="text-xs text-muted">当前选集</p>

@@ -1,6 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import * as m from "motion/react-m";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { pressSpring, reducedMotionQuery } from "@/lib/motion";
 import { SpeedTestBadge } from "@/components/SpeedTestBadge";
 import { MaterialSymbolsStarRounded, MaterialSymbolsMovieOutlineRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
@@ -9,6 +12,7 @@ import { useSearchScrollStore } from "@/store/useSearchScrollStore";
 
 export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
   const router = useRouter();
+  const reduceMotion = useMediaQuery(reducedMotionQuery);
   const doubanImageProxy = useSettingsStore((state) => state.doubanImageProxy);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
@@ -48,7 +52,10 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
   };
 
   return (
-    <div
+    <m.div
+      whileHover={reduceMotion ? undefined : { y: -4 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+      transition={pressSpring}
       role="link"
       tabIndex={0}
       aria-label={movie.title}
@@ -133,6 +140,6 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
         </h3>
         {(movie.year || movie.source_name) && <p className="mt-0.5 text-xs leading-5 text-muted truncate" title={[movie.year, movie.source_name].filter(Boolean).join(" · ")}>{[movie.year, movie.source_name].filter(Boolean).join(" · ")}</p>}
       </div>
-    </div>
+    </m.div>
   );
 };

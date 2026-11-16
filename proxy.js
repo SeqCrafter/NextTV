@@ -1,33 +1,37 @@
 import { NextResponse } from "next/server";
-import { decrypt } from "@/lib/session";
+import { decrypt } from "@/lib/session-token";
 
 const publicRoutes = ["/login"];
+const publicAssets = ["/logo.png", "/favicon.ico", "/sitemap.xml", "/robots.txt"];
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  // Skip static assets and API routes
   if (
-    pathname === "/logo.png" ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/favicon.ico")
+    pathname === "/api" ||
+    pathname.startsWith("/api/") ||
+    pathname === "/_next" ||
+    pathname.startsWith("/_next/") ||
+    publicAssets.includes(pathname)
   ) {
     return NextResponse.next();
   }
 
-  const sessionCookie = request.cookies.get("session")?.value;
-  const isPublicRoute = publicRoutes.includes(pathname);
-
-  // If visiting login page while already authenticated, redirect to home
-  if (isPublicRoute && sessionCookie) {
-    const session = await decrypt(sessionCookie);
-    if (session) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  if (!process.env.SESSION_SECRET?.trim()) {
+    return NextResponse.json(
+      { error: "会话配置错误：未设置 SESSION_SECRET" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
   }
 
-  // If visiting protected route without valid session, redirect to login
+  const sessionCookie = request.cookies.get("session")?.value;
+  const isPublicRoute = publicRoutes.includes(pathname);
+  const session = sessionCookie ? await decrypt(sessionCookie) : null;
+
+  if (isPublicRoute && session) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   if (!isPublicRoute) {
     if (!sessionCookie) {
       const url = new URL("/login", request.url);
@@ -35,11 +39,9 @@ export async function proxy(request) {
       return NextResponse.redirect(url);
     }
 
-    const session = await decrypt(sessionCookie);
     if (!session) {
-      // Cookie exists but is invalid or expired
       const response = NextResponse.redirect(
-        new URL("/login?error=expired", request.url)
+        new URL("/login?error=expired", request.url),
       );
       response.cookies.delete("session");
       return response;
@@ -48,3 +50,9 @@ export async function proxy(request) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    "/((?!api(?:/|$)|_next(?:/|$)|logo\\.png$|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$).*)",
+  ],
+};
