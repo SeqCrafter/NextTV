@@ -1,4 +1,5 @@
 import "../globals.css";
+import { geist, notoSansSC, notoSerifSC } from "@/app/fonts";
 
 export const metadata = {
   title: "NextTV - 影视无限",
@@ -17,7 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="zh-CN"
-      className="antialiased"
+      className={`${geist.variable} ${notoSansSC.variable} ${notoSerifSC.variable} antialiased`}
       data-scroll-behavior="smooth"
     >
       <body className="bg-background-light text-ink min-h-dvh flex flex-col selection:bg-primary selection:text-ink">

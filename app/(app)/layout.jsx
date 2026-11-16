@@ -1,4 +1,5 @@
 import "../globals.css";
+import { geist, notoSansSC, notoSerifSC } from "@/app/fonts";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -20,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="zh-CN"
-      className="antialiased"
+      className={`${geist.variable} ${notoSansSC.variable} ${notoSerifSC.variable} antialiased`}
       data-scroll-behavior="smooth"
     >
       <body className="bg-background-light text-ink min-h-dvh flex flex-col pb-mobile-nav selection:bg-primary selection:text-ink">

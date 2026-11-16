@@ -225,7 +225,7 @@ export default function Home() {
       <section aria-labelledby="recommendation-heading">
         <div className="flex items-center justify-between gap-3 mb-5">
           <div className="min-w-0">
-            <h2 id="recommendation-heading" className="text-lg sm:text-xl font-semibold text-ink">{mediaType === "short" ? "热门短剧" : "热门片单"}</h2>
+            <h2 id="recommendation-heading" className="font-display text-lg sm:text-xl font-semibold text-ink">{mediaType === "short" ? "热门短剧" : "热门片单"}</h2>
             <p className="mt-1 text-xs text-muted truncate">{mediaType === "short" ? "红果短剧推荐" : `豆瓣推荐 · ${currentTag}`}</p>
           </div>
 

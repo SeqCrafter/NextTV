@@ -178,7 +178,7 @@ export default function SearchContent() {
       return (
         <>
           <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-ink">匹配影片</h2>
+            <h2 className="font-display text-lg font-semibold text-ink">匹配影片</h2>
             <p role="status" className="text-xs text-muted tabular-nums">本页 {filteredResults.length} 个结果</p>
           </div>
 

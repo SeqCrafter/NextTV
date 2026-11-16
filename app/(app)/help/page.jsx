@@ -10,7 +10,7 @@ function Section({ id, number, title, children }) {
     <section id={id} className="scroll-mt-24">
       <div className="flex items-center gap-3 mb-6">
         <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-sm font-bold shrink-0">{number}</span>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
+        <h2 className="font-display text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
       </div>
       {children}
     </section>

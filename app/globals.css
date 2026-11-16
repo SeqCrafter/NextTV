@@ -6,9 +6,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", "Hiragino Sans GB", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+@theme inline {
+  --font-sans: var(--font-geist), var(--font-noto-sans-sc), "Microsoft YaHei", "PingFang SC", sans-serif;
+  --font-display: var(--font-noto-serif-sc), "Noto Serif SC", "Songti SC", SimSun, serif;
+}
 
+@theme {
   --color-primary: #edbb4d;
   --color-primary-dark: #876019;
   --color-primary-hover: #e4ae39;
@@ -39,6 +42,10 @@
 body {
   font-family: var(--font-sans);
   line-height: 1.6;
+}
+
+h1 {
+  font-family: var(--font-display);
 }
 
 h1,
@@ -110,6 +117,11 @@ h3 {
 
 .art-video-player {
   --art-theme: var(--color-primary) !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* The plugin sets SimHei inline on each comment. */
+.art-danmuku > div {
   font-family: var(--font-sans) !important;
 }
 
@@ -473,9 +485,10 @@ input[type="search"]::-webkit-search-decoration {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
+  /* Danmaku transitions drive playback; shortening them breaks scrolling. */
+  *:not(.art-danmuku *),
+  *:not(.art-danmuku *)::before,
+  *:not(.art-danmuku *)::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     animation-delay: 0ms !important;

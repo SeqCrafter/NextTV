@@ -366,7 +366,7 @@ export default function Settings() {
       <section className="surface-panel p-4 md:p-8 mt-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">视频源管理</h2>
+            <h2 className="font-display text-xl font-bold text-gray-900">视频源管理</h2>
             <p className="text-gray-500 mt-1">管理视频来源，调整优先级和启用状态</p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -419,7 +419,7 @@ export default function Settings() {
       <section className="surface-panel p-4 md:p-8 mt-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">豆瓣配置</h2>
+            <h2 className="font-display text-xl font-bold text-gray-900">豆瓣配置</h2>
             <p className="text-gray-500 mt-1">配置豆瓣 API 和图片代理以防止连接问题</p>
           </div>
         </div>
@@ -443,7 +443,7 @@ export default function Settings() {
       <section className="surface-panel p-4 md:p-8 mt-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">弹幕源管理</h2>
+            <h2 className="font-display text-xl font-bold text-gray-900">弹幕源管理</h2>
             <p className="text-gray-500 mt-1">配置弹幕接口，丰富观影体验（最多支持 1 个弹幕源）</p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -495,7 +495,7 @@ export default function Settings() {
       {/* Data Management */}
       <section className="surface-panel p-4 md:p-8 mt-8">
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900">数据管理</h2>
+          <h2 className="font-display text-xl font-bold text-gray-900">数据管理</h2>
           <p className="text-gray-500 mt-1">导入或导出您的所有设置、源和播放历史</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
