@@ -10,12 +10,14 @@ import { useSearchScrollStore } from "@/store/useSearchScrollStore";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { SearchBox } from "@/components/SearchBox";
 import {
   MaterialSymbolsHistoryRounded,
   MaterialSymbolsFavoriteOutlineRounded,
   MaterialSymbolsSettingsOutlineRounded,
   MaterialSymbolsDirectionsAltOutlineRounded,
   MaterialSymbolsHomeOutlineRounded,
+  MaterialSymbolsSearchRounded,
   SimpleIconsGithub,
 } from "@/components/icons";
 
@@ -129,67 +131,47 @@ export function Navbar() {
 
   return (
     <>
-      <div className="sticky top-0 z-50 w-full px-3 md:px-8 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 md:py-4">
-        <header className="glass-bar relative max-w-7xl mx-auto rounded-2xl flex items-center justify-between gap-2 px-3 sm:px-6 py-2 sm:py-3">
+      <div className="sticky top-0 z-50 w-full border-b border-line bg-background-light/95 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+        <header className="relative max-w-[1504px] mx-auto flex h-16 md:h-18 items-center justify-between gap-3 px-4 sm:px-6 xl:px-8">
           <Link
             href="/"
             aria-label="NextTV 首页"
-            className="flex items-center content-center gap-2 sm:gap-3 cursor-pointer select-none group shrink-0 rounded-lg min-h-11"
+            className="flex items-center gap-2 select-none shrink-0 rounded-lg min-h-11"
           >
-            <div className="relative group-hover:scale-105 transition-transform duration-200">
-              <Image
-                src="https://tncache1-f1.v3mh.com/image/2026/01/14/67727e3ade57c7062ef81a16d4f711a0.png"
-                alt=""
-                loading="eager"
-                width={24}
-                height={24}
-                className="w-6 h-6 object-contain"
-              />
-            </div>
-            <div className="flex flex-col justify-center h-full">
-              <h1 className="text-xl font-extrabold leading-none tracking-tight">
-                <span className="text-gray-900">Next</span>
-                <span className="text-primary">TV</span>
-              </h1>
-              <span className="text-[10px] text-gray-500 text-center font-medium tracking-wide group-hover:text-primary transition-colors">
-                影视无限畅享
-              </span>
-            </div>
+            <Image src="/logo.png" alt="" loading="eager" width={24} height={28} className="h-7 w-auto object-contain" />
+            <span className="text-[20px] font-bold leading-none tracking-tight text-ink">
+              Next<span className="text-primary-dark">TV</span>
+            </span>
           </Link>
 
-          <div className="hidden md:flex flex-1 max-w-md mx-6">
-            {/* Minimal search for navbar if needed */}
-          </div>
-
-          <nav aria-label="主导航" className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
-            <Link
-              href="https://github.com/SeqCrafter/NextTV"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="flex items-center justify-center size-11 md:size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors btn-press"
-            >
-              <SimpleIconsGithub
-                aria-hidden="true"
-                className="size-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              />
+          <nav aria-label="内容导航" className="hidden md:flex items-center gap-1 mr-auto ml-2">
+            <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm font-medium transition-colors ${pathname === "/" ? "bg-primary-soft text-primary-dark" : "text-muted hover:bg-surface-active hover:text-ink"}`}>
+              <MaterialSymbolsHomeOutlineRounded className="text-xl" aria-hidden="true" />
+              发现
             </Link>
+            <Link href="/direct-input" aria-current={pathname === "/direct-input" || pathname === "/direct" ? "page" : undefined} className={`flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-sm font-medium transition-colors ${pathname === "/direct-input" || pathname === "/direct" ? "bg-primary-soft text-primary-dark" : "text-muted hover:bg-surface-active hover:text-ink"}`}>
+              <MaterialSymbolsDirectionsAltOutlineRounded className="text-xl" aria-hidden="true" />
+              直链播放
+            </Link>
+          </nav>
 
-            {/* 以下入口在手机端移到底部导航栏 */}
+          {pathname !== "/" && pathname !== "/search" && (
+            <div className="hidden lg:block flex-1 min-w-0 max-w-xs mx-2">
+              <SearchBox compact />
+            </div>
+          )}
+
+          <nav aria-label="个人工具" className="flex items-center gap-1 sm:gap-2">
             <Link
-              href="/direct-input"
-              aria-label="直链播放"
-              title="直链播放"
-              aria-current={pathname === "/direct-input" ? "page" : undefined}
-              className={`hidden md:flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/direct-input" ? "bg-gray-100 text-gray-900" : ""}`}
+              href="/search"
+              aria-label="搜索影视"
+              className="ui-button ui-icon-button btn-press md:hidden border-transparent bg-transparent text-muted"
             >
-              <MaterialSymbolsDirectionsAltOutlineRounded className="text-2xl" />
+              <MaterialSymbolsSearchRounded className="text-2xl" aria-hidden="true" />
             </Link>
 
             {/* 片库：观看历史 / 我的收藏 */}
-            <div className="relative hidden md:flex items-center gap-2 md:gap-3" ref={panelRef}>
+            <div className="relative hidden md:flex items-center gap-1" ref={panelRef}>
               {LIBRARY_TABS.map(({ key, label, Icon }) => {
                 const active = openPanel === key;
                 return (
@@ -199,12 +181,13 @@ export function Navbar() {
                     title={label}
                     aria-haspopup="dialog"
                     aria-expanded={active}
-                    className={`flex items-center justify-center size-10 rounded-full transition-colors cursor-pointer btn-press ${active ? "bg-primary/20 text-gray-900" : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"}`}
+                    className={`flex min-h-11 items-center justify-center gap-1.5 rounded-lg px-3 text-sm transition-colors cursor-pointer btn-press ${active ? "bg-primary-soft text-primary-dark" : "text-muted hover:bg-surface-active hover:text-ink"}`}
                     onPointerEnter={loadLibraryPanel}
                     onFocus={loadLibraryPanel}
                     onClick={() => setOpenPanel(active ? null : key)}
                   >
-                    <Icon className="text-2xl" />
+                    <Icon className="text-xl" aria-hidden="true" />
+                    <span className="hidden xl:inline">{key === "history" ? "历史" : "收藏"}</span>
                   </button>
                 );
               })}
@@ -217,9 +200,20 @@ export function Navbar() {
               aria-label="设置"
               title="设置"
               aria-current={pathname === "/settings" ? "page" : undefined}
-              className={`hidden md:flex items-center justify-center size-10 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer btn-press ${pathname === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
+              className={`ui-button ui-icon-button hidden md:flex border-transparent bg-transparent text-muted btn-press ${pathname === "/settings" ? "bg-primary-soft text-primary-dark" : ""}`}
             >
-              <MaterialSymbolsSettingsOutlineRounded className="text-2xl" />
+              <MaterialSymbolsSettingsOutlineRounded className="text-xl" aria-hidden="true" />
+            </Link>
+
+            <span className="hidden md:block h-5 w-px bg-line mx-1" aria-hidden="true" />
+            <Link
+              href="https://github.com/SeqCrafter/NextTV"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub 开源项目"
+              className="ui-button ui-icon-button border-transparent bg-transparent text-muted btn-press"
+            >
+              <SimpleIconsGithub aria-hidden="true" className="size-5" fill="currentColor" viewBox="0 0 24 24" />
             </Link>
           </nav>
         </header>
@@ -282,7 +276,7 @@ export function Navbar() {
 
 function bottomNavItemClass(active) {
   return `flex flex-1 flex-col items-center justify-center gap-0.5 min-w-0 text-[11px] font-medium transition-colors cursor-pointer btn-press ${
-    active ? "text-gray-900" : "text-gray-500"
+    active ? "text-primary-dark" : "text-muted"
   }`;
 }
 
@@ -298,7 +292,7 @@ function BottomNavItemContent({ Icon, label, active }) {
   return (
     <>
       <span
-        className={`flex items-center justify-center h-7 w-12 rounded-full transition-colors ${active ? "bg-primary/25" : ""}`}
+        className={`flex items-center justify-center h-7 w-12 rounded-lg transition-colors ${active ? "bg-primary-soft" : ""}`}
       >
         <Icon className="text-[24px]" aria-hidden="true" />
       </span>

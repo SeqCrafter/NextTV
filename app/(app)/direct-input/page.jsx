@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import {
   MaterialSymbolsPlayArrowRounded,
   MaterialSymbolsDirectionsAltOutlineRounded,
+  MaterialSymbolsMovieOutlineRounded,
+  MaterialSymbolsSearchRounded,
+  MaterialSymbolsHistoryRounded,
 } from "@/components/icons";
 
 export default function DirectInputPage() {
@@ -22,100 +25,101 @@ export default function DirectInputPage() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto page-enter">
-      {/* Hero Section */}
-      <div className="text-center mt-4 sm:mt-8 mb-6 sm:mb-10">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-5">
-          <MaterialSymbolsDirectionsAltOutlineRounded className="text-3xl text-primary" />
+    <div className="w-full max-w-4xl mx-auto pt-6 sm:pt-8 page-enter">
+      <div className="mb-6 flex items-center gap-4">
+        <div aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-dark">
+          <MaterialSymbolsDirectionsAltOutlineRounded className="text-2xl" />
         </div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+        <div>
+        <h1 className="text-[28px] sm:text-[34px] leading-snug font-semibold text-ink">
           直链播放
         </h1>
-        <p className="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
-          粘贴视频直链，即刻畅享播放体验
+        <p className="mt-1 text-sm text-muted">
+          粘贴一个视频链接，留一段时间给自己。
         </p>
+        </div>
       </div>
 
-      {/* Input Card */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 shadow-soft mb-6 sm:mb-10">
-        <div className="space-y-5">
+      <div className="surface-panel p-4 sm:p-6 md:p-8 mb-6">
+        <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); handlePlay(); }}>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              播放链接 <span className="text-red-400">*</span>
+            <label htmlFor="stream-url" className="block text-sm font-medium text-ink mb-2">
+              播放链接 <span aria-hidden="true" className="text-rose-700">*</span>
             </label>
             <input
+              id="stream-url"
               type="text"
+              inputMode="url"
+              required
+              autoComplete="off"
+              aria-describedby="stream-url-help"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handlePlay()}
-              placeholder="粘贴 m3u8、mp4、flv 等视频链接…"
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-200 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-white transition-all"
-              autoFocus
+              placeholder="https://example.com/video.m3u8"
+              className="w-full px-4 py-3 text-base rounded-xl border border-line bg-background-light/50 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 focus:bg-surface-light transition-[border-color,background-color,box-shadow]"
             />
+            <p id="stream-url-help" className="mt-2 text-xs leading-6 text-muted">支持 MP4、M3U8 / HLS 等视频直链，实际可播放格式取决于浏览器。</p>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="stream-title" className="block text-sm font-medium text-ink mb-2">
               视频标题{" "}
-              <span className="text-gray-400 font-normal text-xs">
+              <span className="text-muted font-normal text-xs">
                 (可选)
               </span>
             </label>
             <input
+              id="stream-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handlePlay()}
               placeholder="为视频取一个名称，方便回顾历史记录"
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-200 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-white transition-all"
+              className="w-full px-4 py-3 text-base rounded-xl border border-line bg-background-light/50 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 focus:bg-surface-light transition-[border-color,background-color,box-shadow]"
             />
           </div>
           <button
-            onClick={handlePlay}
+            type="submit"
             disabled={!url.trim()}
-            className="w-full py-3 bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md btn-press"
+            className="ui-button ui-button-primary w-full min-h-12 text-base btn-press"
           >
-            <MaterialSymbolsPlayArrowRounded className="text-xl" />
+            <MaterialSymbolsPlayArrowRounded className="text-xl" aria-hidden="true" />
             开始播放
           </button>
-        </div>
+        </form>
       </div>
 
-      {/* Feature Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+      <section aria-label="直链播放功能" className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 px-1">
         {[
           {
-            emoji: "🎬",
+            Icon: MaterialSymbolsMovieOutlineRounded,
             title: "多格式支持",
-            desc: "兼容 M3U8 / HLS、MP4、FLV、TS 等主流视频格式，无需额外转码。",
+            desc: "播放浏览器支持的视频直链与 HLS 流媒体，无需额外转码。",
           },
           {
-            emoji: "💬",
-            title: "弹幕互动",
+            Icon: MaterialSymbolsSearchRounded,
+            title: "弹幕匹配",
             desc: "播放页右侧可搜索并加载弹幕，让你独自观影也能感受弹幕氛围。",
           },
           {
-            emoji: "📝",
+            Icon: MaterialSymbolsHistoryRounded,
             title: "进度记忆",
             desc: "自动保存播放进度与历史记录，下次打开直链即可从上次位置继续。",
           },
-        ].map((item) => (
+        ].map(({ Icon, title, desc }) => (
           <div
-            key={item.title}
-            className="p-5 bg-white border border-gray-100 rounded-2xl hover:shadow-card transition-shadow"
+            key={title}
+            className="flex items-start gap-3"
           >
-            <div className="text-2xl mb-3">{item.emoji}</div>
-            <h3 className="font-bold text-gray-900 mb-1.5">{item.title}</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              {item.desc}
-            </p>
+            <Icon className="text-xl text-primary-dark shrink-0 mt-0.5" aria-hidden="true" />
+            <div><h2 className="text-sm font-medium text-ink mb-1">{title}</h2>
+            <p className="text-xs text-muted leading-6">{desc}</p></div>
           </div>
         ))}
-      </div>
+      </section>
 
       {/* Usage Tips */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-10">
-        <h4 className="font-bold text-amber-800 mb-2">💡 使用提示</h4>
-        <ul className="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+      <div className="border-t border-line pt-5 mb-6">
+        <h2 className="text-sm font-medium text-ink mb-2">使用提示</h2>
+        <ul className="text-xs text-muted leading-6 space-y-1 list-disc pl-4">
           <li>
             推荐使用{" "}
             <a

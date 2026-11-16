@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { MaterialSymbolsFavoriteOutlineRounded } from "@/components/icons";
 
-export function FavoriteButton({ source, id, videoDetail, className = "" }) {
+export function FavoriteButton({ source, id, videoDetail, className = "", showLabel = false }) {
   // 使用精确选择器：只选择当前item的收藏状态，避免不必要的重渲染
   const favoriteStateFromStore = useFavoritesStore((state) => state.favorites.some((fav) => fav.source === source && fav.id === id));
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
@@ -40,15 +40,19 @@ export function FavoriteButton({ source, id, videoDetail, className = "" }) {
 
   return (
     <button
+      type="button"
       onClick={handleToggleFavorite}
-      className={`flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${favoriteState ? "" : "text-gray-400 dark:text-gray-500 hover:text-primary"
-        } ${className} ${favoriteState ? "text-red-500! hover:text-red-600!" : ""}`}
+      disabled={!videoDetail || !id || !source}
+      aria-label={favoriteState ? "取消收藏" : "添加收藏"}
+      aria-pressed={favoriteState}
+      className={`ui-button btn-press ${showLabel ? "" : "ui-icon-button"} ${favoriteState ? "bg-rose-50 text-rose-700 border-rose-200" : "text-muted"} ${className}`}
       title={favoriteState ? "取消收藏" : "添加收藏"}
     >
       <MaterialSymbolsFavoriteOutlineRounded
-        className={`text-[24px] transition-transform duration-300 ${favoriteState ? "fill-current scale-110" : "scale-100"
-          }`}
+        className="text-xl"
+        aria-hidden="true"
       />
+      {showLabel && <span>{favoriteState ? "已收藏" : "收藏"}</span>}
     </button>
   );
 }

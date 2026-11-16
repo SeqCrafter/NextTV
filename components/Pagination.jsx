@@ -22,26 +22,29 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
   const pages = getPageNumbers();
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 mt-8 mb-4">
+    <nav aria-label="结果分页" className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 mt-8 mb-4 tabular-nums">
       <button
-        className="p-2.5 sm:p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        type="button"
+        className="ui-button ui-icon-button border-transparent bg-transparent btn-press"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
         aria-label="上一页"
       >
-        <MaterialSymbolsChevronLeftRounded className="text-xl" />
+        <MaterialSymbolsChevronLeftRounded className="text-xl" aria-hidden="true" />
       </button>
 
       {pages[0] > 1 && (
         <>
           <button
-            className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            type="button"
+            className="ui-button ui-icon-button border-transparent bg-transparent btn-press"
+            aria-label="第 1 页"
             onClick={() => onPageChange(1)}
           >
             1
           </button>
           {pages[0] > 2 && (
-            <span className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 flex items-center justify-center text-sm text-gray-400">
+            <span aria-hidden="true" className="min-w-6 h-11 flex items-center justify-center text-sm text-muted">
               ...
             </span>
           )}
@@ -50,11 +53,14 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
 
       {pages.map((page) => (
         <button
+          type="button"
           key={page}
-          className={`min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium transition-colors ${
+          aria-label={`第 ${page} 页`}
+          aria-current={page === currentPage ? "page" : undefined}
+          className={`ui-button ui-icon-button btn-press ${
             page === currentPage
-              ? "bg-primary text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-primary-soft text-primary-dark border-primary/60 font-semibold"
+              : "border-transparent bg-transparent text-muted"
           }`}
           onClick={() => onPageChange(page)}
         >
@@ -65,12 +71,14 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       {pages[pages.length - 1] < pageCount && (
         <>
           {pages[pages.length - 1] < pageCount - 1 && (
-            <span className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 flex items-center justify-center text-sm text-gray-400">
+            <span aria-hidden="true" className="min-w-6 h-11 flex items-center justify-center text-sm text-muted">
               ...
             </span>
           )}
           <button
-            className="min-w-10 h-10 sm:min-w-[36px] sm:h-9 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            type="button"
+            className="ui-button ui-icon-button border-transparent bg-transparent btn-press"
+            aria-label={`第 ${pageCount} 页`}
             onClick={() => onPageChange(pageCount)}
           >
             {pageCount}
@@ -79,13 +87,14 @@ export function Pagination({ currentPage, pageCount, onPageChange }) {
       )}
 
       <button
-        className="p-2.5 sm:p-2 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        type="button"
+        className="ui-button ui-icon-button border-transparent bg-transparent btn-press"
         disabled={currentPage === pageCount}
         onClick={() => onPageChange(currentPage + 1)}
         aria-label="下一页"
       >
-        <MaterialSymbolsChevronRightRounded className="text-xl" />
+        <MaterialSymbolsChevronRightRounded className="text-xl" aria-hidden="true" />
       </button>
-    </div>
+    </nav>
   );
 }

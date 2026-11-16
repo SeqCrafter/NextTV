@@ -1,24 +1,6 @@
 import "../globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Inter } from "next/font/google";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  fallback: [
-    "-apple-system",
-    "BlinkMacSystemFont",
-    "Segoe UI",
-    "Segoe UI Midlevel",
-    "Noto Sans",
-    "Helvetica",
-    "Arial",
-    "sans-serif",
-    "Apple Color Emoji",
-    "Segoe UI Emoji"
-  ],
-});
 
 export const metadata = {
   title: "NextTV - 影视无限",
@@ -30,19 +12,23 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f9fafb",
+  themeColor: "#f5f4f0",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html
       lang="zh-CN"
-      className={`${inter.className} antialiased`}
+      className="antialiased"
       data-scroll-behavior="smooth"
     >
-      <body className="bg-background-light text-gray-900 min-h-dvh flex flex-col pb-mobile-nav selection:bg-primary selection:text-white">
+      <body className="bg-background-light text-ink min-h-dvh flex flex-col pb-mobile-nav selection:bg-primary selection:text-ink">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-surface-light focus:px-4 focus:py-3 focus:shadow-card">
+          跳到主要内容
+        </a>
         <Navbar />
-        <main className="flex-1 flex flex-col items-center w-full px-4 md:px-8 pb-12">
+        <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col items-center w-full px-4 sm:px-6 xl:px-8 pb-10 outline-none">
           {children}
         </main>
         <Footer />

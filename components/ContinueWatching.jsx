@@ -138,21 +138,21 @@ export function ContinueWatching({ playHistory }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
-          <span className="w-1 h-6 bg-primary rounded-full" aria-hidden="true"></span>
-          继续观看
-        </h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-base font-semibold text-ink">继续观看</h2>
+        <span className="text-xs text-muted">接着上次看</span>
       </div>
 
       <div className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 snap-x snap-mandatory">
-        {recentHistory.map((record) => (
+        {recentHistory.map((record) => {
+          const progress = Math.max(0, Math.min(Number(record.progress) || 0, 100));
+          return (
           <div
             key={`${record.source}-${record.id}`}
             role="link"
             tabIndex={0}
             aria-label={`继续观看 ${record.title}`}
-            className="group relative shrink-0 snap-start w-[260px] sm:w-[280px] bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-primary hover:shadow-md transition-[border-color,box-shadow] duration-300 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="group relative shrink-0 snap-start w-[280px] surface-panel rounded-xl overflow-hidden hover:border-primary/60 transition-colors duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary-dark"
             onClick={() => handlePlayClick(record)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -163,29 +163,20 @@ export function ContinueWatching({ playHistory }) {
           >
             {updatedEpisodes[`${record.source}-${record.id}`] > 0 && (
               <div className="absolute top-0 right-0 z-20">
-                <div className="relative">
-                  <span className="absolute -left-1 top-1 animate-ping inline-flex h-3 w-3 rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative flex items-center justify-center bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-bl-lg font-bold shadow-sm">
+                  <span className="relative flex items-center justify-center bg-primary-soft text-primary-dark text-xs px-2 py-0.5 rounded-bl-lg font-medium">
                     更新 {updatedEpisodes[`${record.source}-${record.id}`]} 集
                   </span>
-                </div>
               </div>
             )}
-            <div className="flex gap-4 p-4">
+            <div className="flex gap-3 p-3">
               {/* 海报 */}
-              <div className="relative w-24 h-36 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+              <div className="relative w-16 h-24 bg-surface-active rounded-lg overflow-hidden shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={record.poster} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-
-                {record.source && (
-                  <div className="absolute top-1 left-1 z-10">
-                    <span className="block max-w-[5.5rem] truncate bg-primary/90 text-white text-[10px] px-1.5 py-0.5 rounded-md font-medium shadow-sm">{record.source_name || record.source}</span>
-                  </div>
-                )}
+                <img src={record.poster || undefined} alt="" loading="lazy" decoding="async" onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} className="w-full h-full object-cover" />
                 {/* 播放图标 */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
-                    <MaterialSymbolsPlayArrowRounded className="text-primary text-2xl ml-0.5" />
+                <div aria-hidden="true" className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-focus-visible:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-surface-light flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200">
+                    <MaterialSymbolsPlayArrowRounded className="text-ink text-xl" />
                   </div>
                 </div>
               </div>
@@ -193,22 +184,23 @@ export function ContinueWatching({ playHistory }) {
               {/* 信息区域 */}
               <div className="flex-1 flex flex-col justify-between min-w-0">
                 <div>
-                  <h3 className="font-bold text-gray-900 text-base mb-1 line-clamp-2 group-hover:text-primary transition-colors">{record.title}</h3>
-                  <p className="text-xs text-gray-500 mb-1">{formatEpisodeInfo(record)}</p>
-                  {record.year && <p className="text-xs text-gray-400">{record.year}</p>}
+                  <h3 className="font-medium text-ink text-sm leading-5 mb-1 line-clamp-1 group-hover:text-primary-dark transition-colors" title={record.title}>{record.title}</h3>
+                  <p className="text-xs text-muted">{formatEpisodeInfo(record)}</p>
+                  {record.source_name && <p className="mt-1 text-xs text-muted truncate">{record.source_name}</p>}
                 </div>
 
                 {/* 进度条 */}
                 <div className="mt-2">
-                  <div className="h-1 bg-gray-200 rounded-full overflow-hidden" role="progressbar" aria-label="观看进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.floor(Math.min(record.progress, 100))}>
-                    <div className="h-full bg-primary transition-all duration-300" style={{ width: `${Math.min(record.progress, 100)}%` }}></div>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1 tabular-nums">{Math.floor(record.progress)}%</p>
+                   <div className="h-1 bg-line rounded-full overflow-hidden" role="progressbar" aria-label="观看进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.floor(progress)}>
+                     <div className="h-full bg-primary" style={{ width: `${progress}%` }}></div>
+                   </div>
+                   <p className="text-xs text-muted mt-1 tabular-nums">已看 {Math.floor(progress)}%</p>
                 </div>
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -55,7 +55,7 @@ export default function SearchContent() {
       }
       clearScrollPosition();
       router.push(`/search?${params.toString()}`);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     },
     [searchParams, router, clearScrollPosition],
   );
@@ -157,7 +157,7 @@ export default function SearchContent() {
   function renderContent() {
     if (loading) {
       return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
+        <div aria-busy="true" aria-label="正在搜索影片" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
           {Array.from({ length: 12 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))}
@@ -167,9 +167,9 @@ export default function SearchContent() {
 
     if (error) {
       return (
-        <div className="flex flex-col items-center justify-center py-20">
-          <MaterialSymbolsSearchRounded className="text-6xl text-gray-300 mb-4" />
-          <p className="text-gray-500">{error}</p>
+        <div role="status" className="surface-panel flex flex-col items-center justify-center py-14 px-5 text-center">
+          <MaterialSymbolsSearchRounded className="text-3xl text-muted/60 mb-3" aria-hidden="true" />
+          <p className="text-sm text-muted leading-7">{error}</p>
         </div>
       );
     }
@@ -177,16 +177,17 @@ export default function SearchContent() {
     if (query && results.length > 0) {
       return (
         <>
-          <div className="mb-6">
-            <h2 className="text-lg sm:text-xl text-gray-500 font-medium break-words">
-              找到 {filteredResults.length} 个关于{" "}
-              <span className="text-gray-900 font-bold text-xl sm:text-2xl mx-1">
-                &quot;{query}&quot;
-              </span>{" "}
-              的结果
-            </h2>
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-ink">匹配影片</h2>
+            <p role="status" className="text-xs text-muted tabular-nums">本页 {filteredResults.length} 个结果</p>
           </div>
 
+          {filteredResults.length === 0 && (
+            <div className="surface-panel px-5 py-10 text-center">
+              <p className="text-sm text-muted">当前分类暂无匹配影片，试试其他类型或视频源。</p>
+              {mediaType !== "all" && <button type="button" className="ui-button mt-4" onClick={() => setMediaType("all")}>查看全部类型</button>}
+            </div>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
             {filteredResults.map((movie, index) => (
               <div
@@ -211,102 +212,51 @@ export default function SearchContent() {
 
     // Empty state - no query or no results
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <MaterialSymbolsSearchRounded className="text-6xl text-gray-300 mb-4" />
-        <p className="text-gray-500">请输入关键词开始搜索</p>
+      <div className="surface-panel flex flex-col items-center justify-center py-14 px-5 text-center">
+        <MaterialSymbolsSearchRounded className="text-3xl text-muted/60 mb-3" aria-hidden="true" />
+        <p className="text-sm text-muted">输入片名，搜索已启用的视频源。</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-7xl flex flex-col gap-6 sm:gap-8 pt-4 sm:pt-6 page-enter">
-      <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-[1440px] flex flex-col gap-6 sm:gap-8 pt-6 sm:pt-8 page-enter">
+      <section aria-labelledby="search-heading" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+        <div className="min-w-0">
+          <h1 id="search-heading" className="text-[28px] sm:text-[34px] leading-snug tracking-tight font-semibold text-ink">{query ? "搜索结果" : "找一部想看的"}</h1>
+          <p className="mt-2 text-sm text-muted break-words">{query ? <>关键词：<span className="font-medium text-ink">{query}</span></> : "输入片名，轻松发现电影、剧集与短剧。"}</p>
+        </div>
         <SearchBox key={query} initialValue={query} />
+      </section>
 
-        <div className="bg-gray-100 p-1 rounded-lg inline-flex items-center gap-0.5 max-w-full">
-          <label className="cursor-pointer relative">
-            <input
-              className="peer sr-only"
-              name="media-type"
-              type="radio"
-              value="all"
-              checked={mediaType === "all"}
-              onChange={(e) => setMediaType(e.target.value)}
-            />
-            <div className="media-toggle-btn px-3 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all">
-              <MaterialSymbolsGridViewOutlineRounded className="text-[18px]" />
-              全部
-            </div>
-          </label>
-          <div className={`w-px h-4 bg-gray-300 ${mediaType === "all" || mediaType === "movie" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
-          <label className="cursor-pointer relative">
-            <input
-              className="peer sr-only"
-              name="media-type"
-              type="radio"
-              value="movie"
-              checked={mediaType === "movie"}
-              onChange={(e) => setMediaType(e.target.value)}
-            />
-            <div className="media-toggle-btn px-3 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all">
-              <MaterialSymbolsMovieOutlineRounded className="text-[18px]" />
-              电影
-            </div>
-          </label>
-          <div className={`w-px h-4 bg-gray-300 ${mediaType === "movie" || mediaType === "tv" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
-          <label className="cursor-pointer relative">
-            <input
-              className="peer sr-only"
-              name="media-type"
-              type="radio"
-              value="tv"
-              checked={mediaType === "tv"}
-              onChange={(e) => setMediaType(e.target.value)}
-            />
-            <div className="media-toggle-btn px-3 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all">
-              <MaterialSymbolsTvOutlineRounded className="text-[18px]" />
-              电视剧
-            </div>
-          </label>
-          <div className={`w-px h-4 bg-gray-300 ${mediaType === "tv" || mediaType === "short" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
-          <label className="cursor-pointer relative">
-            <input
-              className="peer sr-only"
-              name="media-type"
-              type="radio"
-              value="short"
-              checked={mediaType === "short"}
-              onChange={(e) => setMediaType(e.target.value)}
-            />
-            <div className="media-toggle-btn px-3 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all">
-              <MaterialSymbolsSmartphoneOutline className="text-[18px]" />
-              短剧
-            </div>
-          </label>
+      <section aria-label="搜索筛选" className="surface-panel px-3 py-3 sm:px-5 sm:py-4">
+        <div role="radiogroup" aria-label="内容类型" className="bg-surface-active p-1 rounded-xl inline-flex items-center gap-1 max-w-full">
+          {[
+            { value: "all", label: "全部", Icon: MaterialSymbolsGridViewOutlineRounded },
+            { value: "movie", label: "电影", Icon: MaterialSymbolsMovieOutlineRounded },
+            { value: "tv", label: "电视剧", Icon: MaterialSymbolsTvOutlineRounded },
+            { value: "short", label: "短剧", Icon: MaterialSymbolsSmartphoneOutline },
+          ].map(({ value, label, Icon }) => (
+            <label key={value} className="cursor-pointer relative">
+              <input className="peer sr-only" name="media-type" type="radio" value={value} checked={mediaType === value} onChange={(e) => setMediaType(e.target.value)} />
+              <span className="media-toggle-btn min-h-11 px-3 sm:px-5 rounded-lg text-sm font-medium text-muted peer-checked:bg-surface-light peer-checked:text-ink peer-checked:font-semibold peer-checked:shadow-card peer-focus-visible:ring-2 peer-focus-visible:ring-primary-dark flex items-center gap-1.5 whitespace-nowrap">
+                <Icon className="hidden sm:inline text-lg" aria-hidden="true" />{label}
+              </span>
+            </label>
+          ))}
         </div>
-      </div>
 
-      {/* 视频源标签过滤 */}
-      {query && enabledSources.length > 0 && (
-        <div className="w-full overflow-hidden relative">
-          <div className="flex gap-2 sm:gap-3 overflow-x-auto hide-scrollbar py-2 px-1 pr-16 sm:pr-1">
-            {enabledSources.map((source) => (
-              <button
-                key={source.key}
-                onClick={() => handleSourceChange(source.key)}
-                className={`shrink-0 px-4 sm:px-5 py-2.5 sm:py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
-                  source.key === sourceFilter
-                    ? "bg-primary/10 border border-primary text-primary font-semibold hover:bg-primary hover:text-white"
-                    : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                {source.name}
-              </button>
-            ))}
+        {query && enabledSources.length > 0 && (
+          <div className="mt-3 border-t border-line pt-3 flex items-center gap-3">
+            <span className="hidden sm:block text-xs text-muted shrink-0">视频源</span>
+            <div aria-label="视频源筛选" className="flex flex-1 min-w-0 gap-1 overflow-x-auto custom-scrollbar py-1 px-1">
+              {enabledSources.map((source) => (
+                <button type="button" key={source.key} onClick={() => handleSourceChange(source.key)} aria-pressed={source.key === sourceFilter} className="filter-chip btn-press">{source.name}</button>
+              ))}
+            </div>
           </div>
-          <div aria-hidden="true" className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-linear-to-l from-background-light to-transparent pointer-events-none"></div>
-        </div>
-      )}
+        )}
+      </section>
 
       <div>{renderContent()}</div>
     </div>

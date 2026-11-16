@@ -50,12 +50,13 @@ export function VideoPlayer({
   }, [loadManualDanmakuRef, artPlayerRef]);
 
   return (
-    <div className="relative w-full h-full bg-black sm:rounded-xl overflow-hidden group sm:border sm:border-gray-800/50">
+    <div className="relative w-full h-full bg-black overflow-hidden group">
       {videoDetail?.episodes?.[currentEpisodeIndex] ? (
         <div ref={artRef} className="w-full h-full" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-white">
-          <span>暂无播放源</span>
+        <div className="w-full h-full flex flex-col gap-2 items-center justify-center text-white">
+          <span className="text-sm font-medium">暂无可用播放地址</span>
+          <span className="text-xs text-white/60">请返回搜索页尝试其他视频源</span>
         </div>
       )}
     </div>

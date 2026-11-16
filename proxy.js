@@ -8,6 +8,7 @@ export async function proxy(request) {
 
   // Skip static assets and API routes
   if (
+    pathname === "/logo.png" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/favicon.ico")

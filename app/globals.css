@@ -4,22 +4,47 @@
 @source '../components/**/*.{js,jsx,ts,tsx}';
 @source '../pages/**/*.{js,jsx,ts,tsx,mdx}';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-primary: #fac638;
-  --color-primary-dark: #e5b120;
-  --color-background-light: #f9fafb;
-  --color-surface-light: #ffffff;
-  --color-surface-active: #f3f4f6;
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", "Hiragino Sans GB", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --color-primary: #edbb4d;
+  --color-primary-dark: #876019;
+  --color-primary-hover: #e4ae39;
+  --color-primary-soft: #fcf1d6;
+  --color-background-light: #f5f4f0;
+  --color-surface-light: #fffefa;
+  --color-surface-active: #efeee8;
+  --color-ink: #292b2e;
+  --color-muted: #686b70;
+  --color-line: #e5e3dc;
   --color-danger: #ef4444;
 
-  --radius-default: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
+  --radius-default: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
   --radius-full: 9999px;
 
-  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.03);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 0 4px 20px rgba(53, 47, 32, 0.04);
+  --shadow-card: 0 2px 8px rgba(53, 47, 32, 0.04);
+}
+
+:root {
+  color-scheme: light;
+  accent-color: var(--color-primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
 @utility bg-primary {
@@ -27,7 +52,7 @@
 }
 
 @utility text-primary {
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
 }
 
 @utility bg-background-light {
@@ -53,16 +78,16 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #e5e7eb;
+  background-color: #d8d5cc;
   border-radius: 20px;
 }
 
 .toggle-checkbox:checked + .toggle-label {
-  background-color: #fac638;
+  background-color: var(--color-primary);
 }
 
 .selection\:bg-primary::selection {
-  background-color: #fac638;
+  background-color: var(--color-primary);
 }
 
 .selection\:text-white::selection {
@@ -80,7 +105,12 @@
 /* 暂停按钮 */
 
 .art-icon-state svg {
-  fill: #fac638 !important;
+  fill: var(--color-primary) !important;
+}
+
+.art-video-player {
+  --art-theme: var(--color-primary) !important;
+  font-family: var(--font-sans) !important;
 }
 
 /* ===== Volume Control Hover Optimization ===== */
@@ -294,7 +324,7 @@
 
 /* Page entrance animation */
 .page-enter {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 /* ===== Modal Animations ===== */
@@ -323,7 +353,7 @@
 }
 
 .modal-content-enter {
-  animation: modalContentScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modalContentScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ===== Staggered Grid Animations ===== */
@@ -339,45 +369,7 @@
 }
 
 .grid-item-animate {
-  animation: gridItemFadeIn 0.4s ease-out backwards;
-}
-
-/* Stagger delays for grid items */
-.grid-item-animate:nth-child(1) {
-  animation-delay: 0.05s;
-}
-.grid-item-animate:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.grid-item-animate:nth-child(3) {
-  animation-delay: 0.15s;
-}
-.grid-item-animate:nth-child(4) {
-  animation-delay: 0.2s;
-}
-.grid-item-animate:nth-child(5) {
-  animation-delay: 0.25s;
-}
-.grid-item-animate:nth-child(6) {
-  animation-delay: 0.3s;
-}
-.grid-item-animate:nth-child(7) {
-  animation-delay: 0.35s;
-}
-.grid-item-animate:nth-child(8) {
-  animation-delay: 0.4s;
-}
-.grid-item-animate:nth-child(9) {
-  animation-delay: 0.45s;
-}
-.grid-item-animate:nth-child(10) {
-  animation-delay: 0.5s;
-}
-.grid-item-animate:nth-child(11) {
-  animation-delay: 0.55s;
-}
-.grid-item-animate:nth-child(12) {
-  animation-delay: 0.6s;
+  animation: fadeIn 0.24s ease-out;
 }
 
 /* ===== Button Micro-interactions ===== */
@@ -388,38 +380,17 @@
 }
 
 .btn-press:active {
-  transform: scale(0.96);
+  transform: scale(0.98);
 }
 
 /* Media Type Toggle Buttons */
 .media-toggle-btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
   position: relative;
 }
 
 .media-toggle-btn:active {
-  transform: scale(0.95);
-}
-
-/* Checked state icon animation */
-.media-toggle-btn .material-symbols-outlined {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* When checked, icon bounces slightly */
-input:checked + .media-toggle-btn .material-symbols-outlined {
-  transform: scale(1.1);
-  animation: iconBounce 0.5s ease;
-}
-
-@keyframes iconBounce {
-  0%,
-  100% {
-    transform: scale(1.1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
+  background-color: var(--color-surface-active);
 }
 
 .btn-ripple {
@@ -458,7 +429,7 @@ input:checked + .media-toggle-btn .material-symbols-outlined {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #eceef1 0%, #f6f7f9 50%, #eceef1 100%);
+  background: linear-gradient(90deg, #eae8e1 0%, #f6f5f1 50%, #eae8e1 100%);
   background-size: 1000px 100%;
   animation: shimmer 1.6s infinite linear;
 }
@@ -477,8 +448,8 @@ html {
 /* ===== Focus Visible Enhancement ===== */
 /* 键盘聚焦时给出清晰可见的焦点环（鼠标点击不显示） */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: 3px;
 }
 
 /* 已用 Tailwind ring 自定义焦点样式的元素不再叠加 outline */
@@ -515,19 +486,19 @@ input[type="search"]::-webkit-search-decoration {
 /* ===== Glass Surfaces ===== */
 /* 全站统一的毛玻璃层级：导航栏（glass-bar）与浮层面板（glass-panel） */
 .glass-bar {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(17, 24, 39, 0.04);
-  box-shadow: 0 1px 2px 0 rgba(17, 24, 39, 0.03);
+  background: rgba(255, 254, 250, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
 }
 
 .glass-panel {
   /* 浮层内容密集，背景接近不透明以保证文字清晰，仅保留轻微的毛玻璃质感 */
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  background: rgba(255, 254, 250, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-line);
   box-shadow:
     0 16px 40px -12px rgba(17, 24, 39, 0.14),
     0 4px 12px -6px rgba(17, 24, 39, 0.06);
@@ -581,7 +552,7 @@ input[type="search"]::-webkit-search-decoration {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalContentScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modalContentScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .danmaku-modal-content > .danmaku-modal-body {
@@ -603,27 +574,22 @@ input[type="search"]::-webkit-search-decoration {
   top: 12px;
   right: 12px;
   z-index: 10;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 10px;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--color-muted);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
 
 .danmaku-modal-close:hover {
-  background: rgba(0, 0, 0, 0.06);
-  color: #475569;
-}
-
-:is(.dark) .danmaku-modal-close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
+  background: var(--color-surface-active);
+  color: var(--color-ink);
 }
 
 /* "弹" button styles */
@@ -732,10 +698,10 @@ textarea,
 .mobile-nav {
   height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border-top: 1px solid rgba(17, 24, 39, 0.06);
+  background: rgba(255, 254, 250, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--color-line);
 }
 
 .pb-safe {
@@ -791,4 +757,144 @@ textarea,
   border-radius: 9999px;
   background: rgba(17, 24, 39, 0.15);
   margin: 8px auto 0;
+}
+
+@layer components {
+  .surface-panel {
+    background: var(--color-surface-light);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .ui-button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 14px;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    background: var(--color-surface-light);
+    color: var(--color-ink);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+  }
+
+  .ui-button:hover:not(:disabled) {
+    background: var(--color-surface-active);
+    border-color: #d6d2c7;
+  }
+
+  .ui-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .ui-button-primary {
+    background: var(--color-primary);
+    border-color: transparent;
+  }
+
+  .ui-button-primary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+    border-color: transparent;
+  }
+
+  .ui-icon-button {
+    width: 44px;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    min-height: 44px;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--color-muted);
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  }
+
+  .filter-chip:hover {
+    background: var(--color-surface-active);
+    color: var(--color-ink);
+  }
+
+  .filter-chip[aria-pressed="true"] {
+    background: var(--color-primary-soft);
+    border-color: #e6ce91;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+  }
+
+  .watch-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .watch-screen {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-width: 0;
+    overflow: hidden;
+    background: #141517;
+  }
+
+  .watch-sidebar {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .episode-panel {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .watch-layout {
+      grid-template-columns: minmax(0, 1fr) 304px;
+      gap: 20px;
+    }
+
+    .watch-sidebar > .episode-panel,
+    .watch-sidebar > .danmaku-panel {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+    }
+
+    .watch-layout[data-theater="true"] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .watch-layout[data-theater="true"] .watch-sidebar {
+      display: none;
+    }
+
+    .watch-layout[data-theater="true"] .watch-screen {
+      max-height: max(240px, calc(100dvh - 12rem));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .watch-layout {
+      grid-template-columns: minmax(0, 1fr) 328px;
+    }
+  }
 }

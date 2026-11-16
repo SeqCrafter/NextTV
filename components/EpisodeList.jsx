@@ -1,121 +1,108 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { MaterialSymbolsSwapVertRounded, MaterialSymbolsChevronRightRounded } from "@/components/icons";
+import { useState } from "react";
+import { MaterialSymbolsSwapVertRounded, MaterialSymbolsChevronRightRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
 export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onEpisodeClick, onCollapse }) {
   const [isReversed, setIsReversed] = useState(false);
-  const [manualPageState, setManualPageState] = useState({ episodeIndex: currentEpisodeIndex, page: 0 });
+  const [manualPageState, setManualPageState] = useState(null);
   const pageSize = 35;
-
-  // 根据排序状态生成显示列表
-  const displayEpisodes = useMemo(() => {
-    if (!episodes) return [];
-    const indices = episodes.map((_, index) => index);
-    return isReversed ? [...indices].reverse() : indices;
-  }, [episodes, isReversed]);
-
-  const currentIndexInDisplay = displayEpisodes.indexOf(currentEpisodeIndex);
-  const syncedPage = currentIndexInDisplay === -1 ? 0 : Math.floor(currentIndexInDisplay / pageSize);
-  const page = manualPageState.episodeIndex === currentEpisodeIndex ? manualPageState.page : syncedPage;
-  const totalPages = Math.ceil(displayEpisodes.length / pageSize);
-  const currentRangeEpisodes = displayEpisodes.slice(page * pageSize, (page + 1) * pageSize);
 
   if (!episodes || episodes.length === 0) {
     return null;
   }
 
-  // Ensure tabs are shown if there are episodes, even if just one page
-  const showTabs = episodes.length > 0;
+  const displayEpisodes = episodes.map((_, index) => index);
+  if (isReversed) displayEpisodes.reverse();
+  const currentIndexInDisplay = displayEpisodes.indexOf(currentEpisodeIndex);
+  const syncedPage = currentIndexInDisplay === -1 ? 0 : Math.floor(currentIndexInDisplay / pageSize);
+  const totalPages = Math.ceil(displayEpisodes.length / pageSize);
+  // 切集和排序后自动回到当前集所在分组，手动浏览分组时不抢占位置。
+  const page = manualPageState?.episodeIndex === currentEpisodeIndex && manualPageState?.isReversed === isReversed
+    ? Math.min(manualPageState.page, totalPages - 1)
+    : syncedPage;
+  const currentRangeEpisodes = displayEpisodes.slice(page * pageSize, (page + 1) * pageSize);
+  const currentTitle = episodesTitles?.[currentEpisodeIndex] || (episodes.length === 1 ? "正片" : `第 ${currentEpisodeIndex + 1} 集`);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
-      <div className="px-4 py-3 lg:p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
-        <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white">选集</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{episodes.length > 1 ? `更新至 ${episodes.length} 集` : "电影"}</p>
+    <section id="episode-panel" aria-labelledby="episode-heading" className="episode-panel surface-panel">
+      <div className="px-4 py-3 border-b border-line flex justify-between items-center gap-2 shrink-0">
+        <div className="min-w-0">
+          <h2 id="episode-heading" className="text-base font-semibold text-ink">{episodes.length > 1 ? "剧集" : "影片"}</h2>
+          <p className="text-xs text-muted mt-0.5">{episodes.length > 1 ? `共 ${episodes.length} 集` : "完整影片"}</p>
         </div>
 
-        <div className="flex flex-row lg:flex-col items-center lg:items-end gap-1.5">
-          {/* 折叠选集仅在桌面端侧栏布局下有意义 */}
-          {onCollapse && (
+        <div className="flex items-center gap-1">
+          {episodes.length > 1 && (
             <button
-              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
-              onClick={onCollapse}
-              title="隐藏选集"
+              type="button"
+              className="flex min-h-11 items-center gap-1 px-2 rounded-lg text-xs text-muted hover:bg-surface-active hover:text-ink transition-colors cursor-pointer"
+              onClick={() => setIsReversed((value) => !value)}
+              aria-label={isReversed ? "切换为正序排列" : "切换为倒序排列"}
+              aria-pressed={isReversed}
             >
-              <span>折叠</span>
-              <MaterialSymbolsChevronRightRounded className="text-[14px]" />
+              <MaterialSymbolsSwapVertRounded className={`text-lg transition-transform duration-150 ${isReversed ? "rotate-180" : ""}`} aria-hidden="true" />
+              {isReversed ? "倒序" : "正序"}
             </button>
           )}
-          <button
-            className="text-slate-500 lg:text-slate-400 hover:text-primary transition-colors flex items-center gap-1 text-xs bg-gray-100 dark:bg-slate-700 px-3 lg:px-2 min-h-9 lg:min-h-0 py-1 rounded-lg lg:rounded cursor-pointer"
-            onClick={() => setIsReversed(!isReversed)}
-          >
-            <span>{isReversed ? "倒序" : "正序"}</span>
-            <MaterialSymbolsSwapVertRounded className={`text-[14px] transition-transform ${isReversed ? "rotate-180" : ""}`} />
-          </button>
+          {onCollapse && (
+            <button
+              type="button"
+              className="hidden lg:flex size-11 items-center justify-center rounded-lg text-muted hover:bg-surface-active hover:text-ink transition-colors cursor-pointer"
+              onClick={onCollapse}
+              title="收起选集，扩大画面"
+              aria-label="收起选集，扩大画面"
+            >
+              <MaterialSymbolsChevronRightRounded className="text-xl" aria-hidden="true" />
+            </button>
+          )}
         </div>
       </div>
 
-      {episodes.length > 1 && (
-        <>
-          {showTabs && (
-            <div className="px-4 py-2 flex gap-2 overflow-x-auto custom-scrollbar border-b border-gray-50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/30 shrink-0">
-              {Array.from({ length: totalPages }).map((_, idx) => {
-                const start = idx * pageSize + 1;
-                const end = Math.min((idx + 1) * pageSize, episodes.length);
-                const isActive = page === idx;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => setManualPageState({ episodeIndex: currentEpisodeIndex, page: idx })}
-                    className={`whitespace-nowrap px-3.5 lg:px-3 py-2 lg:py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${isActive
-                      ? "bg-white dark:bg-slate-700 text-primary ring-1 ring-primary/20"
-                      : "text-slate-500 hover:bg-white dark:text-slate-400 dark:hover:bg-slate-700"
-                      }`}
-                  >
-                    {start}-{end}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="p-4 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5 gap-2.5 sm:gap-3 overflow-y-auto custom-scrollbar flex-1 content-start">
-            {currentRangeEpisodes.map((originalIndex) => {
-              const episodeTitle = episodesTitles?.[originalIndex] || `第${originalIndex + 1}集`;
-              const displayIndex = String(originalIndex + 1).padStart(2, "0");
-              const isCurrent = originalIndex === currentEpisodeIndex;
-
-              return (
-                <div key={originalIndex} className="relative group/episode">
-                  <button
-                    className={`w-full aspect-square rounded-lg flex items-center justify-center font-medium transition-all duration-200 text-sm cursor-pointer
-                      ${isCurrent
-                        ? "bg-primary text-white font-bold transform scale-105"
-                        : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
-                      }
-                    `}
-                    onClick={() => onEpisodeClick(originalIndex)}
-                    aria-label={episodeTitle}
-                    aria-current={isCurrent ? "true" : undefined}
-                  >
-                    {displayIndex}
-                    {isCurrent && <span aria-hidden="true" className="absolute top-0 right-0 -mt-1 -mr-1 flex size-3"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span><span className="relative inline-flex size-3 rounded-full bg-sky-500"></span></span>}
-                  </button>
-                  {/* Hover Tooltip */}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 invisible group-hover/episode:opacity-100 group-hover/episode:visible transition-all duration-200 pointer-events-none z-50">
-                    {episodeTitle}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
+      {totalPages > 1 && (
+        <div aria-label="集数分组" className="px-3 py-1.5 flex gap-1 overflow-x-auto custom-scrollbar border-b border-line shrink-0">
+          {Array.from({ length: totalPages }).map((_, idx) => {
+            const group = displayEpisodes.slice(idx * pageSize, (idx + 1) * pageSize);
+            return (
+              <button
+                type="button"
+                key={idx}
+                onClick={() => setManualPageState({ episodeIndex: currentEpisodeIndex, isReversed, page: idx })}
+                aria-pressed={page === idx}
+                className={`whitespace-nowrap min-h-11 px-3 text-xs tabular-nums rounded-lg transition-colors cursor-pointer ${page === idx ? "bg-primary-soft text-primary-dark font-semibold" : "text-muted hover:bg-surface-active"}`}
+              >
+                {group[0] + 1}-{group[group.length - 1] + 1}
+              </button>
+            );
+          })}
+        </div>
       )}
 
-      {episodes.length === 1 && <div className="p-4 text-center text-slate-500 text-sm">这是一部电影，无需选集</div>}
-    </div>
+      <div className={`p-4 grid gap-2 overflow-y-auto custom-scrollbar flex-1 min-h-0 max-h-80 lg:max-h-none content-start ${episodes.length === 1 ? "grid-cols-1" : "grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"}`}>
+        {currentRangeEpisodes.map((originalIndex) => {
+          const episodeTitle = episodesTitles?.[originalIndex] || (episodes.length === 1 ? "正片" : `第 ${originalIndex + 1} 集`);
+          const isCurrent = originalIndex === currentEpisodeIndex;
+          return (
+            <button
+              type="button"
+              key={originalIndex}
+              className={`min-h-11 min-w-0 px-1 rounded-lg border flex items-center justify-center gap-0.5 text-sm tabular-nums transition-colors cursor-pointer ${isCurrent ? "bg-primary-soft border-primary text-primary-dark font-semibold" : "bg-background-light/70 border-transparent text-muted hover:border-line hover:bg-surface-active hover:text-ink"}`}
+              onClick={() => onEpisodeClick(originalIndex)}
+              title={episodeTitle}
+              aria-label={episodeTitle}
+              aria-current={isCurrent ? "true" : undefined}
+            >
+              {isCurrent && <MaterialSymbolsPlayArrowRounded className="text-base shrink-0" aria-hidden="true" />}
+              <span className="truncate">{episodes.length === 1 ? episodeTitle : String(originalIndex + 1).padStart(2, "0")}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-auto border-t border-line px-4 py-3 bg-background-light/50 shrink-0">
+        <p className="text-xs text-muted">当前选集</p>
+        <p className="mt-1 text-sm font-medium text-ink break-words" aria-live="polite" aria-atomic="true">{currentTitle}</p>
+      </div>
+    </section>
   );
 }

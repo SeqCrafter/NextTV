@@ -105,13 +105,13 @@ export default function Home() {
   const handlePrevPage = () => {
     if (page > 0) {
       setPage(page - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
   };
 
   const handleNextPage = () => {
     setPage(page + 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   };
 
   const defaultTag = mediaType === "movie" ? "华语" : "国产剧";
@@ -176,103 +176,79 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full max-w-7xl flex flex-col gap-8 pt-6 page-enter">
-      {/* Search Hero */}
-      <div className="flex flex-col items-center justify-start gap-6 w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-[1440px] flex flex-col gap-6 sm:gap-8 pt-6 sm:pt-8 page-enter">
+      <section aria-labelledby="discovery-heading" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-xs font-medium text-primary-dark"><span aria-hidden="true" className="h-px w-5 bg-primary" /> 随时开启一段好时光</p>
+          <h1 id="discovery-heading" className="text-[28px] sm:text-[34px] leading-snug tracking-tight font-semibold text-ink">发现好故事</h1>
+          <p className="mt-2 text-sm leading-6 text-muted">电影、剧集与短剧，找到下一部想看的。</p>
+        </div>
         <SearchBox />
+      </section>
 
-        <div role="radiogroup" aria-label="内容类型" className="bg-gray-100 p-1 rounded-xl inline-flex items-center gap-0.5 max-w-full">
-          <label className="cursor-pointer relative">
-            <input className="peer sr-only" name="media-type" type="radio" value="movie" checked={mediaType === "movie"} onChange={() => handleMediaTypeChange("movie")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
-              <MaterialSymbolsMovieOutlineRounded className="text-[18px]" aria-hidden="true" />
-              电影
-            </div>
-          </label>
-          <div className={`w-px h-4 bg-gray-300 ${mediaType === "movie" || mediaType === "tv" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
-          <label className="cursor-pointer relative">
-            <input className="peer sr-only" name="media-type" type="radio" value="tv" checked={mediaType === "tv"} onChange={() => handleMediaTypeChange("tv")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
-              <MaterialSymbolsTvOutlineRounded className="text-[18px]" aria-hidden="true" />
-              电视剧
-            </div>
-          </label>
-          <div className={`w-px h-4 bg-gray-300 ${mediaType === "tv" || mediaType === "short" ? "opacity-0" : "opacity-100"} transition-opacity`}></div>
-          <label className="cursor-pointer relative">
-            <input className="peer sr-only" name="media-type" type="radio" value="short" checked={mediaType === "short"} onChange={() => handleMediaTypeChange("short")} />
-            <div className="media-toggle-btn px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-800 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 flex items-center gap-1.5 sm:gap-2 transition-all">
-              <MaterialSymbolsSmartphoneOutline className="text-[18px]" aria-hidden="true" />
-              短剧
-            </div>
-          </label>
+      {playHistory && playHistory.length > 0 && <ContinueWatching playHistory={playHistory} />}
+
+      <section aria-label="内容筛选" className="surface-panel px-3 py-3 sm:px-5 sm:py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div role="radiogroup" aria-label="内容类型" className="bg-surface-active p-1 rounded-xl inline-flex items-center gap-1 max-w-full">
+            {[
+              { value: "movie", label: "电影", Icon: MaterialSymbolsMovieOutlineRounded },
+              { value: "tv", label: "电视剧", Icon: MaterialSymbolsTvOutlineRounded },
+              { value: "short", label: "短剧", Icon: MaterialSymbolsSmartphoneOutline },
+            ].map(({ value, label, Icon }) => (
+              <label key={value} className="cursor-pointer relative">
+                <input className="peer sr-only" name="media-type" type="radio" value={value} checked={mediaType === value} onChange={() => handleMediaTypeChange(value)} />
+                <span className="media-toggle-btn min-h-11 px-3 sm:px-5 rounded-lg text-sm font-medium text-muted hover:text-ink peer-checked:bg-surface-light peer-checked:text-ink peer-checked:font-semibold peer-checked:shadow-card peer-focus-visible:ring-2 peer-focus-visible:ring-primary-dark flex items-center gap-1.5">
+                  <Icon className="text-lg" aria-hidden="true" />{label}
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="hidden md:block text-xs text-muted">{mediaType === "short" ? "红果热门短剧推荐" : "从豆瓣热门片单发现新内容"}</p>
         </div>
-      </div>
 
-      {/* Categories - 短剧模式不显示标签 */}
-      {mediaType !== "short" && (
-      <div className="w-full overflow-hidden relative group/scroll">
-        <div className="flex gap-2 sm:gap-3 overflow-x-auto hide-scrollbar py-2 px-1 pr-16 snap-x" role="toolbar" aria-label="分类标签">
-          <button
-            onClick={() => setShowTagModal(true)}
-            className="shrink-0 px-4 sm:px-5 py-2.5 sm:py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-white border border-dashed border-gray-300 text-gray-600 hover:border-primary hover:text-gray-900 cursor-pointer btn-press flex items-center"
-          >
-            <MaterialSymbolsAdd className="text-[16px] mr-1" />
-            管理标签
-          </button>
-          {currentTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
-              aria-pressed={tag === currentTag}
-              className={`shrink-0 snap-start px-4 sm:px-5 py-2.5 sm:py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all cursor-pointer btn-press ${
-                tag === currentTag
-                  ? "bg-primary border border-primary text-white font-semibold shadow-sm"
-                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              {tag}
+        {mediaType !== "short" && (
+          <div className="mt-3 border-t border-line pt-3 flex items-start gap-2">
+            <div className="flex flex-1 min-w-0 gap-1 overflow-x-auto hide-scrollbar sm:flex-wrap px-1 py-1" role="toolbar" aria-label="分类标签">
+              {currentTags.map((tag) => (
+                <button type="button" key={tag} onClick={() => handleTagClick(tag)} aria-pressed={tag === currentTag} className="filter-chip btn-press">{tag}</button>
+              ))}
+            </div>
+            <button type="button" onClick={() => setShowTagModal(true)} className="mt-1 shrink-0 flex min-h-11 w-11 sm:w-auto items-center justify-center gap-1 rounded-lg px-2 text-xs text-muted hover:bg-surface-active hover:text-ink transition-colors cursor-pointer" aria-label="管理分类标签">
+              <MaterialSymbolsAdd className="text-lg" aria-hidden="true" /><span className="hidden sm:inline">管理标签</span>
             </button>
-          ))}
-        </div>
-        <div aria-hidden="true" className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-linear-to-l from-background-light to-transparent pointer-events-none"></div>
-      </div>
-      )}
+          </div>
+        )}
+      </section>
 
       {/* Popular Section */}
-      <div>
-        <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2 min-w-0">
-            <span className="w-1 h-6 bg-primary rounded-full shrink-0" aria-hidden="true"></span>
-            <span className="truncate">
-            {mediaType === "short" ? "红果短剧 - 热门推荐" : `豆瓣热门 - ${currentTag}`}</span>
-          </h2>
+      <section aria-labelledby="recommendation-heading">
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <div className="min-w-0">
+            <h2 id="recommendation-heading" className="text-lg sm:text-xl font-semibold text-ink">{mediaType === "short" ? "热门短剧" : "热门片单"}</h2>
+            <p className="mt-1 text-xs text-muted truncate">{mediaType === "short" ? "红果短剧推荐" : `豆瓣推荐 · ${currentTag}`}</p>
+          </div>
 
           {/* Pagination Controls */}
           <div className="flex items-center gap-2 shrink-0">
-            {page > 0 && <span className="text-xs text-gray-400 tabular-nums mr-1">第 {page + 1} 页</span>}
+            <span className="text-xs text-muted tabular-nums mr-1">第 {page + 1} 页</span>
             <button
               onClick={handlePrevPage}
               disabled={page === 0}
-              className={`flex items-center justify-center size-11 sm:size-9 rounded-lg border transition-all btn-press ${
-                page === 0 ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-              }`}
+              className="ui-button ui-icon-button btn-press"
               title="上一页"
               aria-label="上一页"
             >
-              <MaterialSymbolsChevronLeftRounded className="text-[20px]" />
+              <MaterialSymbolsChevronLeftRounded className="text-[20px]" aria-hidden="true" />
             </button>
             <button
               onClick={handleNextPage}
               disabled={loading || movies.length < pageSize}
-              className={`flex items-center justify-center size-11 sm:size-9 rounded-lg border transition-all btn-press ${
-                loading || movies.length < pageSize
-                  ? "border-gray-200 text-gray-300 cursor-not-allowed opacity-50"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-primary hover:text-primary cursor-pointer"
-              }`}
+              className="ui-button ui-icon-button btn-press"
               title="下一页"
               aria-label="下一页"
             >
-              <MaterialSymbolsChevronRightRounded className="text-[20px]" />
+              <MaterialSymbolsChevronRightRounded className="text-[20px]" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -284,7 +260,7 @@ export default function Home() {
             ))}
           </div>
         ) : movies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-16 text-center text-gray-400">
+          <div role="status" className="surface-panel flex flex-col items-center justify-center gap-3 py-14 px-5 text-center text-muted">
             <MaterialSymbolsMovieOutlineRounded className="text-4xl" aria-hidden="true" />
             <p className="text-sm">暂时没有内容，请稍后重试或切换分类</p>
           </div>
@@ -297,10 +273,7 @@ export default function Home() {
             ))}
           </div>
         )}
-      </div>
-
-      {/* Continue Watching Section */}
-      {playHistory && playHistory.length > 0 && <ContinueWatching playHistory={playHistory} />}
+      </section>
 
       {/* Tag Management Modal */}
       {showTagModal && (
@@ -355,7 +328,7 @@ export default function Home() {
                   placeholder="输入标签名称..."
                   className="flex-1 min-w-0 bg-white border border-gray-200 rounded-lg px-3 py-2.5 sm:py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <button type="submit" className="bg-primary hover:bg-primary-dark text-white px-5 sm:px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors btn-press">
+                <button type="submit" className="ui-button ui-button-primary btn-press">
                   添加
                 </button>
               </form>

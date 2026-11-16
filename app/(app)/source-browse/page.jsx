@@ -113,7 +113,7 @@ export default function SourceBrowsePage() {
   }, [activeSource?.url, activeCategoryId, page]);
 
   return (
-    <div className="w-full min-h-[calc(100vh-64px)] bg-gray-50 flex flex-col">
+    <div className="w-full min-h-[calc(100vh-64px)] bg-background-light flex flex-col">
       <main className="flex-1 max-w-7xl mx-auto w-full px-0 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* Header Options */}

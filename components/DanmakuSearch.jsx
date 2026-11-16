@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import Link from "next/link";
 import { searchAnime, getEpisodes } from "@/lib/danmakuApi";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import {
   MaterialSymbolsSearchRounded,
   MaterialSymbolsArrowBackRounded,
   MaterialSymbolsChevronRightRounded,
+  MaterialSymbolsPlayArrowRounded,
 } from "@/components/icons";
 
 export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, onCollapse }) {
+  const searchInputId = useId();
   const [searchTerm, setSearchTerm] = useState(initialTitle || "");
   const [animes, setAnimes] = useState([]);
   const [selectedAnime, setSelectedAnime] = useState(null);
@@ -21,9 +24,10 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
 
   const danmakuSources = useSettingsStore((s) => s.danmakuSources);
   const enabledSource = danmakuSources.find((s) => s.enabled);
+  const selectedEpisode = episodes.find((episode) => episode.episodeId === selectedEpisodeId);
 
   const handleSearch = async () => {
-    if (!searchTerm.trim() || !enabledSource) return;
+    if (searching || !searchTerm.trim() || !enabledSource) return;
 
     setSearching(true);
     setSearchError("");
@@ -81,102 +85,74 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
     setSearchError("");
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  if (!enabledSource) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
-        <div className="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
-          <div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">弹幕搜索</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">匹配弹幕源</p>
-          </div>
-          {onCollapse && (
-            <button
-              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
-              onClick={onCollapse}
-            >
-              <span>折叠</span>
-              <MaterialSymbolsChevronRightRounded className="text-[14px]" />
-            </button>
-          )}
-        </div>
-        <div className="p-6 flex-1 flex items-center justify-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
-            请先在设置页面中配置并启用弹幕源
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-white/50 dark:bg-slate-800/50 shrink-0">
+    <div className="danmaku-panel surface-panel overflow-hidden flex flex-col h-full min-h-0">
+      <div className="p-4 border-b border-line flex justify-between items-center gap-3 shrink-0">
         <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white">弹幕搜索</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">搜索匹配的弹幕源</p>
+          <h2 className="text-base font-semibold text-ink">弹幕匹配</h2>
+          <p className="text-xs text-muted mt-0.5">选择对应版本与集数</p>
         </div>
         <div className="flex flex-col items-end gap-1.5">
           {onCollapse && (
             <button
-              className="hidden lg:flex text-white hover:bg-primary/80 transition-colors items-center gap-0.5 text-xs bg-primary/70 px-2 py-1 rounded cursor-pointer"
+              type="button"
+              className="hidden lg:flex size-11 items-center justify-center rounded-lg text-muted hover:bg-surface-active hover:text-ink transition-colors cursor-pointer"
               onClick={onCollapse}
+              aria-label="收起弹幕面板，扩大画面"
+              title="收起弹幕面板，扩大画面"
             >
-              <span>折叠</span>
-              <MaterialSymbolsChevronRightRounded className="text-[14px]" />
+              <MaterialSymbolsChevronRightRounded className="text-xl" aria-hidden="true" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="px-4 py-3 border-b border-gray-50 dark:border-slate-700/50 bg-gray-50/50 dark:bg-slate-800/30 shrink-0">
-        <div className="flex gap-2">
+      {!enabledSource ? (
+        <div className="p-6 flex-1 flex flex-col items-center justify-center gap-4">
+          <p className="text-sm leading-7 text-muted text-center">请先在设置中启用弹幕源，再为影片匹配弹幕。</p>
+          <Link href="/settings" className="ui-button">去设置</Link>
+        </div>
+      ) : (
+        <>
+      <div className="px-4 py-3 border-b border-line bg-background-light/50 shrink-0">
+        <label htmlFor={searchInputId} className="block mb-2 text-xs font-medium text-muted">片名</label>
+        <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
           <input
+            id={searchInputId}
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="输入剧名搜索弹幕..."
-            className="flex-1 min-w-0 px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+            placeholder="输入片名"
+            className="flex-1 min-w-0 min-h-11 px-3 text-sm rounded-lg border border-line bg-surface-light text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 transition-[border-color,box-shadow]"
           />
           <button
-            onClick={handleSearch}
+            type="submit"
             disabled={searching || !searchTerm.trim()}
-            className="w-[72px] sm:w-[68px] py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0"
+            aria-busy={searching}
+            className="ui-button ui-button-primary shrink-0 px-3"
           >
-            {searching ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-            ) : (
+            {searching ? "搜索中" : (
               <>
-                <MaterialSymbolsSearchRounded className="text-[16px]" />
+                <MaterialSymbolsSearchRounded className="text-lg" aria-hidden="true" />
                 搜索
               </>
             )}
           </button>
-        </div>
+        </form>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 min-h-0 max-h-[28rem] lg:max-h-none overflow-y-auto custom-scrollbar">
+        {searching && <p role="status" className="p-6 text-sm leading-7 text-muted text-center">正在搜索匹配的弹幕...</p>}
         {/* Loading State */}
         {loadingEpisodes && (
-          <div className="p-6 flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
-            <p className="text-sm text-slate-500">加载剧集...</p>
-          </div>
+          <p role="status" className="p-6 text-sm leading-7 text-muted text-center">正在获取集数...</p>
         )}
 
         {/* Error State */}
         {searchError && !searching && !loadingEpisodes && (
           <div className="p-4">
-            <p className="text-sm text-slate-500 dark:text-slate-400 text-center">{searchError}</p>
+            <p role="status" className="text-sm leading-7 text-muted text-center">{searchError}</p>
           </div>
         )}
 
@@ -185,32 +161,34 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
           <div className="p-3 space-y-2">
             {animes.map((anime) => (
               <button
+                type="button"
                 key={anime.animeId}
                 onClick={() => handleAnimeSelect(anime)}
-                className="w-full text-left p-3 rounded-lg border border-gray-100 dark:border-slate-700 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-all cursor-pointer group"
+                className="w-full text-left p-3 rounded-xl border border-transparent hover:border-line hover:bg-background-light transition-colors cursor-pointer group"
               >
                 <div className="flex gap-3">
                   {anime.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={anime.imageUrl}
-                      alt={anime.animeTitle}
-                      className="w-12 h-16 object-cover rounded shrink-0"
-                      onError={(e) => { e.target.style.display = "none"; }}
+                      alt=""
+                      className="w-12 h-16 object-cover rounded-lg shrink-0 bg-surface-active"
+                      onError={(e) => { e.currentTarget.style.visibility = "hidden"; }}
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 dark:text-white group-hover:text-primary truncate transition-colors">
+                    <p className="text-sm font-medium text-ink group-hover:text-primary-dark line-clamp-2 transition-colors">
                       {anime.animeTitle}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-1.5">
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                      <span className="text-xs text-muted">
                         {anime.typeDescription || anime.type}
                       </span>
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                      {anime.episodeCount != null && <span className="text-xs text-muted">
                         {anime.episodeCount} 集
-                      </span>
+                      </span>}
                       {anime.source && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                        <span className="text-xs text-primary-dark">
                           {anime.source}
                         </span>
                       )}
@@ -226,10 +204,11 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
         {selectedAnime && !loadingEpisodes && episodes.length > 0 && (
           <div className="p-4">
             <button
+              type="button"
               onClick={handleBackToSearch}
-              className="flex items-center gap-1 text-xs text-slate-500 hover:text-primary mb-3 -ml-1 px-1 min-h-9 sm:min-h-0 transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-xs text-muted hover:text-primary-dark mb-3 px-1 min-h-11 rounded-lg transition-colors cursor-pointer"
             >
-              <MaterialSymbolsArrowBackRounded className="text-[14px]" />
+              <MaterialSymbolsArrowBackRounded className="text-base" aria-hidden="true" />
               返回搜索结果
             </button>
             <div className="flex flex-wrap gap-2 content-start">
@@ -237,38 +216,36 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
                 const isCurrent = ep.episodeId === selectedEpisodeId;
                 const displayNumber = String(ep.episodeNumber || "?").padStart(2, "0");
                 return (
-                  <div key={ep.episodeId} className="relative group/episode">
                     <button
-                      className={`size-11 sm:size-10 rounded-lg flex items-center justify-center font-medium transition-all duration-200 text-xs cursor-pointer shrink-0
-                        ${isCurrent
-                          ? "bg-primary text-white font-bold transform scale-105"
-                          : "text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-slate-700 dark:hover:border-primary dark:hover:text-primary"
-                        }
-                      `}
+                      type="button"
+                      key={ep.episodeId}
+                      className={`size-11 rounded-lg border flex items-center justify-center gap-0.5 font-medium transition-colors text-sm tabular-nums cursor-pointer shrink-0 ${isCurrent ? "bg-primary-soft border-primary text-primary-dark font-semibold" : "text-muted bg-background-light border-transparent hover:border-line hover:text-ink"}`}
                       onClick={() => handleEpisodeClick(ep)}
+                      aria-label={ep.episodeTitle || `第 ${ep.episodeNumber} 集`}
+                      aria-pressed={isCurrent}
+                      title={ep.episodeTitle}
                     >
+                      {isCurrent && <MaterialSymbolsPlayArrowRounded className="text-base" aria-hidden="true" />}
                       {displayNumber}
-                      {isCurrent && <span className="absolute top-0 right-0 -mt-1 -mr-1 flex size-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span><span className="relative inline-flex size-2.5 rounded-full bg-sky-500"></span></span>}
                     </button>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 invisible group-hover/episode:opacity-100 group-hover/episode:visible transition-all duration-200 pointer-events-none z-50">
-                      {ep.episodeTitle}
-                    </div>
-                  </div>
                 );
               })}
             </div>
+            {selectedEpisode && <p role="status" className="mt-4 text-xs leading-6 text-muted">当前匹配：{selectedEpisode.episodeTitle}</p>}
           </div>
         )}
 
         {/* Empty Initial State */}
         {!searching && !loadingEpisodes && animes.length === 0 && !searchError && (
           <div className="p-6 flex items-center justify-center">
-            <p className="text-sm text-slate-400 dark:text-slate-500 text-center">
-              输入剧名搜索对应弹幕
+            <p className="text-sm leading-7 text-muted text-center">
+              输入片名，再选择对应版本与集数。
             </p>
           </div>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }
