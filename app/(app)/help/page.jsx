@@ -245,7 +245,16 @@ export default function HelpPage() {
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
               <p className="text-sm text-amber-800">
                 <strong>提示：</strong>
-                导入时支持批量添加视频源。你可以手动编辑 JSON 文件来批量配置多个视频源，然后一次性导入。导入操作会合并现有配置而非覆盖。导入格式请前往github仓库查看。
+                导入时支持批量添加视频源。你可以手动编辑 JSON 文件来批量配置多个视频源，然后一次性导入。导入操作会合并现有配置而非覆盖。导入格式请前往github仓库查看。如不知道如何导入，可尝试下载
+                <a
+                  href="https://alist.xiaohanys.top/cloudflare/NextTV-settings.json"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-800 hover:text-amber-900 underline underline-offset-2"
+                >
+                  该配置
+                </a>
+                并导入。
               </p>
             </div>
           </div>

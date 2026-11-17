@@ -30,6 +30,7 @@ export default function Home() {
   const [tvTags, setTvTags] = useState([]);
   const [showTagModal, setShowTagModal] = useState(false);
   const pageSize = 12;
+  const recommendationGridClassName = "mx-auto grid w-[92%] grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6";
 
   // 获取播放记录
   const playHistory = usePlayHistoryStore((state) => state.playHistory);
@@ -173,7 +174,7 @@ export default function Home() {
     <div className="w-full max-w-[1440px] flex flex-col gap-6 sm:gap-8 pt-6 sm:pt-8 page-enter">
       <section aria-labelledby="discovery-heading" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
         <div>
-          <p className="mb-2 flex items-center gap-2 text-xs font-medium text-primary-dark"><span aria-hidden="true" className="h-px w-5 bg-primary" /> 随时开启一段好时光</p>
+          <p className="mb-2 flex items-center gap-2 text-sm sm:text-base font-medium text-primary-dark"><span aria-hidden="true" className="h-px w-5 bg-primary" /> 随时开启一段好时光</p>
           <h1 id="discovery-heading" className="text-[28px] sm:text-[34px] leading-snug tracking-tight font-semibold text-ink">发现好故事</h1>
           <p className="mt-2 text-sm leading-6 text-muted">电影、剧集与短剧，找到下一部想看的。</p>
         </div>
@@ -235,7 +236,7 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div aria-busy="true" aria-label="加载中" className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
+          <div aria-busy="true" aria-label="加载中" className={recommendationGridClassName}>
             {Array.from({ length: pageSize }).map((_, index) => (
               <SkeletonCard key={index} />
             ))}
@@ -246,7 +247,7 @@ export default function Home() {
             <p className="text-sm">暂时没有内容，请稍后重试或切换分类</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
+          <div className={recommendationGridClassName}>
             {movies.map((movie, index) => (
               <ResultItem key={movie.id} index={index}>
                 <MovieCard movie={movie} eager={index < 6} />

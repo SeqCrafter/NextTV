@@ -12,8 +12,8 @@
 
 <div align="center">
 
-![Next.js](https://img.shields.io/badge/Next.js-16.3.3-000?logo=nextdotjs)
-![React](https://img.shields.io/badge/React-19.2.8-61dafb?logo=react)
+![Next.js](https://img.shields.io/badge/Next.js-16.4.6-000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19.3.0-61dafb?logo=react)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.3.3-38bdf8?logo=tailwindcss)
 ![ArtPlayer](https://img.shields.io/badge/ArtPlayer-5.4.0-ff6b6b)
 ![HLS.js](https://img.shields.io/badge/HLS.js-1.7.1-ec407a)
@@ -41,17 +41,17 @@
 - ⚙️ **灵活配置** - 可视化管理视频源和弹幕源，支持导入导出
 - ⌨️ **快捷键支持** - 丰富的键盘快捷键，提升观看体验
 - 🔔 **首页剧集更新提醒** - 首页继续观看区域展示剧集更新提醒
-- 🔗 **直链播放** - 支持直链播放(尝试使用openlist的链接播放高清视频)，支持 FLV、TS、MP4 等多种格式
+- 🔗 **直链播放** - 支持直链播放(尝试使用openlist的链接播放高清视频)，支持 MP4，m3u8 等多种格式
 - 🔗 **视频源探索** - 直接探索视频源内容
 
 ---
 
 <details>
   <summary>点击查看项目截图</summary>
-  <img src="https://tncache1-f1.v3mh.com/image/2026/01/16/3c7155e313df3bdae29b66815a42b3db.png" alt="主页截图" style="max-width:600px">
-  <img src="https://tncache1-f1.v3mh.com/image/2026/01/16/778e5b27c569b953924f7c803d788e83.png" alt="搜索截图" style="max-width:600px">
-  <img src="https://tncache1-f1.v3mh.com/image/2026/01/16/0d13d14d462d7c9d7cb250e072f1fdea.png" alt="播放截图" style="max-width:600px">
-  <img src="https://tncache1-f1.v3mh.com/image/2026/01/16/fc1aaa5124285bf4d02fc8df8193821c.png" alt="设置截图" style="max-width:600px">
+  <img src="https://tncache1-f1.v3mh.com/image/2026/11/17/855d434e431be1ec3439677ceae24aff.jpg" alt="主页截图" style="max-width:600px">
+  <img src="https://tncache1-f1.v3mh.com/image/2026/11/17/7ce964454a711a29661e707086856456.jpg" alt="源浏览截图" style="max-width:600px">
+  <img src="https://tncache1-f1.v3mh.com/image/2026/11/17/e9c452f4a585e4f45bc64f8899e5e17b.jpg" alt="播放截图" style="max-width:600px">
+  <img src="https://tncache1-f1.v3mh.com/image/2026/11/17/e138bb4ff94e35d85fbb431d282b066a.jpg" alt="设置截图" style="max-width:600px">
 </details>
 
 ---
@@ -275,11 +275,8 @@ Fork 项目后，点击 Vercel 按钮即可部署。
 你可以使用[该网站](https://randomkeygen.com/secret-key)生成`SESSION_SECRET`。
 密码按照你需要设置的设置即可
 
-### 2. 使用 EdgeOne 部署
 
-添加密码登录功能后不兼容了，无法使用了
-
-### 3. 其他支持 Next.js 的云函数都可以尝试
+### 2. 其他支持 Next.js 的云函数都可以尝试
 需要设置`SESSION_SECRET`和`PASSWORD`环境变量。
 你可以使用[该网站](https://randomkeygen.com/secret-key)生成`SESSION_SECRET`。
 密码按照你需要设置的设置即可
