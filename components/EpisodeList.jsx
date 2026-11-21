@@ -28,10 +28,10 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
   const currentTitle = episodesTitles?.[currentEpisodeIndex] || (episodes.length === 1 ? "正片" : `第 ${currentEpisodeIndex + 1} 集`);
 
   return (
-    <section id="episode-panel" aria-labelledby="episode-heading" className="episode-panel surface-panel">
-      <div className="px-4 py-3 border-b border-line flex justify-between items-center gap-2 shrink-0">
+    <section id="episode-panel" aria-labelledby="episode-heading" className="episode-panel rounded-2xl bg-surface-light">
+      <div className="px-4 pt-4 pb-2 flex justify-between items-center gap-2 shrink-0">
         <div className="min-w-0">
-          <h2 id="episode-heading" className="text-base font-semibold text-ink">{episodes.length > 1 ? "剧集" : "影片"}</h2>
+          <h2 id="episode-heading" className="text-base font-semibold text-ink">{episodes.length > 1 ? "选集" : "播放列表"}</h2>
           <p className="text-xs text-muted mt-0.5">{episodes.length > 1 ? `共 ${episodes.length} 集` : "完整影片"}</p>
         </div>
 
@@ -55,6 +55,8 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
               onClick={onCollapse}
               title="收起选集，扩大画面"
               aria-label="收起选集，扩大画面"
+              aria-controls="episode-panel"
+              aria-expanded="true"
             >
               <MaterialSymbolsChevronRightRounded className="text-xl" aria-hidden="true" />
             </button>
@@ -63,7 +65,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
       </div>
 
       {totalPages > 1 && (
-        <div aria-label="集数分组" className="px-3 py-1.5 flex gap-1 overflow-x-auto custom-scrollbar border-b border-line shrink-0">
+        <div aria-label="集数分组" className="px-3 py-1.5 flex gap-1 overflow-x-auto custom-scrollbar shrink-0">
           {Array.from({ length: totalPages }).map((_, idx) => {
             const group = displayEpisodes.slice(idx * pageSize, (idx + 1) * pageSize);
             return (
@@ -106,7 +108,7 @@ export function EpisodeList({ episodes, episodesTitles, currentEpisodeIndex, onE
         })}
       </m.div>
 
-      <div className="mt-auto border-t border-line px-4 py-3 bg-background-light/50 shrink-0">
+      <div className="mt-auto px-4 py-3 bg-background-light/50 shrink-0">
         <p className="text-xs text-muted">当前选集</p>
         <p className="mt-1 text-sm font-medium text-ink break-words" aria-live="polite" aria-atomic="true">{currentTitle}</p>
       </div>

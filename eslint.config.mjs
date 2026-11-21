@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     ".agent/**",
     ".agents/**",
     ".claude/**",
+    ".oil-ui/**",
   ]),
 ]);
 

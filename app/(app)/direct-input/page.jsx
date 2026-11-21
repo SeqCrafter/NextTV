@@ -8,6 +8,7 @@ import {
   MaterialSymbolsMovieOutlineRounded,
   MaterialSymbolsSearchRounded,
   MaterialSymbolsHistoryRounded,
+  MaterialSymbolsChevronRightRounded,
 } from "@/components/icons";
 
 export default function DirectInputPage() {
@@ -25,22 +26,19 @@ export default function DirectInputPage() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto pt-6 sm:pt-8 page-enter">
-      <div className="mb-6 flex items-center gap-4">
-        <div aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-dark">
-          <MaterialSymbolsDirectionsAltOutlineRounded className="text-2xl" />
+    <div className="w-full max-w-[1440px] mx-auto pt-5 sm:pt-6 page-enter">
+      <header className="mb-5 sm:mb-6 flex items-center gap-3">
+        <div aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-dark">
+          <MaterialSymbolsDirectionsAltOutlineRounded className="text-xl" />
         </div>
-        <div>
-        <h1 className="text-[28px] sm:text-[34px] leading-snug font-semibold text-ink">
+        <h1 className="page-heading">
           直链播放
         </h1>
-        <p className="mt-1 text-sm text-muted">
-          粘贴一个视频链接，留一段时间给自己。
-        </p>
-        </div>
-      </div>
+        <span className="ml-auto text-xs text-muted">MP4 / M3U8 / HLS</span>
+      </header>
 
-      <div className="surface-panel p-4 sm:p-6 md:p-8 mb-6">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_304px] xl:grid-cols-[minmax(0,1fr)_360px] lg:gap-8">
+      <section aria-label="视频链接" className="rounded-2xl bg-surface-light p-5 sm:p-7">
         <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); handlePlay(); }}>
           <div>
             <label htmlFor="stream-url" className="block text-sm font-medium text-ink mb-2">
@@ -52,13 +50,15 @@ export default function DirectInputPage() {
               inputMode="url"
               required
               autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
               aria-describedby="stream-url-help"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com/video.m3u8"
-              className="w-full px-4 py-3 text-base rounded-xl border border-line bg-background-light/50 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 focus:bg-surface-light transition-[border-color,background-color,box-shadow]"
+              className="ui-input"
             />
-            <p id="stream-url-help" className="mt-2 text-xs leading-6 text-muted">支持 MP4、M3U8 / HLS 等视频直链，实际可播放格式取决于浏览器。</p>
+            <p id="stream-url-help" className="mt-2 text-xs leading-6 text-muted">粘贴视频文件或 M3U8 播放列表的完整链接。</p>
           </div>
           <div>
             <label htmlFor="stream-title" className="block text-sm font-medium text-ink mb-2">
@@ -72,37 +72,44 @@ export default function DirectInputPage() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="为视频取一个名称，方便回顾历史记录"
-              className="w-full px-4 py-3 text-base rounded-xl border border-line bg-background-light/50 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 focus:bg-surface-light transition-[border-color,background-color,box-shadow]"
+              placeholder="为视频取个名字，方便在历史中找到"
+              className="ui-input"
             />
           </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+          <p className="text-xs leading-6 text-muted">播放进度保存在当前浏览器，下次可以接着看。</p>
           <button
             type="submit"
             disabled={!url.trim()}
-            className="ui-button ui-button-primary w-full min-h-12 text-base btn-press"
+            className="ui-button ui-button-primary w-full sm:w-auto sm:min-w-36 min-h-12 shrink-0 text-base btn-press"
           >
             <MaterialSymbolsPlayArrowRounded className="text-xl" aria-hidden="true" />
             开始播放
           </button>
+          </div>
         </form>
-      </div>
+      </section>
 
-      <section aria-label="直链播放功能" className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6 px-1">
+      <aside aria-label="播放说明" className="space-y-6">
+        <div aria-hidden="true" className="hidden lg:flex aspect-video items-center justify-center rounded-2xl bg-cinema">
+          <div className="flex size-14 items-center justify-center rounded-full bg-primary/15 text-primary"><MaterialSymbolsPlayArrowRounded className="text-3xl text-[var(--color-primary)]" /></div>
+        </div>
+      <section aria-label="直链播放功能" className="space-y-5 px-1">
         {[
           {
             Icon: MaterialSymbolsMovieOutlineRounded,
-            title: "多格式支持",
-            desc: "播放浏览器支持的视频直链与 HLS 流媒体，无需额外转码。",
+            title: "视频直链",
+            desc: "支持 MP4 和 HLS 流媒体，具体格式取决于浏览器。",
           },
           {
             Icon: MaterialSymbolsSearchRounded,
             title: "弹幕匹配",
-            desc: "播放页右侧可搜索并加载弹幕，让你独自观影也能感受弹幕氛围。",
+            desc: "播放时可搜索片名，选择对应版本和集数。",
           },
           {
             Icon: MaterialSymbolsHistoryRounded,
-            title: "进度记忆",
-            desc: "自动保存播放进度与历史记录，下次打开直链即可从上次位置继续。",
+            title: "继续观看",
+            desc: "可从观看历史重新打开视频，恢复上次的进度。",
           },
         ].map(({ Icon, title, desc }) => (
           <div
@@ -117,8 +124,8 @@ export default function DirectInputPage() {
       </section>
 
       {/* Usage Tips */}
-      <div className="border-t border-line pt-5 mb-6">
-        <h2 className="text-sm font-medium text-ink mb-2">使用提示</h2>
+      <details className="group px-1">
+        <summary className="flex min-h-11 items-center gap-2 text-sm font-medium text-ink cursor-pointer"><MaterialSymbolsChevronRightRounded className="text-lg transition-transform group-open:rotate-90" aria-hidden="true" />获取链接与使用提示</summary>
         <ul className="text-xs text-muted leading-6 space-y-1 list-disc pl-4">
           <li>
             推荐使用{" "}
@@ -135,6 +142,8 @@ export default function DirectInputPage() {
           <li>支持直接粘贴 m3u8 地址，播放器将自动解析 HLS 流</li>
           <li>填写标题有助于在观看历史中快速找到该视频</li>
         </ul>
+      </details>
+      </aside>
       </div>
     </div>
   );

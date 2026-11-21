@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useEffectEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { SearchBox } from "@/components/SearchBox";
@@ -10,6 +11,7 @@ import { MediaTypeSwitch } from "@/components/MediaTypeSwitch";
 import { ResultItem } from "@/components/ResultItem";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
+import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
 import { searchVideos } from "@/lib/cmsApi";
 import {
   MaterialSymbolsSearchRounded,
@@ -23,12 +25,14 @@ export default function SearchContent() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [mediaType, setMediaType] = useState("all"); // 'all', 'movie', 'tv'
   const [pageCount, setPageCount] = useState(1);
   const videoSources = useSettingsStore((state) => state.videoSources);
   const saveScrollPosition = useSearchScrollStore((state) => state.saveScrollPosition);
   const restoreScrollPosition = useSearchScrollStore((state) => state.restoreScrollPosition);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
+  const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
 
   const getCurrentVideoSources = useEffectEvent(() => videoSources);
   const restoreSavedScrollPosition = useEffectEvent(() => restoreScrollPosition());
@@ -89,10 +93,13 @@ export default function SearchContent() {
 
   // 执行搜索
   useEffect(() => {
+    let cancelled = false;
     async function performSearch() {
       if (!query || !query.trim()) {
         setResults([]);
         setPageCount(1);
+        setError(null);
+        setLoading(false);
         return;
       }
 
@@ -106,32 +113,38 @@ export default function SearchContent() {
           currentPage,
           sourceFilter || undefined,
         );
+        if (cancelled) return;
         setResults(searchData.results);
         setPageCount(searchData.pageCount);
 
-        if (searchData.results.length === 0) {
-          setError("未找到相关结果，请尝试其他关键词");
+        if (searchData.failed) {
+          setError("当前视频源暂时无法访问，请切换视频源或稍后重试。");
+        } else if (searchData.results.length === 0) {
+          setError("未找到匹配影片，可以切换视频源或换个关键词。");
         }
 
         // 数据加载完成后恢复滚动位置
         requestAnimationFrame(() => {
+          if (cancelled) return;
           const savedY = restoreSavedScrollPosition();
           if (savedY > 0) {
             window.scrollTo(0, savedY);
           }
         });
       } catch (err) {
+        if (cancelled) return;
         console.error("搜索错误:", err);
         setError("搜索失败，请稍后重试");
         setResults([]);
         setPageCount(1);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     performSearch();
-  }, [query, enabledSourceKeys, currentPage, sourceFilter]);
+    return () => { cancelled = true; };
+  }, [query, enabledSourceKeys, currentPage, sourceFilter, retryCount]);
 
   // 根据媒体类型和视频源过滤结果
   const filteredResults = results.filter((result) => {
@@ -153,9 +166,12 @@ export default function SearchContent() {
 
   // Render content based on search state - clearer than nested ternaries
   function renderContent() {
+    if (query && enabledSources.length === 0) {
+      return <div role="status" className="empty-state"><h2 className="font-display text-xl font-semibold text-ink">还没有启用的视频源</h2><p className="text-sm text-muted">启用一个视频源后，就可以搜索影片。</p><Link href="/settings" className="ui-button ui-button-primary">设置视频源</Link></div>;
+    }
     if (loading) {
       return (
-        <div aria-busy="true" aria-label="正在搜索影片" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
+        <div aria-busy="true" aria-label="正在搜索影片" className="content-grid">
           {Array.from({ length: 12 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))}
@@ -165,9 +181,11 @@ export default function SearchContent() {
 
     if (error) {
       return (
-        <div role="status" className="surface-panel flex flex-col items-center justify-center py-14 px-5 text-center">
-          <MaterialSymbolsSearchRounded className="text-3xl text-muted/60 mb-3" aria-hidden="true" />
+        <div role="status" className="empty-state">
+          <div className="flex size-12 items-center justify-center rounded-xl bg-primary-soft text-primary-dark" aria-hidden="true"><MaterialSymbolsSearchRounded className="text-2xl" /></div>
+          <h2 className="font-display text-xl font-semibold text-ink">{error.startsWith("未找到") ? "没有找到匹配影片" : "搜索暂时不可用"}</h2>
           <p className="text-sm text-muted leading-7">{error}</p>
+          <button type="button" onClick={() => setRetryCount((count) => count + 1)} className="ui-button">重新搜索</button>
         </div>
       );
     }
@@ -175,18 +193,13 @@ export default function SearchContent() {
     if (query && results.length > 0) {
       return (
         <>
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="font-display text-lg font-semibold text-ink">匹配影片</h2>
-            <p role="status" className="text-xs text-muted tabular-nums">本页 {filteredResults.length} 个结果</p>
-          </div>
-
           {filteredResults.length === 0 && (
-            <div className="surface-panel px-5 py-10 text-center">
+            <div className="empty-state">
               <p className="text-sm text-muted">当前分类暂无匹配影片，试试其他类型或视频源。</p>
               {mediaType !== "all" && <button type="button" className="ui-button mt-4" onClick={() => setMediaType("all")}>查看全部类型</button>}
             </div>
           )}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
+          <div className="content-grid">
             {filteredResults.map((movie, index) => (
               <ResultItem key={`${movie.source}-${movie.id}`} index={index}>
                 <MovieCard movie={movie} eager={index < 6} />
@@ -205,32 +218,46 @@ export default function SearchContent() {
       );
     }
 
-    // Empty state - no query or no results
+    // Reuse actual history instead of filling the initial view with a large card.
     return (
-      <div className="surface-panel flex flex-col items-center justify-center py-14 px-5 text-center">
-        <MaterialSymbolsSearchRounded className="text-3xl text-muted/60 mb-3" aria-hidden="true" />
-        <p className="text-sm text-muted">输入片名，搜索已启用的视频源。</p>
+      <div>
+        {searchHistory.length > 0 && <section aria-labelledby="recent-searches-heading" className="mb-6"><h2 id="recent-searches-heading" className="font-display text-lg font-semibold text-ink mb-3">最近搜索</h2><div className="flex flex-wrap gap-2">{searchHistory.map((term) => <Link key={term} href={`/search?q=${encodeURIComponent(term)}`} className="ui-button max-w-full"><span className="truncate">{term}</span></Link>)}</div></section>}
+        <div className="empty-state">
+          <div className="flex size-12 items-center justify-center rounded-xl bg-primary-soft text-primary-dark" aria-hidden="true"><MaterialSymbolsSearchRounded className="text-2xl" /></div>
+          <h2 className="font-display text-xl font-semibold text-ink">从片名开始</h2>
+          <p className="text-sm leading-7 text-muted">搜索电影、电视剧或短剧，也可以按视频源浏览。</p>
+          <Link href="/source-browse" className="ui-button">浏览视频源</Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[1440px] flex flex-col gap-6 sm:gap-8 pt-6 sm:pt-8 page-enter">
-      <section aria-labelledby="search-heading" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+    <div className="w-full max-w-[1440px] flex flex-col gap-5 sm:gap-6 pt-5 sm:pt-6 page-enter">
+      <section aria-labelledby="search-heading" className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:items-center">
         <div className="min-w-0">
-          <h1 id="search-heading" className="text-[28px] sm:text-[34px] leading-snug tracking-tight font-semibold text-ink">{query ? "搜索结果" : "找一部想看的"}</h1>
-          <p className="mt-2 text-sm text-muted break-words">{query ? <>关键词：<span className="font-medium text-ink">{query}</span></> : "输入片名，轻松发现电影、剧集与短剧。"}</p>
+          <h1 id="search-heading" className="page-heading flex flex-wrap items-baseline gap-3">
+            {query ? "搜索结果" : "搜索影片"}
+            {query && !loading && !error && results.length > 0 && <span role="status" className="font-sans text-xs font-normal text-muted tabular-nums">本页 {filteredResults.length} 个结果</span>}
+          </h1>
         </div>
-        <SearchBox key={query} initialValue={query} />
+        <SearchBox key={query} initialValue={query} onSearch={(value) => {
+          const params = new URLSearchParams(searchParams);
+          params.set("q", value);
+          params.delete("page");
+          if (sourceFilter) params.set("source", sourceFilter);
+          router.push(`/search?${params.toString()}`);
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }} />
       </section>
 
-      <section aria-label="搜索筛选" className="surface-panel px-3 py-3 sm:px-5 sm:py-4">
-        <MediaTypeSwitch value={mediaType} onChange={setMediaType} includeAll />
+      <section aria-label="搜索筛选" className="flex flex-col gap-2 xl:flex-row xl:items-center xl:gap-4">
+        <div className="self-start"><MediaTypeSwitch value={mediaType} onChange={setMediaType} includeAll /></div>
 
         {query && enabledSources.length > 0 && (
-          <div className="mt-3 border-t border-line pt-3 flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <span className="hidden sm:block text-xs text-muted shrink-0">视频源</span>
-            <div aria-label="视频源筛选" className="flex flex-1 min-w-0 gap-1 overflow-x-auto custom-scrollbar py-1 px-1">
+            <div aria-label="视频源筛选" className="flex flex-1 min-w-0 gap-1 overflow-x-auto custom-scrollbar py-1">
               {enabledSources.map((source) => (
                 <button type="button" key={source.key} onClick={() => handleSourceChange(source.key)} aria-pressed={source.key === sourceFilter} className="filter-chip btn-press">{source.name}</button>
               ))}

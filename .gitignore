@@ -31,3 +31,7 @@ dist-ssr
 CLAUDE.md
 .claude
 .mcp.json
+
+skills-lock.json
+.kilo
+.oil-ui

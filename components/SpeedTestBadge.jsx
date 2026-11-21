@@ -89,8 +89,8 @@ export function SpeedTestBadge({ videoId, sourceKey, sourceName, sourceUrl }) {
   if (loading) {
     return (
       <div className="absolute top-2 left-2 z-10">
-        <span className="bg-black/60 backdrop-blur-sm text-white/80 text-[10px] px-2 py-1 rounded-md flex items-center gap-1 animate-pulse">
-          <MaterialSymbolsRefreshRounded className="text-[10px] animate-spin" />
+        <span className="bg-surface-light/95 backdrop-blur-sm text-muted text-[11px] px-2 py-1 rounded-md flex items-center gap-1 animate-pulse">
+          <MaterialSymbolsRefreshRounded className="text-[12px] animate-spin" />
           测速中...
         </span>
       </div>
@@ -114,22 +114,12 @@ export function SpeedTestBadge({ videoId, sourceKey, sourceName, sourceUrl }) {
     speedText = `${speedBps} B/s`;
   }
 
-  // Color coding based on latency only
-  let colorClass = "bg-red-500/70 text-white";
-  const latency = result.responseTime || 9999;
-
-  if (latency < 600) {
-    colorClass = "bg-green-500/70 text-white";
-  } else if (latency <= 1000) {
-    colorClass = "bg-yellow-500/70 text-black";
-  }
-
   return (
     <div className="absolute top-2 left-2 z-10">
-      <div className={`${colorClass} shadow-sm backdrop-blur-md rounded-md px-2 py-1 flex flex-col items-start gap-0.5 min-w-[50px]`}>
-        <span className="text-[10px] font-bold leading-none">{result.responseTime}ms</span>
+      <div className="bg-surface-light/95 text-ink shadow-sm backdrop-blur-md rounded-md px-2 py-1 flex flex-col items-start gap-0.5 min-w-[50px]">
+        <span className="text-[11px] font-semibold leading-4">{result.responseTime}ms</span>
         {speedText && (
-          <span className="text-[9px] font-medium leading-none whitespace-nowrap opacity-90">
+          <span className="text-[11px] font-medium leading-4 whitespace-nowrap text-muted">
             {speedText}
           </span>
         )}

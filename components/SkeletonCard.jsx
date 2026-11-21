@@ -5,7 +5,7 @@ export function SkeletonCard() {
       <div className="relative w-full aspect-2/3 overflow-hidden rounded-xl skeleton ring-1 ring-line" />
 
       {/* Title skeleton */}
-      <div className="h-4 rounded skeleton w-3/4" />
+      <div className="min-h-12 pt-1"><div className="h-4 rounded skeleton w-3/4" /></div>
     </div>
   );
 }

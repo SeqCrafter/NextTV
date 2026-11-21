@@ -139,11 +139,11 @@ export function ContinueWatching({ playHistory }) {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-semibold text-ink">继续观看</h2>
-        <span className="text-xs text-muted">接着上次看</span>
+        <h2 className="font-display text-lg font-semibold text-ink">继续观看</h2>
+        <span className="text-xs text-muted">{recentHistory.length > 1 ? "左右滑动查看" : "接着上次看"}</span>
       </div>
 
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 snap-x snap-mandatory">
+      <div aria-label="最近观看的影片" tabIndex={0} className="flex gap-3 sm:gap-4 overflow-x-auto custom-scrollbar pb-2 snap-x snap-mandatory rounded-xl">
         {recentHistory.map((record) => {
           const progress = Math.max(0, Math.min(Number(record.progress) || 0, 100));
           return (
@@ -152,7 +152,7 @@ export function ContinueWatching({ playHistory }) {
             role="link"
             tabIndex={0}
             aria-label={`继续观看 ${record.title}`}
-            className="group relative shrink-0 snap-start w-[280px] surface-panel rounded-xl overflow-hidden hover:border-primary/60 transition-colors duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary-dark"
+            className="group relative shrink-0 snap-start w-[280px] rounded-xl bg-surface-light overflow-hidden hover:bg-primary-soft/50 transition-colors duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary-dark"
             onClick={() => handlePlayClick(record)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -184,7 +184,7 @@ export function ContinueWatching({ playHistory }) {
               {/* 信息区域 */}
               <div className="flex-1 flex flex-col justify-between min-w-0">
                 <div>
-                  <h3 className="font-medium text-ink text-sm leading-5 mb-1 line-clamp-1 group-hover:text-primary-dark transition-colors" title={record.title}>{record.title}</h3>
+                  <h3 className="font-medium text-ink text-sm leading-5 mb-1 line-clamp-2 group-hover:text-primary-dark transition-colors" title={record.title}>{record.title}</h3>
                   <p className="text-xs text-muted">{formatEpisodeInfo(record)}</p>
                   {record.source_name && <p className="mt-1 text-xs text-muted truncate">{record.source_name}</p>}
                 </div>

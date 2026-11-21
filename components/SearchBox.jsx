@@ -69,9 +69,6 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
 
   const handleClearInput = () => {
     setInputValue("");
-    if (onSearch) {
-      router.push("/search");
-    }
   };
 
   return (
@@ -80,12 +77,12 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
       className="w-full relative"
       onKeyDown={(e) => { if (e.key === "Escape") setShowHistory(false); }}
     >
-      <form role="search" aria-label={compact ? "导航搜索" : "影视搜索"} onSubmit={handleSearch} className={`w-full relative flex items-center gap-1 border border-line bg-surface-light shadow-card transition-[border-color,box-shadow] hover:border-[#d6d2c7] focus-within:border-primary-dark/50 focus-within:ring-3 focus-within:ring-primary/15 ${compact ? "rounded-xl pr-1" : "rounded-2xl pr-1.5"}`}>
+      <form role="search" aria-label={compact ? "导航搜索" : "影视搜索"} onSubmit={handleSearch} className="w-full relative flex items-center gap-1 rounded-xl border border-line bg-surface-light p-1 transition-[border-color,box-shadow] hover:border-[#d6d2c7] focus-within:border-primary-dark/50 focus-within:ring-3 focus-within:ring-primary/15">
         <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-muted">
           <MaterialSymbolsSearchRounded className="text-xl" aria-hidden="true" />
         </div>
         <input
-          className={`w-full min-w-0 flex-1 bg-transparent pl-11 pr-1 text-ink placeholder:text-muted text-base outline-none ${compact ? "h-11 text-sm" : "h-14"}`}
+          className={`w-full min-w-0 h-11 flex-1 bg-transparent pl-10 pr-1 text-ink placeholder:text-muted text-base outline-none ${compact ? "text-sm" : ""}`}
           placeholder={placeholder}
           type="search"
           enterKeyHint="search"
@@ -96,12 +93,12 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
           onFocus={() => setShowHistory(true)}
         />
         {inputValue && (
-          <button type="button" onClick={handleClearInput} aria-label="清空输入" className={`flex shrink-0 items-center justify-center rounded-lg text-muted hover:bg-surface-active hover:text-ink transition-colors btn-press ${compact ? "size-9" : "size-11"}`}>
+          <button type="button" onClick={handleClearInput} aria-label="清空输入" className="flex size-11 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-surface-active hover:text-ink transition-colors btn-press">
             <MaterialSymbolsCloseRounded className="text-xl" aria-hidden="true" />
           </button>
         )}
-        <m.button type="submit" aria-label="搜索" whileTap={{ scale: 0.95 }} transition={pressSpring} className={`flex shrink-0 items-center justify-center rounded-[10px] bg-primary text-ink font-semibold hover:bg-primary-hover transition-colors cursor-pointer ${compact ? "size-9" : "h-11 px-4 text-sm"}`}>
-          {compact ? <MaterialSymbolsSearchRounded className="text-xl" aria-hidden="true" /> : "搜索"}
+        <m.button type="submit" aria-label="搜索" whileTap={{ scale: 0.97 }} transition={pressSpring} className={`flex h-11 shrink-0 items-center justify-center rounded-lg px-3 text-sm font-semibold transition-colors cursor-pointer ${compact ? "bg-primary-soft text-primary-dark hover:bg-primary/25" : "bg-primary text-ink hover:bg-primary-hover sm:px-4"}`}>
+          搜索
         </m.button>
       </form>
 

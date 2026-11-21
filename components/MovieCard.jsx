@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useState } from "react";
 import * as m from "motion/react-m";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { pressSpring, reducedMotionQuery } from "@/lib/motion";
@@ -10,9 +11,9 @@ import { MaterialSymbolsStarRounded, MaterialSymbolsMovieOutlineRounded, Materia
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useSearchScrollStore } from "@/store/useSearchScrollStore";
 
-export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
-  const router = useRouter();
+export function MovieCard({ movie, remark, showSpeedTest = true, eager = false }) {
   const reduceMotion = useMediaQuery(reducedMotionQuery);
+  const [failedPoster, setFailedPoster] = useState(null);
   const doubanImageProxy = useSettingsStore((state) => state.doubanImageProxy);
   const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
@@ -32,49 +33,31 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
     }
   }
 
-  const handleClick = () => {
-    // 如果有 source 信息（从 API 搜索来的），则传递 source 参数到播放页面
-    if (movie.source) {
-      router.push(`/play/${movie.id}?source=${movie.source}`);
-    } else {
-      // 豆瓣卡片或红果卡片，跳转到搜索页面，使用 title 搜索
-      clearScrollPosition();
-      router.push(`/search?q=${encodeURIComponent(movie.title)}`);
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleClick();
-    }
-  };
+  const href = movie.source
+    ? `/play/${movie.id}?source=${encodeURIComponent(movie.source)}`
+    : `/search?q=${encodeURIComponent(movie.title)}`;
 
   return (
-    <m.div
-      whileHover={reduceMotion ? undefined : { y: -4 }}
+    <m.article
+      whileHover={reduceMotion ? undefined : { y: -3 }}
       whileTap={reduceMotion ? undefined : { scale: 0.985 }}
       transition={pressSpring}
-      role="link"
-      tabIndex={0}
-      aria-label={movie.title}
-      className="group relative flex flex-col gap-2.5 cursor-pointer rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary-dark focus-visible:ring-offset-4 focus-visible:ring-offset-background-light"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
+      className="group relative min-w-0 flex flex-col gap-2.5 rounded-xl focus-within:ring-2 focus-within:ring-primary-dark focus-within:ring-offset-4 focus-within:ring-offset-background-light"
     >
       <div className="relative w-full aspect-2/3 overflow-hidden rounded-xl bg-surface-active ring-1 ring-black/5 transition-[box-shadow] duration-200 group-hover:shadow-soft group-hover:ring-primary/50">
         <div aria-hidden="true" className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-3 text-muted/70">
           <MaterialSymbolsMovieOutlineRounded className="text-3xl" />
           <span className="text-xs text-center line-clamp-2">{movie.title}</span>
         </div>
-        {movie.rating && movie.rating !== "暂无" && (
-          <div className="absolute top-2 right-2 bg-surface-light/95 text-ink text-xs font-semibold px-1.5 py-1 rounded-md flex items-center gap-0.5 z-10 shadow-card">
+        {remark ? (
+          <span className="pointer-events-none absolute top-2 right-2 z-20 max-w-[calc(100%_-_1rem)] truncate rounded-md bg-surface-light/95 px-2 py-1 text-xs font-medium text-ink" aria-label={`更新状态 ${remark}`} title={remark}>{remark}</span>
+        ) : Number(movie.rating) > 0 && (
+          <div className="pointer-events-none absolute top-2 right-2 bg-surface-light/95 text-ink text-xs font-semibold px-1.5 py-1 rounded-md flex items-center gap-0.5 z-20 shadow-card">
             <MaterialSymbolsStarRounded className="text-primary-dark text-[14px]" aria-hidden="true" />
             <span aria-label={`评分 ${movie.rating}`}>{movie.rating}</span>
           </div>
         )}
-        {douban_image_url && (
+        {douban_image_url && failedPoster !== douban_image_url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={douban_image_url}
@@ -85,9 +68,7 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
             decoding="async"
             referrerPolicy="no-referrer"
             draggable={false}
-            onError={(e) => {
-              e.currentTarget.style.visibility = "hidden";
-            }}
+            onError={() => setFailedPoster(douban_image_url)}
             className="relative w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
           />
         )}
@@ -96,28 +77,28 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
           <MaterialSymbolsPlayArrowRounded className="text-xl" />
         </div>
         {movie.doubanUrl && (
-          <div className="absolute bottom-2 right-2 z-10">
+          <div className="absolute bottom-2 right-2 z-20">
             <a
               href={movie.doubanUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex min-h-8 items-center bg-surface-light/95 hover:bg-primary-soft text-ink text-xs px-2 rounded-md transition-colors"
+              className="group/douban flex size-11 items-end justify-end rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-dark"
               title="在豆瓣查看"
               aria-label={`在豆瓣查看 ${movie.title}`}
             >
-              豆瓣
+              <span className="inline-flex h-6 items-center rounded-md bg-surface-light/95 px-2 text-[11px] font-medium leading-4 text-muted transition-colors group-hover/douban:bg-primary-soft group-hover/douban:text-primary-dark group-focus-visible/douban:bg-primary-soft group-focus-visible/douban:text-primary-dark">豆瓣</span>
             </a>
           </div>
         )}
         {movie.hongguoUrl && (
-          <div className="absolute bottom-2 right-2 z-10">
+          <div className="absolute bottom-2 right-2 z-20">
             <a
               href={movie.hongguoUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex min-h-8 items-center bg-surface-light/95 hover:bg-primary-soft text-ink text-xs px-2 rounded-md transition-colors"
+              className="inline-flex min-h-11 items-center bg-surface-light/95 hover:bg-primary-soft text-ink text-xs px-2.5 rounded-md transition-colors"
               title="在红果查看"
               aria-label={`在红果查看 ${movie.title}`}
             >
@@ -135,11 +116,17 @@ export function MovieCard({ movie, showSpeedTest = true, eager = false }) {
         )}
       </div>
       <div>
-        <h3 className="text-ink text-sm sm:text-[15px] font-medium leading-6 truncate group-hover:text-primary-dark transition-colors" title={movie.title}>
-          {movie.title}
+        <h3 className="min-h-12 text-ink text-sm sm:text-[15px] font-medium leading-6 group-hover:text-primary-dark transition-colors" title={movie.title}>
+          <Link href={href} prefetch={false} onClick={(event) => {
+            if (movie.source || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            clearScrollPosition();
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }} className="line-clamp-2 before:absolute before:inset-0 before:z-10 before:rounded-xl focus-visible:outline-none">
+            {movie.title}
+          </Link>
         </h3>
         {(movie.year || movie.source_name) && <p className="mt-0.5 text-xs leading-5 text-muted truncate" title={[movie.year, movie.source_name].filter(Boolean).join(" · ")}>{[movie.year, movie.source_name].filter(Boolean).join(" · ")}</p>}
       </div>
-    </m.div>
+    </m.article>
   );
 };

@@ -11,8 +11,9 @@ import {
   MaterialSymbolsPlayArrowRounded,
 } from "@/components/icons";
 
-export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, onCollapse }) {
+export function DanmakuSearch({ id, initialTitle, onEpisodeSelect, onAnimeSelect, onCollapse }) {
   const searchInputId = useId();
+  const headingId = `${searchInputId}-heading`;
   const [searchTerm, setSearchTerm] = useState(initialTitle || "");
   const [animes, setAnimes] = useState([]);
   const [selectedAnime, setSelectedAnime] = useState(null);
@@ -54,6 +55,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
     if (!enabledSource) return;
 
     setSelectedAnime(anime);
+    setSearchError("");
     setLoadingEpisodes(true);
     setEpisodes([]);
     setSelectedEpisodeId(null);
@@ -86,11 +88,11 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
   };
 
   return (
-    <div className="danmaku-panel surface-panel overflow-hidden flex flex-col h-full min-h-0">
-      <div className="p-4 border-b border-line flex justify-between items-center gap-3 shrink-0">
+    <section id={id} aria-labelledby={headingId} data-empty={!enabledSource} className={`danmaku-panel rounded-2xl bg-surface-light overflow-hidden flex flex-col min-h-0 ${enabledSource ? "h-full" : ""}`}>
+      <div className="p-4 flex justify-between items-center gap-3 shrink-0">
         <div>
-          <h2 className="text-base font-semibold text-ink">弹幕匹配</h2>
-          <p className="text-xs text-muted mt-0.5">选择对应版本与集数</p>
+          <h2 id={headingId} className="text-base font-semibold text-ink">弹幕匹配</h2>
+          {enabledSource && <p className="text-xs text-muted mt-0.5">选择对应版本与集数</p>}
         </div>
         <div className="flex flex-col items-end gap-1.5">
           {onCollapse && (
@@ -100,6 +102,8 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
               onClick={onCollapse}
               aria-label="收起弹幕面板，扩大画面"
               title="收起弹幕面板，扩大画面"
+              aria-controls={id}
+              aria-expanded="true"
             >
               <MaterialSymbolsChevronRightRounded className="text-xl" aria-hidden="true" />
             </button>
@@ -108,13 +112,15 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
       </div>
 
       {!enabledSource ? (
-        <div className="p-6 flex-1 flex flex-col items-center justify-center gap-4">
-          <p className="text-sm leading-7 text-muted text-center">请先在设置中启用弹幕源，再为影片匹配弹幕。</p>
-          <Link href="/settings" className="ui-button">去设置</Link>
+        <div className="px-5 pb-5 flex flex-col items-center justify-center gap-3">
+          <div className="flex size-12 items-center justify-center rounded-xl bg-primary-soft text-primary-dark" aria-hidden="true"><MaterialSymbolsSearchRounded className="text-2xl" /></div>
+          <h3 className="text-sm font-semibold text-ink">还没有启用弹幕源</h3>
+          <p className="text-sm leading-7 text-muted text-center">启用弹幕源后，可以按片名和集数匹配。</p>
+          <Link href="/settings" className="ui-button">配置弹幕源</Link>
         </div>
       ) : (
         <>
-      <div className="px-4 py-3 border-b border-line bg-background-light/50 shrink-0">
+      <div className="px-4 pb-4 shrink-0">
         <label htmlFor={searchInputId} className="block mb-2 text-xs font-medium text-muted">片名</label>
         <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
           <input
@@ -123,7 +129,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="输入片名"
-            className="flex-1 min-w-0 min-h-11 px-3 text-sm rounded-lg border border-line bg-surface-light text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-dark/30 focus:border-primary-dark/50 transition-[border-color,box-shadow]"
+            className="ui-input flex-1"
           />
           <button
             type="submit"
@@ -201,7 +207,7 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
         )}
 
         {/* Episode List (after selecting anime) */}
-        {selectedAnime && !loadingEpisodes && episodes.length > 0 && (
+        {selectedAnime && !loadingEpisodes && (
           <div className="p-4">
             <button
               type="button"
@@ -246,6 +252,6 @@ export function DanmakuSearch({ initialTitle, onEpisodeSelect, onAnimeSelect, on
       </div>
         </>
       )}
-    </div>
+    </section>
   );
 }

@@ -1,227 +1,277 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { MovieCard } from "@/components/MovieCard";
+import { SkeletonCard } from "@/components/SkeletonCard";
 import { Pagination } from "@/components/Pagination";
-import { 
-  MaterialSymbolsMovieOutlineRounded, 
-  MaterialSymbolsVideoLibraryOutlineRounded,
-  MaterialSymbolsCheckRounded
-} from "@/components/icons";
+import { Select } from "@/components/Select";
+import { MaterialSymbolsVideoLibraryOutlineRounded } from "@/components/icons";
 
 export default function SourceBrowsePage() {
   const videoSources = useSettingsStore((state) => state.videoSources);
-  const activeSources = useMemo(() => videoSources.filter(s => s.enabled), [videoSources]);
+  const activeSources = useMemo(() => videoSources.filter((source) => source.enabled), [videoSources]);
 
   const [selectedSourceId, setSelectedSourceId] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const [sourceInfo, setSourceInfo] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState("all");
-  
+
   const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(true);
+  const [loadedView, setLoadedView] = useState(null);
+  const [videoError, setVideoError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalVideos, setTotalVideos] = useState(0);
 
   const activeSourceId = activeSources.some((source) => source.id === selectedSourceId)
     ? selectedSourceId
     : activeSources[0]?.id ?? null;
-  const activeSource = useMemo(() => activeSources.find(s => s.id === activeSourceId), [activeSources, activeSourceId]);
+  const activeSource = useMemo(() => activeSources.find((source) => source.id === activeSourceId), [activeSources, activeSourceId]);
+  const sourceUrl = activeSource?.url;
+  const currentSourceInfo = sourceInfo?.sourceUrl === sourceUrl ? sourceInfo : null;
+  const categories = currentSourceInfo?.categories ?? [{ type_id: "all", type_name: "全部" }];
+  const totalVideos = currentSourceInfo?.totalVideos ?? null;
+  // Only reveal results that belong to the current source, category, and page.
+  const isLoading = Boolean(sourceUrl) && (
+    loading || loadedView?.sourceUrl !== sourceUrl ||
+    loadedView?.categoryId !== activeCategoryId || loadedView?.page !== page
+  );
 
   useEffect(() => {
+    let cancelled = false;
+
     async function resetSourceView() {
       await Promise.resolve();
+      if (cancelled) return;
       setActiveCategoryId("all");
       setPage(1);
     }
 
     resetSourceView();
+
+    return () => { cancelled = true; };
   }, [activeSourceId]);
 
   // Fetch categories and total info when source changes
   useEffect(() => {
-    if (!activeSource?.url) return;
+    if (!sourceUrl) return;
 
     const controller = new AbortController();
 
     const fetchSourceInfo = async () => {
+      await Promise.resolve();
+      if (controller.signal.aborted) return;
+      setSourceInfo(null);
+
       try {
-        const proxyUrl = `/api/detail?apiUrl=${encodeURIComponent(activeSource.url)}`;
+        const proxyUrl = `/api/detail?apiUrl=${encodeURIComponent(sourceUrl)}`;
         const response = await fetch(proxyUrl, { signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        
-        if (data.class) {
-          setCategories([{ type_id: "all", type_name: "首页" }, ...data.class]);
-        }
-        if (data.total) {
-          setTotalVideos(data.total);
-        }
+        if (controller.signal.aborted) return;
+        if (!data || data.error) throw new Error("Invalid source response");
+
+        const total = typeof data.total === "number" || (typeof data.total === "string" && data.total.trim())
+          ? Number(data.total)
+          : NaN;
+        setSourceInfo({
+          sourceUrl,
+          categories: [{ type_id: "all", type_name: "全部" }, ...(Array.isArray(data.class) ? data.class : [])],
+          totalVideos: Number.isSafeInteger(total) && total >= 0 ? total : null,
+          error: false,
+        });
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if (!controller.signal.aborted && error.name !== "AbortError") {
           console.error("Failed to fetch source info:", error);
+          setSourceInfo({ sourceUrl, totalVideos: null, error: true });
         }
       }
     };
 
     fetchSourceInfo();
-    
+
     return () => controller.abort();
-  }, [activeSource?.url]);
+  }, [sourceUrl, retryKey]);
 
   // Fetch videos when source, category, or page changes
   useEffect(() => {
-    if (!activeSource?.url) return;
+    if (!sourceUrl) return;
 
     const controller = new AbortController();
 
     const fetchVideos = async () => {
+      await Promise.resolve();
+      if (controller.signal.aborted) return;
       setLoading(true);
+      setVideoError(false);
+
       try {
-        let fetchUrl = `${activeSource.url}?ac=detail&pg=${page}`;
+        let fetchUrl = `${sourceUrl}?ac=detail&pg=${page}`;
         if (activeCategoryId !== "all") {
           fetchUrl += `&t=${activeCategoryId}`;
         }
-        
+
         const proxyUrl = `/api/detail?apiUrl=${encodeURIComponent(fetchUrl)}`;
         const response = await fetch(proxyUrl, { signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        
-        if (data.list) {
-          setVideos(data.list);
-        } else {
-          setVideos([]);
-        }
-        
-        if (data.pagecount) {
-          setTotalPages(data.pagecount);
-        }
+        if (controller.signal.aborted) return;
+        if (data?.error || !Array.isArray(data?.list)) throw new Error("Invalid video response");
+
+        setVideos(data.list);
+        const pageCount = Number(data.pagecount);
+        setTotalPages(Number.isSafeInteger(pageCount) && pageCount > 0 ? pageCount : 1);
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if (!controller.signal.aborted && error.name !== "AbortError") {
           console.error("Failed to fetch videos:", error);
           setVideos([]);
+          setTotalPages(1);
+          setVideoError(true);
         }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoadedView({ sourceUrl, categoryId: activeCategoryId, page });
+          setLoading(false);
+        }
       }
     };
 
     fetchVideos();
 
     return () => controller.abort();
-  }, [activeSource?.url, activeCategoryId, page]);
+  }, [sourceUrl, activeCategoryId, page, retryKey]);
 
   return (
-    <div className="w-full min-h-[calc(100vh-64px)] bg-background-light flex flex-col">
-      <main className="flex-1 max-w-7xl mx-auto w-full px-0 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
-        
-        {/* Header Options */}
-        <section>
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">源浏览</h1>
-          
-          {/* Source Selector */}
-          <div className="flex flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
-            {activeSources.map(source => (
-              <button
-                key={source.id}
-                onClick={() => setSelectedSourceId(source.id)}
-                className={`shrink-0 flex items-center justify-between gap-4 px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all w-full sm:w-auto sm:min-w-[240px] cursor-pointer ${
-                  activeSourceId === source.id
-                    ? 'border-primary ring-1 ring-primary bg-white shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-primary/50 hover:shadow-sm'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-lg ${activeSourceId === source.id ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'}`}>
-                    <MaterialSymbolsMovieOutlineRounded className="text-xl" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className={`font-semibold text-base ${activeSourceId === source.id ? 'text-gray-900' : 'text-gray-700'}`}>
-                      {source.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 mt-0.5">
-                      {activeSourceId === source.id && totalVideos > 0 
-                        ? `共 ${totalVideos.toLocaleString()} 个视频` 
-                        : "浏览此源"}
-                    </p>
-                  </div>
-                </div>
-                {activeSourceId === source.id && (
-                  <div className="bg-primary text-white rounded-full p-0.5">
-                    <MaterialSymbolsCheckRounded className="text-sm" />
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
+    <div className="mx-auto w-full min-w-0 max-w-[1440px] bg-background-light py-4 sm:py-6">
+      <header className="space-y-2">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+          <h1 className="shrink-0 text-2xl font-semibold leading-8 text-ink">源浏览</h1>
+          {activeSource && (
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+              <label htmlFor="source-browse-source" className="sr-only">视频源</label>
+              <Select
+                id="source-browse-source"
+                aria-label="视频源"
+                value={String(activeSourceId)}
+                options={activeSources.map((source) => ({ value: String(source.id), label: source.name }))}
+                onChange={(value) => {
+                  const source = activeSources.find((source) => String(source.id) === value);
+                  if (!source) return;
+                  setSelectedSourceId(source.id);
+                  setActiveCategoryId("all");
+                  setPage(1);
+                }}
+                size="compact"
+                className="min-w-11 flex-1 sm:w-60 sm:flex-none"
+              />
+              <p aria-live="polite" aria-atomic="true" className="shrink-0 whitespace-nowrap text-xs text-muted tabular-nums sm:text-sm">
+                {totalVideos !== null
+                  ? `共 ${totalVideos.toLocaleString("zh-CN")} 部`
+                  : !sourceUrl || currentSourceInfo?.error
+                    ? "总数暂不可用"
+                    : currentSourceInfo ? "总数未提供" : "总数加载中"}
+              </p>
+            </div>
+          )}
+        </div>
 
-          {/* Category Selector */}
-          {categories.length > 0 && (
-             <div className="flex flex-wrap gap-2 sm:gap-3 items-center mb-6 sm:mb-8 pb-4 border-b border-gray-200/60">
-              {categories.map(category => (
+        {activeSource && (
+          <div className="flex min-w-0 items-center gap-2">
+            <div role="group" aria-label="视频分类" className="custom-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto py-1">
+              {categories.map((category) => (
                 <button
                   key={category.type_id}
+                  type="button"
+                  aria-pressed={String(activeCategoryId) === String(category.type_id)}
                   onClick={() => {
                     setActiveCategoryId(category.type_id);
                     setPage(1);
                   }}
-                  className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    activeCategoryId === category.type_id
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className="filter-chip min-h-11 min-w-11"
                 >
-                  {category.type_name === '首页' ? '全部' : category.type_name}
+                  {category.type_name === "首页" ? "全部" : category.type_name}
                 </button>
               ))}
             </div>
-          )}
-        </section>
+            {currentSourceInfo?.error && (
+              <button type="button" className="ui-button shrink-0" onClick={() => setRetryKey((key) => key + 1)}>
+                重试分类
+              </button>
+            )}
+          </div>
+        )}
+      </header>
 
-        {/* Video Grid */}
-        <section>
-          {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      <section aria-label="视频列表" aria-busy={isLoading} className="mt-4 min-w-0 sm:mt-5">
+        {!activeSource ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl bg-surface-light px-6 py-12 text-center">
+            <MaterialSymbolsVideoLibraryOutlineRounded aria-hidden="true" className="mb-4 text-4xl text-muted" />
+            <h2 className="text-lg font-semibold text-ink">还没有启用的视频源</h2>
+            <p className="mt-2 text-sm text-muted">在设置中启用或添加视频源，即可浏览片库。</p>
+            <Link href="/settings" className="ui-button ui-button-primary mt-5 text-ink">前往设置</Link>
+          </div>
+        ) : isLoading ? (
+          <>
+            <p role="status" className="sr-only">正在加载视频</p>
+            <div className="content-grid min-w-0">
+              {Array.from({ length: 12 }, (_, index) => (
+                <div key={index} className="min-w-0"><SkeletonCard /></div>
+              ))}
             </div>
-          ) : videos.length > 0 ? (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:gap-6">
-                {videos.map(video => (
+          </>
+        ) : videoError || !sourceUrl ? (
+          <div role="alert" className="flex flex-col items-center justify-center rounded-2xl bg-surface-light px-6 py-12 text-center">
+            <MaterialSymbolsVideoLibraryOutlineRounded aria-hidden="true" className="mb-4 text-4xl text-muted" />
+            <h2 className="text-lg font-semibold text-ink">暂时无法加载视频</h2>
+            <p className="mt-2 text-sm text-muted">
+              {sourceUrl ? "视频源请求失败，请重试或切换其他视频源。" : "当前视频源缺少地址，请在设置中检查。"}
+            </p>
+            {sourceUrl ? (
+              <button type="button" className="ui-button ui-button-primary mt-5 text-ink" onClick={() => setRetryKey((key) => key + 1)}>
+                重新加载
+              </button>
+            ) : (
+              <Link href="/settings" className="ui-button ui-button-primary mt-5 text-ink">前往设置</Link>
+            )}
+          </div>
+        ) : videos.length > 0 ? (
+          <>
+            <div className="content-grid min-w-0">
+              {videos.map((video, index) => (
+                <div key={`${activeSourceId}-${video.vod_id}`} className="min-w-0">
                   <MovieCard
-                    key={video.vod_id}
                     movie={{
                       id: video.vod_id,
                       title: video.vod_name,
                       poster: video.vod_pic,
-                      rating: video.vod_remarks || video.vod_score || "",
+                      rating: video.vod_score || "",
                       source: activeSource?.key,
                       source_name: activeSource?.name,
-                      source_url: activeSource?.url
+                      source_url: sourceUrl,
                     }}
+                    remark={String(video.vod_remarks || "")}
                     showSpeedTest={false}
+                    eager={index < 6}
                   />
-                ))}
-              </div>
-              
-              {totalPages > 1 && (
-                <Pagination
-                  currentPage={page}
-                  pageCount={totalPages}
-                  onPageChange={setPage}
-                />
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-              <MaterialSymbolsVideoLibraryOutlineRounded className="text-6xl text-gray-300 mb-4" />
-              <p>该分类下暂无视频</p>
+                </div>
+              ))}
             </div>
-          )}
-        </section>
 
-      </main>
+            {totalPages > 1 && (
+              <Pagination currentPage={page} pageCount={totalPages} onPageChange={(nextPage) => { setPage(nextPage); window.scrollTo({ top: 0, behavior: "auto" }); }} />
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-2xl bg-surface-light px-6 py-12 text-center">
+            <MaterialSymbolsVideoLibraryOutlineRounded aria-hidden="true" className="mb-4 text-4xl text-muted" />
+            <h2 className="text-lg font-semibold text-ink">该分类下暂无视频</h2>
+            <p className="mt-2 text-sm text-muted">可以切换分类或视频源继续浏览。</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
