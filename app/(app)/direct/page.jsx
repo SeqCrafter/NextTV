@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRetainedRoute } from "@/hooks/useRetainedRoute";
 import { useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { VideoPlayerDirect } from "@/components/VideoPlayerDirect";
@@ -22,7 +22,7 @@ export default function DirectPlayerPage() {
 }
 
 function DirectPlayerContent() {
-  const searchParams = useSearchParams();
+  const { searchParams } = useRetainedRoute();
   const playerurl = searchParams.get("playerurl");
   const title = searchParams.get("title") || "";
   const [searchTitle, setSearchTitle] = useState(null);

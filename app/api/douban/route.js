@@ -28,8 +28,8 @@ const getDoubanData = unstable_cache(
 );
 
 export async function GET(request) {
+  const searchParams = request.nextUrl.searchParams;
   try {
-    const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get("type") || "movie";
     const tag = searchParams.get("tag") || "热门";
     const pageLimit = searchParams.get("page_limit") || "12";

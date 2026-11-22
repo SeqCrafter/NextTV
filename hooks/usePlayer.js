@@ -1,4 +1,4 @@
-import { useEffect, useRef, useEffectEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useEffectEvent } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
@@ -62,6 +62,11 @@ export function usePlayer({
     }
   };
   const savePlayProgressEvent = useEffectEvent(savePlayProgress);
+
+  useLayoutEffect(() => () => {
+    savePlayProgressEvent();
+    artPlayerRef.current?.pause();
+  }, []);
 
   // 加载当前剧集的弹幕
   const loadDanmaku = () => {

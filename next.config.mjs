@@ -8,6 +8,8 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   reactStrictMode: false,
   reactCompiler: true,
+  cacheComponents: true,
+  partialPrefetching: true,
   output: "standalone",
   experimental: {
     agentUpgrade: "security",

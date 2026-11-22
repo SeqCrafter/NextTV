@@ -107,8 +107,8 @@ const getHongguoRecommend = unstable_cache(
 );
 
 export async function GET(request) {
+  const {searchParams} = new URL(request.url);
   try {
-    const {searchParams} = new URL(request.url);
     const pageLimit = parseInt(searchParams.get("page_limit")) || 12;
     const pageStart = parseInt(searchParams.get("page_start")) || 0;
 

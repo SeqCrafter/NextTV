@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { AnimatePresence, useIsPresent } from "motion/react";
 import * as m from "motion/react-m";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { pressSpring, reducedMotionQuery, surfaceMotion, snappySpring } from "@/lib/motion";
 import { useRouter } from "next/navigation";
 import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
-import { useSearchScrollStore } from "@/store/useSearchScrollStore";
+import { pushBrowseRoute } from "@/store/useBrowseScrollStore";
 import { MaterialSymbolsSearchRounded, MaterialSymbolsCloseRounded, MaterialSymbolsHistoryRounded } from "@/components/icons";
 
 export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索电影、电视剧、短剧", compact = false }) {
@@ -20,7 +20,8 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
   const addToHistory = useSearchHistoryStore((state) => state.addToHistory);
   const removeFromHistory = useSearchHistoryStore((state) => state.removeFromHistory);
   const clearHistory = useSearchHistoryStore((state) => state.clearHistory);
-  const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
+
+  useLayoutEffect(() => () => setShowHistory(false), []);
 
   // 监听外部点击与新焦点，不在 blur 时卸载按钮，避免 Safari 丢失内部点击。
   useEffect(() => {
@@ -44,12 +45,11 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
       const trimmedValue = inputValue.trim();
       addToHistory(trimmedValue);
       setShowHistory(false);
-      clearScrollPosition();
 
       if (onSearch) {
         onSearch(trimmedValue);
       } else {
-        router.push(`/search?q=${encodeURIComponent(trimmedValue)}`);
+        pushBrowseRoute(router, `/search?q=${encodeURIComponent(trimmedValue)}`);
       }
     }
   };
@@ -58,12 +58,11 @@ export function SearchBox({ initialValue = "", onSearch, placeholder = "搜索�
     setInputValue(item);
     setShowHistory(false);
     addToHistory(item);
-    clearScrollPosition();
 
     if (onSearch) {
       onSearch(item);
     } else {
-      router.push(`/search?q=${encodeURIComponent(item)}`);
+      pushBrowseRoute(router, `/search?q=${encodeURIComponent(item)}`);
     }
   };
 

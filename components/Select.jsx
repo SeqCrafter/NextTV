@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, useIsPresent } from "motion/react";
 import * as m from "motion/react-m";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useActivityPortal } from "@/hooks/useActivityPortal";
 import { reducedMotionQuery } from "@/lib/motion";
 import { MaterialSymbolsCheckRounded, MaterialSymbolsChevronRightRounded } from "@/components/icons";
 
@@ -22,6 +23,7 @@ export function Select({
   "aria-labelledby": labelledBy,
   "aria-describedby": describedBy,
 }) {
+  const portalRoot = useActivityPortal();
   const generatedId = useId();
   const triggerId = id || generatedId;
   const listId = `${triggerId}-options`;
@@ -37,6 +39,8 @@ export function Select({
   const enabledIndices = options.flatMap((option, index) => option.disabled ? [] : [index]);
   const unavailable = disabled || enabledIndices.length === 0;
   const menuWidth = position?.width;
+
+  useLayoutEffect(() => () => setOpen(false), []);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -190,7 +194,7 @@ export function Select({
         <MaterialSymbolsChevronRightRounded aria-hidden="true" className={`size-4 shrink-0 text-muted transition-transform duration-150 ${open ? "-rotate-90" : "rotate-90"}`} />
       </button>
       {name && <input type="hidden" name={name} value={value ?? ""} />}
-      {position && createPortal(
+      {position && portalRoot && createPortal(
         <AnimatePresence>
           {open && <SelectMenu key={listId} menuRef={menuRef} id={listId} labelledBy={triggerId} position={position} reduceMotion={reduceMotion}>
             {options.map((option, index) => (
@@ -215,7 +219,7 @@ export function Select({
             ))}
           </SelectMenu>}
         </AnimatePresence>,
-        document.body,
+        portalRoot,
       )}
     </div>
   );

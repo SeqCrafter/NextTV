@@ -12,8 +12,8 @@ const getDoubanActorsCached = unstable_cache(
 );
 
 export async function GET(request) {
+  const { searchParams } = new URL(request.url);
   try {
-    const { searchParams } = new URL(request.url);
     const doubanId = searchParams.get("id");
 
     if (!doubanId) {

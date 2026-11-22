@@ -1,4 +1,5 @@
 import "../globals.css";
+import { Suspense } from "react";
 import { geist, notoSansSC, notoSerifSC } from "@/app/fonts";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -30,7 +31,9 @@ export default function RootLayout({ children }) {
           跳到主要内容
         </a>
         <MotionProvider>
-          <Navbar />
+          <Suspense fallback={<div className="h-16 shrink-0" />}>
+            <Navbar />
+          </Suspense>
           <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col items-center w-full px-4 sm:px-6 xl:px-8 pb-10 outline-none">
             {children}
           </main>

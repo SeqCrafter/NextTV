@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { getVideoDetail } from "@/lib/cmsApi";
 import { scrapeDoubanDetails } from "@/lib/getDouban";
@@ -9,8 +9,12 @@ export function useVideoData(id, source, setCurrentEpisodeIndex) {
   const [doubanActors, setDoubanActors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const completedLoadRef = useRef(null);
+  const sourceUrl = useSettingsStore((state) => state.videoSources.find((item) => item.key === source)?.url);
+  const loadKey = JSON.stringify([id, source, sourceUrl]);
 
   useEffect(() => {
+    if (completedLoadRef.current === loadKey) return;
     let cancelled = false;
 
     async function loadData() {
@@ -81,6 +85,7 @@ export function useVideoData(id, source, setCurrentEpisodeIndex) {
         setVideoDetail(videoDetailData);
         setDoubanActors(actorsData);
         setLoading(false);
+        completedLoadRef.current = loadKey;
       } catch (err) {
         if (cancelled) return;
         console.error("Failed to load data:", err);
@@ -97,7 +102,7 @@ export function useVideoData(id, source, setCurrentEpisodeIndex) {
     return () => {
       cancelled = true;
     };
-  }, [id, source, setCurrentEpisodeIndex]);
+  }, [id, source, loadKey, setCurrentEpisodeIndex]);
 
   return {
     videoDetail,

@@ -9,7 +9,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
 import { usePlayHistoryStore } from "@/store/usePlayHistoryStore";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
-import { useSearchScrollStore } from "@/store/useSearchScrollStore";
+import { pushBrowseRoute } from "@/store/useBrowseScrollStore";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -86,18 +86,15 @@ export function Navbar() {
         title: record.title || "",
         poster: record.poster || "",
       });
-      router.push(`/direct?${params.toString()}`);
+      pushBrowseRoute(router, `/direct?${params.toString()}`);
     } else {
-      router.push(`/play/${record.id}?source=${record.source}`);
+      pushBrowseRoute(router, `/play/${record.id}?source=${record.source}`);
     }
   };
 
-  const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
-
   const handleFavoriteClick = (favorite) => {
     setOpenPanel(null);
-    clearScrollPosition();
-    router.push(`/search?q=${encodeURIComponent(favorite.title)}`);
+    pushBrowseRoute(router, `/search?q=${encodeURIComponent(favorite.title)}`);
   };
 
   const libraryPanel = openPanel && (

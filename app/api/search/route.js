@@ -22,8 +22,8 @@ const getSearchData = unstable_cache(
   },
 );
 export async function GET(request) {
+  const {searchParams} = new URL(request.url);
   try {
-    const {searchParams} = new URL(request.url);
     const apiUrl = searchParams.get("apiUrl");
     console.log("apiUrl", decodeURIComponent(apiUrl));
     if (!apiUrl) {

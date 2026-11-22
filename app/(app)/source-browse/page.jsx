@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { pushBrowseRoute } from "@/store/useBrowseScrollStore";
+import { useBrowseScrollRestoration } from "@/hooks/useBrowseScrollRestoration";
+import { useRetainedRoute } from "@/hooks/useRetainedRoute";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
 import { Pagination } from "@/components/Pagination";
@@ -10,12 +14,22 @@ import { Select } from "@/components/Select";
 import { MaterialSymbolsVideoLibraryOutlineRounded } from "@/components/icons";
 
 export default function SourceBrowsePage() {
-  const videoSources = useSettingsStore((state) => state.videoSources);
-  const activeSources = useMemo(() => videoSources.filter((source) => source.enabled), [videoSources]);
+  return (
+    <Suspense fallback={<div className="w-full max-w-[1440px] py-6" role="status">正在加载视频源...</div>}>
+      <SourceBrowseContent />
+    </Suspense>
+  );
+}
 
-  const [selectedSourceId, setSelectedSourceId] = useState(null);
+function SourceBrowseContent() {
+  const router = useRouter();
+  const { searchParams } = useRetainedRoute();
+  const videoSources = useSettingsStore((state) => state.videoSources);
+  const activeSources = videoSources.filter((source) => source.enabled);
+
   const [sourceInfo, setSourceInfo] = useState(null);
-  const [activeCategoryId, setActiveCategoryId] = useState("all");
+  const completedSourceInfoRef = useRef(null);
+  const completedVideosRef = useRef(null);
 
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,41 +37,43 @@ export default function SourceBrowsePage() {
   const [videoError, setVideoError] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const activeSourceId = activeSources.some((source) => source.id === selectedSourceId)
-    ? selectedSourceId
-    : activeSources[0]?.id ?? null;
-  const activeSource = useMemo(() => activeSources.find((source) => source.id === activeSourceId), [activeSources, activeSourceId]);
+  const sourceParam = searchParams.get("source");
+  const selectedSource = activeSources.find((source) => source.key === sourceParam);
+  const activeSource = selectedSource ?? activeSources[0];
+  const activeSourceId = activeSource?.id ?? null;
+  const invalidSource = Boolean(sourceParam) && !selectedSource;
+  const activeCategoryId = invalidSource ? "all" : searchParams.get("category") || "all";
+  const pageParam = Number(searchParams.get("page"));
+  const page = !invalidSource && Number.isSafeInteger(pageParam) && pageParam > 0 ? pageParam : 1;
   const sourceUrl = activeSource?.url;
+  const sourceInfoKey = JSON.stringify([sourceUrl, retryKey]);
+  const videoKey = JSON.stringify([sourceUrl, activeCategoryId, page, retryKey]);
   const currentSourceInfo = sourceInfo?.sourceUrl === sourceUrl ? sourceInfo : null;
   const categories = currentSourceInfo?.categories ?? [{ type_id: "all", type_name: "全部" }];
   const totalVideos = currentSourceInfo?.totalVideos ?? null;
   // Only reveal results that belong to the current source, category, and page.
   const isLoading = Boolean(sourceUrl) && (
     loading || loadedView?.sourceUrl !== sourceUrl ||
-    loadedView?.categoryId !== activeCategoryId || loadedView?.page !== page
+    loadedView?.categoryId !== activeCategoryId || loadedView?.page !== page ||
+    loadedView?.retryKey !== retryKey
   );
+  useBrowseScrollRestoration(!isLoading && (!sourceUrl || Boolean(currentSourceInfo)));
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function resetSourceView() {
-      await Promise.resolve();
-      if (cancelled) return;
-      setActiveCategoryId("all");
-      setPage(1);
-    }
-
-    resetSourceView();
-
-    return () => { cancelled = true; };
-  }, [activeSourceId]);
+  function changeView(sourceKey, categoryId, nextPage) {
+    const params = new URLSearchParams(searchParams);
+    params.set("source", sourceKey);
+    if (categoryId === "all") params.delete("category");
+    else params.set("category", categoryId);
+    if (nextPage <= 1) params.delete("page");
+    else params.set("page", String(nextPage));
+    pushBrowseRoute(router, `/source-browse?${params.toString()}`, { scroll: false });
+  }
 
   // Fetch categories and total info when source changes
   useEffect(() => {
-    if (!sourceUrl) return;
+    if (!sourceUrl || completedSourceInfoRef.current === sourceInfoKey) return;
 
     const controller = new AbortController();
 
@@ -83,10 +99,12 @@ export default function SourceBrowsePage() {
           totalVideos: Number.isSafeInteger(total) && total >= 0 ? total : null,
           error: false,
         });
+        completedSourceInfoRef.current = sourceInfoKey;
       } catch (error) {
         if (!controller.signal.aborted && error.name !== "AbortError") {
           console.error("Failed to fetch source info:", error);
           setSourceInfo({ sourceUrl, totalVideos: null, error: true });
+          completedSourceInfoRef.current = sourceInfoKey;
         }
       }
     };
@@ -94,11 +112,11 @@ export default function SourceBrowsePage() {
     fetchSourceInfo();
 
     return () => controller.abort();
-  }, [sourceUrl, retryKey]);
+  }, [sourceUrl, sourceInfoKey]);
 
   // Fetch videos when source, category, or page changes
   useEffect(() => {
-    if (!sourceUrl) return;
+    if (!sourceUrl || completedVideosRef.current === videoKey) return;
 
     const controller = new AbortController();
 
@@ -109,12 +127,16 @@ export default function SourceBrowsePage() {
       setVideoError(false);
 
       try {
-        let fetchUrl = `${sourceUrl}?ac=detail&pg=${page}`;
+        const fetchUrl = new URL(sourceUrl);
+        fetchUrl.searchParams.set("ac", "detail");
+        fetchUrl.searchParams.set("pg", String(page));
         if (activeCategoryId !== "all") {
-          fetchUrl += `&t=${activeCategoryId}`;
+          fetchUrl.searchParams.set("t", activeCategoryId);
+        } else {
+          fetchUrl.searchParams.delete("t");
         }
 
-        const proxyUrl = `/api/detail?apiUrl=${encodeURIComponent(fetchUrl)}`;
+        const proxyUrl = `/api/detail?apiUrl=${encodeURIComponent(fetchUrl.toString())}`;
         const response = await fetch(proxyUrl, { signal: controller.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
@@ -133,7 +155,8 @@ export default function SourceBrowsePage() {
         }
       } finally {
         if (!controller.signal.aborted) {
-          setLoadedView({ sourceUrl, categoryId: activeCategoryId, page });
+          completedVideosRef.current = videoKey;
+          setLoadedView({ sourceUrl, categoryId: activeCategoryId, page, retryKey });
           setLoading(false);
         }
       }
@@ -142,7 +165,7 @@ export default function SourceBrowsePage() {
     fetchVideos();
 
     return () => controller.abort();
-  }, [sourceUrl, activeCategoryId, page, retryKey]);
+  }, [sourceUrl, activeCategoryId, page, retryKey, videoKey]);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-[1440px] bg-background-light py-4 sm:py-6">
@@ -160,9 +183,7 @@ export default function SourceBrowsePage() {
                 onChange={(value) => {
                   const source = activeSources.find((source) => String(source.id) === value);
                   if (!source) return;
-                  setSelectedSourceId(source.id);
-                  setActiveCategoryId("all");
-                  setPage(1);
+                  changeView(source.key, "all", 1);
                 }}
                 size="compact"
                 className="min-w-11 flex-1 sm:w-60 sm:flex-none"
@@ -187,8 +208,7 @@ export default function SourceBrowsePage() {
                   type="button"
                   aria-pressed={String(activeCategoryId) === String(category.type_id)}
                   onClick={() => {
-                    setActiveCategoryId(category.type_id);
-                    setPage(1);
+                    changeView(activeSource.key, String(category.type_id), 1);
                   }}
                   className="filter-chip min-h-11 min-w-11"
                 >
@@ -261,7 +281,7 @@ export default function SourceBrowsePage() {
             </div>
 
             {totalPages > 1 && (
-              <Pagination currentPage={page} pageCount={totalPages} onPageChange={(nextPage) => { setPage(nextPage); window.scrollTo({ top: 0, behavior: "auto" }); }} />
+              <Pagination currentPage={page} pageCount={totalPages} onPageChange={(nextPage) => changeView(activeSource.key, activeCategoryId, nextPage)} />
             )}
           </>
         ) : (

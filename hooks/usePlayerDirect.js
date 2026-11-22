@@ -1,4 +1,4 @@
-import { useEffect, useRef, useEffectEvent, useCallback } from "react";
+import { useEffect, useLayoutEffect, useRef, useEffectEvent, useCallback } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import artplayerPluginDanmuku from "artplayer-plugin-danmuku";
@@ -96,6 +96,11 @@ export function usePlayerDirect({
   };
 
   const savePlayProgressEvent = useEffectEvent(savePlayProgress);
+
+  useLayoutEffect(() => () => {
+    savePlayProgressEvent();
+    artPlayerRef.current?.pause();
+  }, []);
 
   // 加载弹幕
   const loadDanmaku = useCallback(() => {

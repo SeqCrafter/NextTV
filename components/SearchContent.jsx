@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useEffectEvent } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect, useRef, useEffectEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MovieCard } from "@/components/MovieCard";
 import { SkeletonCard } from "@/components/SkeletonCard";
@@ -10,96 +10,90 @@ import { Pagination } from "@/components/Pagination";
 import { MediaTypeSwitch } from "@/components/MediaTypeSwitch";
 import { ResultItem } from "@/components/ResultItem";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { useSearchScrollStore } from "@/store/useSearchScrollStore";
+import { pushBrowseRoute } from "@/store/useBrowseScrollStore";
 import { useSearchHistoryStore } from "@/store/useSearchHistoryStore";
+import { useBrowseScrollRestoration } from "@/hooks/useBrowseScrollRestoration";
+import { useRetainedRoute } from "@/hooks/useRetainedRoute";
 import { searchVideos } from "@/lib/cmsApi";
 import {
   MaterialSymbolsSearchRounded,
 } from "@/components/icons";
 
 export default function SearchContent() {
-  const searchParams = useSearchParams();
+  const { searchParams } = useRetainedRoute();
   const router = useRouter();
   const query = searchParams.get("q") || "";
-  const currentPage = Number(searchParams.get("page")) || 1;
+  const pageParam = Number(searchParams.get("page"));
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [mediaType, setMediaType] = useState("all"); // 'all', 'movie', 'tv'
+  const typeParam = searchParams.get("type");
+  const mediaType = ["movie", "tv", "short"].includes(typeParam) ? typeParam : "all";
   const [pageCount, setPageCount] = useState(1);
+  const [loadedSearchKey, setLoadedSearchKey] = useState(null);
+  const completedSearchRef = useRef(null);
   const videoSources = useSettingsStore((state) => state.videoSources);
-  const saveScrollPosition = useSearchScrollStore((state) => state.saveScrollPosition);
-  const restoreScrollPosition = useSearchScrollStore((state) => state.restoreScrollPosition);
-  const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
   const searchHistory = useSearchHistoryStore((state) => state.searchHistory);
 
   const getCurrentVideoSources = useEffectEvent(() => videoSources);
-  const restoreSavedScrollPosition = useEffectEvent(() => restoreScrollPosition());
 
   // 只显示已激活的源
   const enabledSources = videoSources.filter((s) => s.enabled);
   // 稳定的依赖值，避免 Zustand hydration 引用变化触发重复请求
-  const enabledSourceKeys = enabledSources.map((s) => s.key).join(",");
+  const enabledSourceKeys = JSON.stringify(enabledSources.map((s) => [s.key, s.url]));
   // 从 URL 参数读取源过滤，默认为第一个激活源
   const sourceParam = searchParams.get("source");
   const sourceFilter = sourceParam && enabledSources.some((s) => s.key === sourceParam)
     ? sourceParam
     : enabledSources.length > 0 ? enabledSources[0].key : "";
-
-  const handlePageChange = useCallback(
-    (page) => {
-      const params = new URLSearchParams(searchParams);
-      if (page <= 1) {
-        params.delete("page");
-      } else {
-        params.set("page", String(page));
-      }
-      clearScrollPosition();
-      router.push(`/search?${params.toString()}`);
-      window.scrollTo({ top: 0, behavior: "auto" });
-    },
-    [searchParams, router, clearScrollPosition],
+  const invalidSource = Boolean(sourceParam) && sourceParam !== sourceFilter;
+  const currentPage = !invalidSource && Number.isSafeInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const searchKey = JSON.stringify([query, enabledSourceKeys, currentPage, sourceFilter, retryCount]);
+  const isLoading = Boolean(query.trim()) && Boolean(sourceFilter) && (
+    loading || loadedSearchKey !== searchKey
   );
+  useBrowseScrollRestoration(!isLoading);
 
-  const handleSourceChange = useCallback(
-    (sourceKey) => {
-      const params = new URLSearchParams(searchParams);
-      params.set("source", sourceKey);
+  const setMediaType = (type) => {
+    const params = new URLSearchParams(searchParams);
+    if (type === "all") params.delete("type");
+    else params.set("type", type);
+    if (sourceFilter) params.set("source", sourceFilter);
+    pushBrowseRoute(router, `/search?${params.toString()}`, { scroll: false });
+  };
+
+  function handlePageChange(page) {
+    const params = new URLSearchParams(searchParams);
+    if (page <= 1) {
       params.delete("page");
-      clearScrollPosition();
-      router.push(`/search?${params.toString()}`);
-    },
-    [searchParams, router, clearScrollPosition],
-  );
+    } else {
+      params.set("page", String(page));
+    }
+    if (sourceFilter) params.set("source", sourceFilter);
+    pushBrowseRoute(router, `/search?${params.toString()}`, { scroll: false });
+  }
 
-  // 持续监听滚动事件，保存滚动位置（防抖）
-  // 不能只在 unmount 时保存，因为 Next.js 页面切换时 window.scrollY 可能已被重置为 0
-  useEffect(() => {
-    let timer;
-    const handleScroll = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        saveScrollPosition();
-      }, 150);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [saveScrollPosition]);
+  function handleSourceChange(sourceKey) {
+    const params = new URLSearchParams(searchParams);
+    params.set("source", sourceKey);
+    params.delete("page");
+    pushBrowseRoute(router, `/search?${params.toString()}`, { scroll: false });
+  }
 
   // 执行搜索
   useEffect(() => {
-    let cancelled = false;
+    // Activity re-runs effects on reveal; keep the already loaded list and its DOM.
+    if (completedSearchRef.current === searchKey) return;
+    const controller = new AbortController();
     async function performSearch() {
       if (!query || !query.trim()) {
         setResults([]);
         setPageCount(1);
         setError(null);
         setLoading(false);
+        setLoadedSearchKey(searchKey);
+        completedSearchRef.current = searchKey;
         return;
       }
 
@@ -112,39 +106,36 @@ export default function SearchContent() {
           getCurrentVideoSources(),
           currentPage,
           sourceFilter || undefined,
+          controller.signal,
         );
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setResults(searchData.results);
-        setPageCount(searchData.pageCount);
+        const count = Number(searchData.pageCount);
+        setPageCount(Number.isSafeInteger(count) && count > 0 ? count : 1);
 
         if (searchData.failed) {
           setError("当前视频源暂时无法访问，请切换视频源或稍后重试。");
         } else if (searchData.results.length === 0) {
           setError("未找到匹配影片，可以切换视频源或换个关键词。");
         }
-
-        // 数据加载完成后恢复滚动位置
-        requestAnimationFrame(() => {
-          if (cancelled) return;
-          const savedY = restoreSavedScrollPosition();
-          if (savedY > 0) {
-            window.scrollTo(0, savedY);
-          }
-        });
       } catch (err) {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         console.error("搜索错误:", err);
         setError("搜索失败，请稍后重试");
         setResults([]);
         setPageCount(1);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!controller.signal.aborted) {
+          completedSearchRef.current = searchKey;
+          setLoadedSearchKey(searchKey);
+          setLoading(false);
+        }
       }
     }
 
     performSearch();
-    return () => { cancelled = true; };
-  }, [query, enabledSourceKeys, currentPage, sourceFilter, retryCount]);
+    return () => controller.abort();
+  }, [query, currentPage, sourceFilter, searchKey]);
 
   // 根据媒体类型和视频源过滤结果
   const filteredResults = results.filter((result) => {
@@ -169,7 +160,7 @@ export default function SearchContent() {
     if (query && enabledSources.length === 0) {
       return <div role="status" className="empty-state"><h2 className="font-display text-xl font-semibold text-ink">还没有启用的视频源</h2><p className="text-sm text-muted">启用一个视频源后，就可以搜索影片。</p><Link href="/settings" className="ui-button ui-button-primary">设置视频源</Link></div>;
     }
-    if (loading) {
+    if (isLoading) {
       return (
         <div aria-busy="true" aria-label="正在搜索影片" className="content-grid">
           {Array.from({ length: 12 }).map((_, index) => (
@@ -238,7 +229,7 @@ export default function SearchContent() {
         <div className="min-w-0">
           <h1 id="search-heading" className="page-heading flex flex-wrap items-baseline gap-3">
             {query ? "搜索结果" : "搜索影片"}
-            {query && !loading && !error && results.length > 0 && <span role="status" className="font-sans text-xs font-normal text-muted tabular-nums">本页 {filteredResults.length} 个结果</span>}
+            {query && !isLoading && !error && results.length > 0 && <span role="status" className="font-sans text-xs font-normal text-muted tabular-nums">本页 {filteredResults.length} 个结果</span>}
           </h1>
         </div>
         <SearchBox key={query} initialValue={query} onSearch={(value) => {
@@ -246,8 +237,7 @@ export default function SearchContent() {
           params.set("q", value);
           params.delete("page");
           if (sourceFilter) params.set("source", sourceFilter);
-          router.push(`/search?${params.toString()}`);
-          window.scrollTo({ top: 0, behavior: "instant" });
+          pushBrowseRoute(router, `/search?${params.toString()}`, { scroll: false });
         }} />
       </section>
 

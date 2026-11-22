@@ -9,13 +9,12 @@ import { SpeedTestBadge } from "@/components/SpeedTestBadge";
 import { MaterialSymbolsStarRounded, MaterialSymbolsMovieOutlineRounded, MaterialSymbolsPlayArrowRounded } from "@/components/icons";
 
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { useSearchScrollStore } from "@/store/useSearchScrollStore";
+import { saveBrowseScrollPosition } from "@/store/useBrowseScrollStore";
 
 export function MovieCard({ movie, remark, showSpeedTest = true, eager = false }) {
   const reduceMotion = useMediaQuery(reducedMotionQuery);
   const [failedPoster, setFailedPoster] = useState(null);
   const doubanImageProxy = useSettingsStore((state) => state.doubanImageProxy);
-  const clearScrollPosition = useSearchScrollStore((state) => state.clearScrollPosition);
 
   let douban_image_url = movie.poster || "";
 
@@ -117,11 +116,7 @@ export function MovieCard({ movie, remark, showSpeedTest = true, eager = false }
       </div>
       <div>
         <h3 className="min-h-12 text-ink text-sm sm:text-[15px] font-medium leading-6 group-hover:text-primary-dark transition-colors" title={movie.title}>
-          <Link href={href} prefetch={false} onClick={(event) => {
-            if (movie.source || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            clearScrollPosition();
-            window.scrollTo({ top: 0, behavior: "instant" });
-          }} className="line-clamp-2 before:absolute before:inset-0 before:z-10 before:rounded-xl focus-visible:outline-none">
+          <Link href={href} prefetch={false} onNavigate={saveBrowseScrollPosition} className="line-clamp-2 before:absolute before:inset-0 before:z-10 before:rounded-xl focus-visible:outline-none">
             {movie.title}
           </Link>
         </h3>

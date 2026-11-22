@@ -1,25 +1,22 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, useIsPresent } from "motion/react";
 import * as m from "motion/react-m";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useDialogLifecycle } from "@/hooks/useDialogLifecycle";
+import { useActivityPortal } from "@/hooks/useActivityPortal";
 import { backdropMotion, reducedMotionQuery, surfaceMotion } from "@/lib/motion";
 
-const subscribe = () => () => {};
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
-
 export function AnimatedDialog({ isOpen, ...props }) {
-  const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-  if (!mounted) return null;
+  const portalRoot = useActivityPortal();
+  if (!portalRoot) return null;
   return createPortal(
     <AnimatePresence>
       {isOpen && <DialogSurface key="dialog" {...props} />}
     </AnimatePresence>,
-    document.body,
+    portalRoot,
   );
 }
 

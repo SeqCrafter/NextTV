@@ -1,7 +1,7 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
-import { useState, useRef, useCallback } from "react";
+import { useRetainedRoute } from "@/hooks/useRetainedRoute";
+import { Suspense, useState, useLayoutEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -25,8 +25,15 @@ const DanmakuSearchModal = dynamic(
 );
 
 export default function PlayerPage() {
-  const params = useParams();
-  const searchParams = useSearchParams();
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <PlayerContent />
+    </Suspense>
+  );
+}
+
+function PlayerContent() {
+  const { params, searchParams } = useRetainedRoute();
   const id = params.id;
   const source = searchParams.get("source");
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
@@ -35,6 +42,8 @@ export default function PlayerPage() {
   const [descExpanded, setDescExpanded] = useState(false);
   const loadManualDanmakuRef = useRef(null);
   const { videoDetail, doubanActors, loading, error } = useVideoData(id, source, setCurrentEpisodeIndex);
+
+  useLayoutEffect(() => () => setShowDanmakuModal(false), []);
 
   const handleDanmakuEpisodeConfirm = useCallback((episodeId) => {
     loadManualDanmakuRef.current?.(episodeId);
